@@ -9,3 +9,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/upload', function () {
+    return view('upload');
+})->name('upload');
+

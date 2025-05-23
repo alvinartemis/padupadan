@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Content - Padu Padan</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}"> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -361,15 +362,14 @@
         <nav>
             <ul>
                 <li>
-                    <a href="{{ url('/') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="{{ route('home') }}"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001 1h3v-3m0 0h3m-3 0h-3v-3m9 2h3a1 1 0 001-1v-3m-4-7v4m-3 0h-4a1 2 0 00-1 1v3" />
                         </svg>
                         <span>Home</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ url('/upload') }}" class="active">
+                    <a href="{{ route('upload') }}" class="active">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
@@ -401,8 +401,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="{{ route('profile') }}"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                         <span>Profile</span>
@@ -588,12 +587,7 @@
                 let formData = new FormData();
                 formData.append('media', file);
 
-                // --- BAGIAN INI KUNCINYA ---
-                // Pastikan deklarasi csrfToken ada di sini atau di scope yang bisa dijangkau
-                // Jika kamu belum menambahkan meta tag CSRF, pastikan untuk menambahkannya di <head>
-                const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').content : '';
-                // Jika kamu yakin meta tag selalu ada, bisa lebih singkat:
-                // const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
                 console.log("CSRF Token:", csrfToken); // Debugging token
 
@@ -601,29 +595,25 @@
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': csrfToken // Menggunakan variabel csrfToken
+                        'X-CSRF-TOKEN': csrfToken
                     }
                 })
                 .then(response => {
                     console.log("Fetch response received:", response);
                     if (!response.ok) {
-                        // Laravel 419 Page Expired (saat CSRF token tidak ada/invalid) atau 403 Forbidden
-                        // Coba cek status code juga
                         if (response.status === 419) {
                             alert('Session expired. Please refresh the page and try again.');
-                            window.location.reload(); // Muat ulang halaman
+                            window.location.reload();
                             throw new Error('Session expired.');
                         } else if (response.status === 403) {
                             alert('Permission denied or invalid CSRF token. Please refresh the page.');
-                            window.location.reload(); // Muat ulang halaman
+                            window.location.reload();
                             throw new Error('Forbidden request.');
                         }
-                        // Untuk error lain, coba parse JSON
                         return response.json().then(err => {
                             console.error("Server responded with error JSON:", err);
                             throw new Error(err.message || `Server error: ${response.status}`);
                         }).catch(() => {
-                            // Jika bukan JSON (misal HTML dari error page Laravel)
                             console.error("Server responded with non-JSON error (likely HTML error page):", response.statusText);
                             throw new Error(`Server error: ${response.status} ${response.statusText}. Check server logs for details.`);
                         });

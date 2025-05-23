@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StylistAuthController;
 use App\Http\Controllers\UploadVideoController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController; // Tambahkan ini
 
 Route::get('/', function () {
     return view('welcome');
@@ -10,14 +12,20 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::get('/upload', function () { return view('upload'); })->name('upload')->middleware('auth');
-Route::post('/upload-video', [UploadVideoController::class, 'uploadAndRedirect'])->name('upload.video')->middleware('auth');
-Route::get('/upload/detail/{id}', [UploadVideoController::class, 'showVideoDetail'])->name('upload.detail')->middleware('auth');
+Route::middleware('auth')->group(function () {
+    Route::get('/upload', function () {
+        return view('upload');
+    })->name('upload');
+    Route::post('/upload-video', [UploadVideoController::class, 'uploadAndRedirect'])->name('upload.video');
+    Route::get('/upload/detail/{id}', [UploadVideoController::class, 'showVideoDetail'])->name('upload.detail');
+    Route::post('/upload/post-final/{id}', [UploadVideoController::class, 'finalPost'])->name('upload.final.post');
+    Route::post('/upload/discard', [UploadVideoController::class, 'discardUpload'])->name('upload.discard');
 
-// --- ROUTE BARU UNTUK PROSES FINAL POST/SIMPAN KE DATABASE ---
-Route::post('/upload/post-final/{id}', [UploadVideoController::class, 'finalPost'])->name('upload.final.post')->middleware('auth');
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile'); // Route untuk halaman profil
+});
+
 
 Route::get('/stylist/login', [StylistAuthController::class, 'showLoginForm'])->name('stylist.login');
 Route::post('/stylist/login', [StylistAuthController::class, 'login'])->name('stylist.login.submit');

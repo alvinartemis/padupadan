@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Padu Padan </title>
+    <title>Padu Padan</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         html, body {
@@ -201,7 +201,7 @@
             border-radius: 50%;
             object-fit: cover;
             border: 2px solid #fff;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
         }
 
         .interaction-sidebar .interaction-buttons {
@@ -450,11 +450,11 @@
             <nav>
                 <ul>
                     <li>
-                        <a href="#" class="active">
+                        <a href="{{ route('home') }}" class="active">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001 1h3v-3m0 0h3m-3 0h-3v-3m9 2h3a1 1 0 001-1v-3m-4-7v4m-3 0h-4a1 1 0 00-1 1v3" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001 1h3v-3m0 0h3m-3 0h-3v-3m9 2h3a1 1 0 001-1v-3m-4-7v4m-3 0h-4a1 2 0 00-1 1v3" />
                             </svg>
-                            Home
+                            <span>Home</span>
                         </a>
                     </li>
                     <li>
@@ -462,7 +462,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
-                            Upload
+                            <span>Upload</span>
                         </a>
                     </li>
                     <li>
@@ -470,7 +470,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4v10l8 4 8-4V7m-4 5v6m-4-6v6m-4-6v6" />
                             </svg>
-                            Digital Wardrobe
+                            <span>Digital Wardrobe</span>
                         </a>
                     </li>
                     <li>
@@ -478,7 +478,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
-                            Lookbook
+                            <span>Lookbook</span>
                         </a>
                     </li>
                     <li>
@@ -486,15 +486,14 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                             </svg>
-                            Chat
+                            <span>Chat</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <a href="{{ route('profile') }}"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                            Profile
+                            <span>Profile</span>
                         </a>
                     </li>
                 </ul>
@@ -672,10 +671,10 @@
                     const commentItem = document.createElement('div');
                     commentItem.classList.add('comment-item');
                     commentItem.innerHTML = `
-                        <img src="${comment.avatar}" alt="${comment.author}" class="avatar">
+                        <img src="<span class="math-inline">\{comment\.avatar\}" alt\="</span>{comment.author}" class="avatar">
                         <div class="comment-content">
-                            <div class="comment-author">${comment.author}</div>
-                            <div class="comment-text">${comment.text}</div>
+                            <div class="comment-author"><span class="math-inline">\{comment\.author\}</div\>
+<div class\="comment\-text"\></span>{comment.text}</div>
                             <div class="comment-meta">
                                 <span>${comment.time}</span>
                                 <span>Reply</span>

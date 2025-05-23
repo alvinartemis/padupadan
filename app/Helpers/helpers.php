@@ -8,7 +8,7 @@ if (!function_exists('formatBytes')) {
         $dm = ($decimals < 0) ? 0 : $decimals;
         $sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
 
-        $i = floor(log($bytes) / log($k));
+        $i = floor(log($bytes, $k));
 
         return number_format($bytes / pow($k, $i), $dm) . ' ' . $sizes[$i];
     }

@@ -450,22 +450,6 @@
             word-wrap: break-word; /* Memastikan teks wrap */
         }
 
-
-        /* Gaya untuk komentar pengguna sendiri (jika ada) */
-        /* Anda bisa menambahkan kelas 'my-comment' ke comment-item jika itu komentar dari user login */
-        /* .comment-item.my-comment {
-            justify-content: flex-end;
-        }
-        .comment-item.my-comment .comment-text-wrapper {
-            align-items: flex-end;
-        }
-        .comment-item.my-comment .comment-message {
-            background-color: transparent;
-            color: #444;
-        }
-        */
-
-
         .comment-input-area {
             padding: 15px 20px;
             border-top: 1px solid #eee;

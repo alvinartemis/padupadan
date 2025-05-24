@@ -12,7 +12,7 @@ class VideoFashion extends Model
     protected $table = 'videofashion';
     protected $primaryKey = 'idVideoFashion';
 
-    public $timestamps = false; // <-- PASTIKAN INI TIDAK DIKOMENTARI jika tidak ada timestamps di DB
+    public $timestamps = false;
 
     protected $fillable = [
         'idPengguna',
@@ -20,13 +20,12 @@ class VideoFashion extends Model
         'tag',
         'formatFile',
         'ukuranFile',
-        'pathFile',   // <-- TAMBAHKAN INI (jika sudah di-migrasi)
-        'mimeType',   // <-- TAMBAHKAN INI (jika sudah di-migrasi)
+        'pathFile',
+        'mimeType',
     ];
 
-    // Relasi ke model User/Pengguna
     public function user()
     {
-        return $this->belongsTo(User::class, 'idPengguna', 'idPengguna'); // Sesuaikan 'User::class' dan foreign key
+        return $this->belongsTo(\App\Models\User::class, 'idPengguna', 'idPengguna');
     }
 }

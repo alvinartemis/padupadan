@@ -14,6 +14,7 @@
             overflow: hidden; /* Mencegah scrollbar muncul di seluruh halaman */
         }
 
+
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f2f5;
@@ -21,6 +22,7 @@
             justify-content: center;
             align-items: center;
         }
+
 
         .container {
             display: flex;
@@ -35,6 +37,7 @@
             position: relative; /* Untuk positioning di dalamnya */
         }
 
+
         .sidebar {
             width: 250px;
             background-color: #fff;
@@ -47,17 +50,20 @@
             flex-shrink: 0;
         }
 
+
         .sidebar .logo {
             margin-bottom: 30px;
             display: flex;
             align-items: center;
         }
 
+
         .sidebar .logo img {
             height: 40px;
             width: auto;
             margin-left: 0;
         }
+
 
         .sidebar .search-box {
             display: flex;
@@ -68,6 +74,7 @@
             margin-bottom: 30px;
         }
 
+
         .sidebar .search-box input {
             border: none;
             background: transparent;
@@ -77,11 +84,13 @@
             margin-left: 10px;
         }
 
+
         .sidebar .search-box svg {
             width: 18px;
             height: 18px;
             color: #888;
         }
+
 
         .sidebar nav ul {
             list-style: none;
@@ -89,9 +98,11 @@
             margin: 0;
         }
 
+
         .sidebar nav ul li {
             margin-bottom: 15px;
         }
+
 
         .sidebar nav ul li a {
             display: flex;
@@ -104,11 +115,13 @@
             transition: background-color 0.2s ease;
         }
 
+
         .sidebar nav ul li a:hover,
         .sidebar nav ul li a.active {
             background-color: #e0f7fa;
             color: #007bff;
         }
+
 
         .sidebar nav ul li a svg {
             margin-right: 15px;
@@ -117,9 +130,11 @@
             color: #888;
         }
 
+
         .sidebar nav ul li a.active svg {
             color: #007bff;
         }
+
 
         .main-content-wrapper {
             flex-grow: 1;
@@ -131,12 +146,14 @@
             position: relative;
         }
 
+
         .main-content {
             display: flex;
             align-items: center;
             height: 100%;
             flex-shrink: 0;
         }
+
 
         .video-column {
             position: relative;
@@ -149,12 +166,14 @@
             flex-shrink: 0;
         }
 
+
         .video-column video,
         .video-column img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
 
         .post-info-overlay {
             position: absolute;
@@ -169,16 +188,19 @@
             pointer-events: none;
         }
 
+
         .post-info-overlay .username {
             font-weight: 600;
             margin-bottom: 5px;
             font-size: 1.1em;
         }
 
+
         .post-info-overlay .description {
             font-size: 0.9em;
             line-height: 1.4;
         }
+
 
         .interaction-sidebar {
             width: 80px;
@@ -195,6 +217,7 @@
             margin-left: 15px; /* Jarak antara video dan sidebar interaksi */
         }
 
+
         .interaction-sidebar .user-avatar-single img {
             width: 40px;
             height: 40px;
@@ -204,6 +227,7 @@
             box-shadow: 0 0 5px rgba(0,0,0,0.1);
         }
 
+
         .interaction-sidebar .interaction-buttons {
             display: flex;
             flex-direction: column;
@@ -211,6 +235,7 @@
             gap: 25px;
             width: 100%;
         }
+
 
         .interaction-sidebar .icon-group {
             display: flex;
@@ -220,6 +245,7 @@
             color: #555;
             font-size: 13px;
         }
+
 
         .interaction-sidebar .icon-group .like-button {
             width: 48px;
@@ -234,9 +260,11 @@
             transition: background-color 0.2s ease, transform 0.2s ease;
         }
 
+
         .interaction-sidebar .icon-group .like-button:hover {
             background-color: #e0e2e5;
         }
+
 
         .interaction-sidebar .icon-group .like-button svg {
             width: 24px;
@@ -245,10 +273,12 @@
             transition: color 0.2s ease;
         }
 
+
         .interaction-sidebar .icon-group .like-button.liked svg {
             fill: #FFD700;
             color: #FFD700;
         }
+
 
         .interaction-sidebar .interaction-buttons svg {
             width: 24px;
@@ -258,9 +288,11 @@
             transition: color 0.2s ease;
         }
 
+
         .interaction-sidebar .interaction-buttons svg:hover {
             color: #007bff;
         }
+
 
         /* CSS untuk Scroll Arrows yang diposisikan di tengah area kosong di kanan tampilan */
         .scroll-arrows-right-centered {
@@ -273,6 +305,7 @@
             gap: 15px;
             z-index: 100;
         }
+
 
         .scroll-arrows-right-centered .arrow-button {
             width: 48px;
@@ -287,6 +320,7 @@
             transition: background-color 0.2s ease, transform 0.2s ease;
         }
 
+
         .scroll-arrows-right-centered .arrow-button:hover {
             background-color: #e0e2e5;
             transform: translateY(-2px);
@@ -295,13 +329,15 @@
             transform: translateY(2px);
         }
 
+
         .scroll-arrows-right-centered .arrow-button svg {
             width: 24px;
             height: 24px;
             color: #888;
         }
 
-        /* ----- CSS untuk Comments Section ----- */
+
+        /* ----- CSS untuk Comments Section (Gaya Baru: Tanpa Bubble) ----- */
         .comments-section {
             position: absolute;
             top: 0;
@@ -315,11 +351,14 @@
             display: flex;
             flex-direction: column;
             z-index: 101;
+            box-sizing: border-box; /* Pastikan padding masuk hitungan width */
         }
+
 
         .comments-section.active {
             transform: translateX(0);
         }
+
 
         .comments-header {
             padding: 15px 20px;
@@ -329,12 +368,14 @@
             align-items: center;
         }
 
+
         .comments-header h3 {
             margin: 0;
             font-size: 1.1em;
             font-weight: 600;
             color: #333;
         }
+
 
         .comments-header .close-button {
             background: none;
@@ -344,77 +385,95 @@
             color: #888;
         }
 
+
         .comments-list {
             flex-grow: 1;
             overflow-y: auto;
             padding: 20px;
         }
 
+
+        /* Gaya Komentar Baru (Seperti Chat Inbox, Tapi Tanpa Bubble Background) */
         .comment-item {
             display: flex;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             align-items: flex-start;
+            gap: 10px; /* Jarak antara avatar dan teks */
         }
+
 
         .comment-item .avatar {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            margin-right: 15px;
-            flex-shrink: 0;
+            flex-shrink: 0; /* Pastikan avatar tidak mengecil */
         }
 
-        .comment-item .comment-content {
+
+        .comment-item .comment-text-wrapper { /* Nama baru untuk mengganti .comment-bubble-wrapper */
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
+
+
+        .comment-item .comment-meta-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+        }
+
 
         .comment-item .comment-author {
             font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 0.95em;
-        }
-
-        .comment-item .comment-text {
             font-size: 0.9em;
-            line-height: 1.4;
-            color: #444;
-            margin-bottom: 5px;
+            color: #333;
         }
 
-        .comment-item .comment-meta {
-            font-size: 0.8em;
+
+        .comment-item .comment-time {
+            font-size: 0.75em;
             color: #999;
-            display: flex;
-            gap: 10px;
         }
 
-        .comment-item .comment-meta span {
-            cursor: pointer;
+
+        .comment-item .comment-message { /* Nama baru untuk mengganti .comment-bubble */
+            /* Hapus semua gaya bubble background, padding, border-radius */
+            /* background-color: transparent; */ /* Tidak perlu karena default transparan */
+            padding: 0; /* Hapus padding bubble */
+            border-radius: 0; /* Hapus border-radius */
+            font-size: 0.9em;
+            color: #444;
+            max-width: 100%; /* Lebar penuh */
+            word-wrap: break-word; /* Memastikan teks wrap */
         }
 
-        .comment-item .comment-meta span:hover {
-            text-decoration: underline;
-        }
 
-        .comment-item .view-replies {
-            font-size: 0.8em;
-            color: #007bff;
-            cursor: pointer;
-            margin-top: 5px;
-            display: inline-block;
+        /* Gaya untuk komentar pengguna sendiri (jika ada) */
+        /* Anda bisa menambahkan kelas 'my-comment' ke comment-item jika itu komentar dari user login */
+        /* .comment-item.my-comment {
+            justify-content: flex-end;
         }
+        .comment-item.my-comment .comment-text-wrapper {
+            align-items: flex-end;
+        }
+        .comment-item.my-comment .comment-message {
+            background-color: transparent;
+            color: #444;
+        }
+        */
 
-        .comment-item .view-replies:hover {
-            text-decoration: underline;
-        }
 
         .comment-input-area {
             padding: 15px 20px;
             border-top: 1px solid #eee;
             display: flex;
             align-items: center;
+            gap: 10px; /* Jarak antara input dan tombol */
         }
+
 
         .comment-input-area input {
             flex-grow: 1;
@@ -423,8 +482,9 @@
             padding: 10px 15px;
             outline: none;
             font-size: 0.9em;
-            margin-right: 10px;
+            /* margin-right: 10px; */ /* Dihapus karena ada gap */
         }
+
 
         .comment-input-area .send-button {
             background: none;
@@ -432,6 +492,16 @@
             color: #007bff;
             font-size: 1.2em;
             cursor: pointer;
+            padding: 5px; /* Tambahkan padding untuk area klik */
+            display: flex; /* Untuk memusatkan SVG */
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .comment-input-area .send-button svg {
+            width: 24px; /* Sesuaikan ukuran SVG */
+            height: 24px;
         }
     </style>
 </head>
@@ -490,7 +560,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('profile') }}"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <a href="{{ route('profile') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                             <span>Profile</span>
@@ -499,6 +570,7 @@
                 </ul>
             </nav>
         </div>
+
 
         <div class="main-content-wrapper">
             <div class="main-content">
@@ -514,10 +586,12 @@
                     </div>
                 </div>
 
+
                 <div class="interaction-sidebar">
                     <div class="user-avatar-single">
                         <img src="https://i.imgur.com/S2i43eS.jpg" alt="User Avatar">
                     </div>
+
 
                     <div class="interaction-buttons">
                         <div class="icon-group">
@@ -551,6 +625,7 @@
             </div>
         </div>
 
+
         <div class="scroll-arrows-right-centered">
             <div class="arrow-button" id="arrowUp">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -580,6 +655,7 @@
             </div>
         </div>
         </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -621,7 +697,9 @@
                 }
             ];
 
+
             let currentVideoIndex = 0;
+
 
             // Dapatkan elemen-elemen yang relevan
             const mainVideo = document.getElementById('mainVideo');
@@ -633,6 +711,8 @@
             const commentsHeaderCount = document.getElementById('commentsHeaderCount');
 
 
+
+
             const arrowUp = document.getElementById('arrowUp');
             const arrowDown = document.getElementById('arrowDown');
             const commentIcon = document.getElementById('commentIcon');
@@ -640,14 +720,17 @@
             const closeCommentsButton = document.getElementById('closeComments');
             const likeButton = document.getElementById('likeButton');
 
+
             // Fungsi untuk memuat video dan info terkait
             function loadVideo(index) {
                 const videoData = videos[index];
                 if (!videoData) return; // Hentikan jika indeks tidak valid
 
+
                 mainVideo.src = videoData.src;
                 mainVideo.load(); // Memuat video baru
                 mainVideo.play(); // Memulai pemutaran
+
 
                 videoUsername.textContent = videoData.username;
                 videoDescription.textContent = videoData.description;
@@ -655,14 +738,17 @@
                 commentCountSpan.textContent = videoData.commentsCount;
                 commentsHeaderCount.textContent = `Comments (${videoData.commentsCount})`;
 
+
                 // Reset like state saat video berganti
                 likeButton.classList.remove('liked');
                 // Asumsi status like awal adalah false untuk setiap video baru
                 likeButton.dataset.isLiked = 'false';
 
+
                 // Muat komentar untuk video ini
                 loadComments(videoData.comments);
             }
+
 
             // Fungsi untuk memuat komentar
             function loadComments(comments) {
@@ -671,25 +757,18 @@
                     const commentItem = document.createElement('div');
                     commentItem.classList.add('comment-item');
                     commentItem.innerHTML = `
-                        <img src="<span class="math-inline">\{comment\.avatar\}" alt\="</span>{comment.author}" class="avatar">
-                        <div class="comment-content">
-                            <div class="comment-author"><span class="math-inline">\{comment\.author\}</div\>
-<div class\="comment\-text"\></span>{comment.text}</div>
-                            <div class="comment-meta">
-                                <span>${comment.time}</span>
-                                <span>Reply</span>
-                                <span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M4.318 6.318a4.5 4.5 0 000 6.364L8 16.364l3.682-3.682a4.5 4.5 0 00-6.364-6.364L8 7.636l1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                    </svg> ${comment.likes}
-                                </span>
+                        <img src="${comment.avatar}" alt="${comment.author}" class="avatar">
+                        <div class="comment-text-wrapper"> <div class="comment-meta-info">
+                                <div class="comment-author">${comment.author}</div>
+                                <div class="comment-time">${comment.time}</div>
                             </div>
-                            ${comment.replies > 0 ? `<div class="view-replies">View ${comment.replies} replies</div>` : ''}
-                        </div>
+                            <div class="comment-message">${comment.text}</div> </div>
                     `;
                     commentsList.appendChild(commentItem);
                 });
             }
+
+
 
 
             // Event Listener untuk tombol panah bawah
@@ -698,25 +777,30 @@
                 loadVideo(currentVideoIndex);
             });
 
+
             // Event Listener untuk tombol panah atas
             arrowUp.addEventListener('click', () => {
                 currentVideoIndex = (currentVideoIndex - 1 + videos.length) % videos.length;
                 loadVideo(currentVideoIndex);
             });
 
+
             // Event Listener untuk Komentar
             commentIcon.addEventListener('click', () => {
                 commentsSection.classList.add('active');
             });
 
+
             closeCommentsButton.addEventListener('click', () => {
                 commentsSection.classList.remove('active');
             });
+
 
             // Event Listener untuk Like
             likeButton.addEventListener('click', () => {
                 let isLiked = likeButton.classList.toggle('liked'); // Menggunakan toggle untuk menambah/menghapus kelas 'liked'
                 let currentLikes = parseFloat(likeCountSpan.textContent); // Mengambil nilai angka
+
 
                 if (isLiked) {
                     likeCountSpan.textContent = (currentLikes + 0.1).toFixed(1) + 'K';
@@ -725,9 +809,13 @@
                 }
             });
 
+
             // Muat video pertama saat halaman dimuat
             loadVideo(currentVideoIndex);
         });
     </script>
 </body>
 </html>
+
+
+

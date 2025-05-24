@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload Content - Padu Padan</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}"> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -15,6 +14,7 @@
             display: flex;
             min-height: 100vh;
         }
+
 
         .sidebar {
             width: 250px;
@@ -32,17 +32,20 @@
             z-index: 100;
         }
 
+
         .sidebar .logo {
             margin-bottom: 30px;
             display: flex;
             align-items: center;
         }
 
+
         .sidebar .logo img {
             height: 40px;
             width: auto;
             margin-left: 0;
         }
+
 
         .sidebar .search-box {
             display: flex;
@@ -53,6 +56,7 @@
             margin-bottom: 30px;
         }
 
+
         .sidebar .search-box input {
             border: none;
             background: transparent;
@@ -62,11 +66,13 @@
             margin-left: 10px;
         }
 
+
         .sidebar .search-box svg {
             width: 18px;
             height: 18px;
             color: #888;
         }
+
 
         .sidebar nav ul {
             list-style: none;
@@ -74,9 +80,11 @@
             margin: 0;
         }
 
+
         .sidebar nav ul li {
             margin-bottom: 15px;
         }
+
 
         .sidebar nav ul li a {
             display: flex;
@@ -89,11 +97,13 @@
             transition: background-color 0.2s ease;
         }
 
+
         .sidebar nav ul li a:hover,
         .sidebar nav ul li a.active {
             background-color: #e0f7fa;
             color: #007bff;
         }
+
 
         .sidebar nav ul li a svg {
             margin-right: 15px;
@@ -102,9 +112,11 @@
             color: #888;
         }
 
+
         .sidebar nav ul li a.active svg {
             color: #007bff;
         }
+
 
         /* Styles for the Upload Content Area */
         .upload-content-area {
@@ -120,9 +132,11 @@
             justify-content: flex-start;
         }
 
+
         .upload-content-area h2 {
             display: none;
         }
+
 
         .upload-card {
             background-color: #fff;
@@ -140,6 +154,7 @@
             gap: 20px; /* Untuk jarak antar elemen di dalam card */
         }
 
+
         .upload-card form {
             width: 100%;
             display: flex;
@@ -147,6 +162,7 @@
             align-items: center;
             justify-content: center;
         }
+
 
         .upload-box {
             border: 2px dashed #d1d1d1;
@@ -166,10 +182,12 @@
             position: relative;
         }
 
+
         .upload-box:hover {
             border-color: #007bff;
             background-color: #f7fcff;
         }
+
 
         .upload-box .upload-icon {
             width: 80px;
@@ -178,12 +196,14 @@
             margin-bottom: 15px;
         }
 
+
         .upload-box p {
             font-size: 1.5em;
             color: #333;
             margin: 0;
             font-weight: 600;
         }
+
 
         .upload-box p.subtitle {
             font-size: 0.9em;
@@ -192,9 +212,11 @@
             margin-bottom: 20px;
         }
 
+
         .upload-box input[type="file"] {
             display: none;
         }
+
 
         .select-video-button {
             background-color: #ffc107;
@@ -210,9 +232,11 @@
             margin-top: 10px;
         }
 
+
         .select-video-button:hover {
             background-color: #e0a800;
         }
+
 
         /* Gaya untuk tombol Next */
         .next-button {
@@ -234,14 +258,17 @@
             z-index: 10;
         }
 
+
         .next-button.active {
             opacity: 1;
             pointer-events: auto;
         }
 
+
         .next-button:hover.active {
             background-color: #0056b3;
         }
+
 
         /* Informasi tambahan */
         .info-grid {
@@ -253,6 +280,7 @@
             padding-bottom: 0;
         }
 
+
         .info-box {
             background-color: #f0f2f5;
             border-radius: 10px;
@@ -263,12 +291,14 @@
             text-align: center;
         }
 
+
         .info-box .info-icon {
             width: 40px;
             height: 40px;
             color: #666;
             margin-bottom: 10px;
         }
+
 
         .info-box h3 {
             font-size: 1.1em;
@@ -277,12 +307,14 @@
             font-weight: 600;
         }
 
+
         .info-box p {
             font-size: 0.85em;
             color: #888;
             margin: 0;
             line-height: 1.4;
         }
+
 
         #previewImage, #previewVideo {
             max-width: 100%;
@@ -292,6 +324,7 @@
             border-radius: 8px;
             display: none;
         }
+
 
         /* Responsive adjustments */
         @media (max-width: 768px) {
@@ -362,14 +395,15 @@
         <nav>
             <ul>
                 <li>
-                    <a href="{{ route('home') }}"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="{{ url('/home') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001 1h3v-3m0 0h3m-3 0h-3v-3m9 2h3a1 1 0 001-1v-3m-4-7v4m-3 0h-4a1 2 0 00-1 1v3" />
                         </svg>
                         <span>Home</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('upload') }}" class="active">
+                    <a href="{{ url('/upload') }}" class="active">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
@@ -401,7 +435,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('profile') }}"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="{{ url('/profile') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                         <span>Profile</span>
@@ -410,6 +445,7 @@
             </ul>
         </nav>
     </div>
+
 
     <div class="upload-content-area">
         {{-- H2 ini disembunyikan via CSS: display: none; --}}
@@ -427,9 +463,11 @@
                     <img id="previewImage" src="#" alt="Preview" style="display:none;">
                     <video id="previewVideo" src="#" controls style="display:none;"></video>
 
+
                     <button type="button" id="nextButton" class="next-button">Next</button>
                 </div>
             </form>
+
 
             <div class="info-grid">
                 <div class="info-box">
@@ -464,6 +502,7 @@
         </div>
     </div>
 
+
     <script>
     const uploadBox = document.getElementById('uploadBox');
     const mediaUpload = document.getElementById('mediaUpload');
@@ -475,11 +514,14 @@
     const nextButton = document.getElementById('nextButton');
     const uploadForm = document.getElementById('uploadForm');
 
+
     console.log("Script loaded.");
+
 
     // Memastikan elemen preview disembunyikan secara default
     previewImage.style.display = 'none';
     previewVideo.style.display = 'none';
+
 
     // Fungsi untuk mengupdate status tombol Next
     function updateNextButtonStatus() {
@@ -492,12 +534,14 @@
         }
     }
 
+
     // Event listener untuk tombol "Select video"
     selectVideoButton.addEventListener('click', (e) => {
         e.stopPropagation();
         mediaUpload.click();
         console.log("Select video button clicked.");
     });
+
 
     // Event listener untuk klik pada uploadBox
     uploadBox.addEventListener('click', (e) => {
@@ -506,6 +550,7 @@
             console.log("Upload box clicked, media input triggered.");
         }
     });
+
 
     mediaUpload.addEventListener('change', function() {
         const file = this.files[0];
@@ -518,10 +563,12 @@
                 previewImage.src = '';
                 previewVideo.src = '';
 
+
                 uploadBox.querySelector('.upload-icon').style.display = 'none';
                 uploadText.style.display = 'none';
                 subtitleText.style.display = 'none';
                 selectVideoButton.style.display = 'none';
+
 
                 if (file.type.startsWith('image/')) {
                     previewImage.src = e.target.result;
@@ -537,10 +584,12 @@
             uploadText.textContent = 'Select video to upload';
             subtitleText.textContent = 'Or drag and drop it here';
 
+
             uploadBox.querySelector('.upload-icon').style.display = 'block';
             uploadText.style.display = 'block';
             subtitleText.style.display = 'block';
             selectVideoButton.style.display = 'inline-block';
+
 
             previewImage.style.display = 'none';
             previewVideo.style.display = 'none';
@@ -550,6 +599,7 @@
         }
     });
 
+
     // Drag and drop functionality (tetap sama)
     uploadBox.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -557,15 +607,18 @@
         uploadBox.style.backgroundColor = '#f7fcff';
     });
 
+
     uploadBox.addEventListener('dragleave', () => {
         uploadBox.style.borderColor = '#d1d1d1';
         uploadBox.style.backgroundColor = '#fff';
     });
 
+
     uploadBox.addEventListener('drop', (e) => {
         e.preventDefault();
         uploadBox.style.borderColor = '#d1d1d1';
         uploadBox.style.backgroundColor = '#fff';
+
 
         const files = e.dataTransfer.files;
         if (files.length > 0) {
@@ -574,7 +627,9 @@
         }
     });
 
+
     updateNextButtonStatus(); // Panggil saat halaman pertama kali dimuat
+
 
     // Event listener untuk tombol Next
     nextButton.addEventListener('click', () => {
@@ -587,33 +642,45 @@
                 let formData = new FormData();
                 formData.append('media', file);
 
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+                // --- BAGIAN INI KUNCINYA ---
+                // Pastikan deklarasi csrfToken ada di sini atau di scope yang bisa dijangkau
+                // Jika kamu belum menambahkan meta tag CSRF, pastikan untuk menambahkannya di <head>
+                const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').content : '';
+                // Jika kamu yakin meta tag selalu ada, bisa lebih singkat:
+                // const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
 
                 console.log("CSRF Token:", csrfToken); // Debugging token
+
 
                 fetch('{{ route('upload.video') }}', {
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': csrfToken
+                        'X-CSRF-TOKEN': csrfToken // Menggunakan variabel csrfToken
                     }
                 })
                 .then(response => {
                     console.log("Fetch response received:", response);
                     if (!response.ok) {
+                        // Laravel 419 Page Expired (saat CSRF token tidak ada/invalid) atau 403 Forbidden
+                        // Coba cek status code juga
                         if (response.status === 419) {
                             alert('Session expired. Please refresh the page and try again.');
-                            window.location.reload();
+                            window.location.reload(); // Muat ulang halaman
                             throw new Error('Session expired.');
                         } else if (response.status === 403) {
                             alert('Permission denied or invalid CSRF token. Please refresh the page.');
-                            window.location.reload();
+                            window.location.reload(); // Muat ulang halaman
                             throw new Error('Forbidden request.');
                         }
+                        // Untuk error lain, coba parse JSON
                         return response.json().then(err => {
                             console.error("Server responded with error JSON:", err);
                             throw new Error(err.message || `Server error: ${response.status}`);
                         }).catch(() => {
+                            // Jika bukan JSON (misal HTML dari error page Laravel)
                             console.error("Server responded with non-JSON error (likely HTML error page):", response.statusText);
                             throw new Error(`Server error: ${response.status} ${response.statusText}. Check server logs for details.`);
                         });
@@ -633,6 +700,7 @@
                     console.error('Error saat mengunggah file:', error);
                     alert('Terjadi kesalahan saat mengunggah file. Silakan coba lagi. Detil error di konsol.');
                 });
+
 
             } else {
                 alert('Tidak ada file yang dipilih untuk diunggah.');

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Find Your Style!</title>
+    <title>Your Style!</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -88,21 +88,49 @@
     </style>
 </head>
 <body>
+    <div class="circle left"></div>
+    <div class="circle right"></div>
 
-<div class="circle left"></div>
-<div class="circle right"></div>
-
-<div class="logo">
-    <img src="img/logoy.png" alt="Logo">
-</div>
-
-<div class="container">
-    <div class="mb-8">
-        <img src="{{ $resultImage }}" alt="{{ $resultTitle }}" class="max-w-md rounded-lg shadow-md">
-        <p class="text-gray-600 mt-4">{{ $resultDescription }}</p>
+    <div class="logo">
+        <img src="{{ asset('img/logoy.png') }}"alt="Logo">
     </div>
-</div>
 
+    <div class="container">
+        <h1>{{ $resultTitle }}</h1>
+        @php
+            $resultDescription = '';
+            $resultImage = null;
+            switch ($resultTitle) {
+                case 'The Easygoing Explorer':
+                    $resultDescription = 'Effortless comfort is your style signature! ...';
+                    $resultImage = asset('img/exp.png');
+                    break;
+                case 'The Authority':
+                    $resultDescription = 'The aura of a boss radiates from every fiber of your being! ...';
+                    $resultImage = asset('img/ta.png');
+                    break;
+                case 'The Trendsetter':
+                    $resultDescription = 'Dare to be different! You are a fashion virtuoso, ...';
+                    $resultImage = asset('img/ts.png');
+                    break;
+                case 'The Fashion Icon':
+                    $resultDescription = 'Look who is here! A genuine style icon graces us with ...';
+                    break;
+                default:
+                    $resultDescription = 'No style profile found.';
+                    break;
+            }
+        @endphp
+        <p>{{ $resultDescription }}</p>
+        @if($resultImage)
+            <img src="{{ $resultImage }}" alt="{{ $resultTitle }}" style="max-width: 300px; margin-bottom: 20px;">
+        @endif
+
+        <form method="POST" action="{{ route('set_preference.complete') }}">
+            @csrf
+            <button type="submit" class="ready-button">I'm Ready!</button>
+        </form>
+    </div>
 </body>
 </html>
 

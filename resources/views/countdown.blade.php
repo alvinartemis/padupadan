@@ -101,11 +101,10 @@
                 setTimeout(updateCountdown, 1000);
             } else {
                 setTimeout(() => {
-                    window.location.href= "{{ route('set_preference.result') }}";
+                    window.location.href = "{{ route('set_preference.result') }}";
                 }, 1000);
             }
         };
-
     </script>
 </body>
 </html>

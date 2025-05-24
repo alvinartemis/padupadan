@@ -42,3 +42,14 @@ Route::middleware('auth')->group(function () {
     Route::get('set-preference/result', [App\Http\Controllers\SetPreferenceController::class, 'showResult'])->name('set_preference.result');
     Route::post('/set-preference/complete', [App\Http\Controllers\SetPreferenceController::class, 'complete'])->name('set_preference.complete');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/stylists', [App\Http\Controllers\ChatController::class, 'getStylists'])->name('chat.stylists');
+    Route::get('/chat/stylist/{stylist}', [App\Http\Controllers\ChatController::class, 'showChatWithStylist'])->name('chat.show');
+    Route::post('/chat/stylist/{stylist}/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/stylist/{stylist}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/message/{pesan}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
+
+    Route::get('/stylist/{stylist}/profile', [App\Http\Controllers\StylistProfileController::class, 'show'])->name('chat.profilestylist');
+});

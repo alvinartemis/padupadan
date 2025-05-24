@@ -9,6 +9,7 @@ use App\Models\VideoFashion; // Pastikan ini menunjuk ke model video Anda
 
 class ProfileController extends Controller
 {
+
     public function __construct()
     {
         $this->middleware('auth'); // Halaman profil membutuhkan pengguna yang terautentikasi
@@ -44,4 +45,5 @@ class ProfileController extends Controller
         // Hapus $stats dari compact jika tidak akan digunakan di view
         return view('profile', compact('profileData', 'posts'));
     }
+
 }

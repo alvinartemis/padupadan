@@ -1,8 +1,11 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StylistAuthController;
 use App\Http\Controllers\SetPreferenceController;
+use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\EditProfileController;
 
 
 Route::get('/', function () {
@@ -42,3 +45,11 @@ Route::middleware('auth')->group(function () {
     Route::get('set-preference/result', [App\Http\Controllers\SetPreferenceController::class, 'showResult'])->name('set_preference.result');
     Route::post('/set-preference/complete', [App\Http\Controllers\SetPreferenceController::class, 'complete'])->name('set_preference.complete');
 });
+
+
+Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'])->name('profile.edit');
+Route::post('/settings/editprofile', [EditProfileController::class, 'update'])->name('profile.update');
+Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
+Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
+Route::post('/logout', [Controller::class, 'logout'])->name('logout');
+

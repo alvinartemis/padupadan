@@ -222,7 +222,7 @@
 
         .profile-actions button {
             background-color: #007bff;
-            color: #fff;
+            color: hsl(0, 0%, 100%);
             border: none;
             padding: 10px 25px;
             border-radius: 25px;
@@ -235,12 +235,25 @@
 
 
 
-
-        .profile-actions button:hover {
-            background-color: #0056b3;
+        .profile-actions .settings-btn {
+            display: inline-block; /* Penting agar padding dan border-radius bekerja pada <a> */
+            background-color: #F4BC43; /* Warna kuning dari gambar */
+            color: #2C3E50; /* Warna teks biru gelap dari gambar */
+            border: none;
+            padding: 10px 25px; /* Sesuaikan padding agar terlihat proporsional */
+            border-radius: 25px; /* Membuat sudut sangat melengkung */
+            font-size: 0.9em;
+            font-weight: 600; /* Membuat teks tebal */
+            text-decoration: none; /* Menghilangkan garis bawah default link */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Tambahkan sedikit bayangan */
         }
 
-
+        .profile-actions .settings-btn:hover {
+            background-color: #e0a830; /* Warna kuning sedikit lebih gelap saat hover */
+            transform: translateY(-1px); /* Efek sedikit naik saat hover */
+        }
 
 
         .profile-content-grid {
@@ -458,7 +471,7 @@
                 <p class="bio">{{ $profileData['bio'] }}</p>
                 {{-- Bagian Statistik Dihapus Total --}}
                 <div class="profile-actions">
-                    <button>Edit Profile</button>
+                    <a href="{{ route('profile.edit') }}" class="settings-btn">Settings</a>
                 </div>
             </div>
         </div>

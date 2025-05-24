@@ -10,7 +10,7 @@ class Stylist extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'stylist'; // sesuaikan dengan nama tabel sebenarnya
+    protected $table = 'stylist';
     protected $primaryKey = 'idStylist';
     public $timestamps = false;
 
@@ -38,7 +38,12 @@ class Stylist extends Authenticatable
 
     public function getAuthIdentifierName()
     {
-        return 'username'; // agar Laravel tahu field username yang digunakan
+        return 'username';
+    }
+
+    public function pesanMasuk()
+    {
+        return $this->hasMany(Pesan::class, 'idStylist', 'idStylist');
     }
 
 }

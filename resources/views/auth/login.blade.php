@@ -168,7 +168,7 @@
             <button type="submit" class="login-button mb-4">Log In</button>
         </form>
         <p class="register-link">
-            <a href="{{ url('/forgotpassword') }}">Forgot Password</a>
+            <a href="{{ url('/forgot-password') }}">Forgot Password</a>
         </p>
         <p class="register-link">
             Don't have an account? <a href="{{ url('/register') }}">Sign Up</a>

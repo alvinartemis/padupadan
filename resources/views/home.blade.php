@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Padu Padan</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         html, body {
             margin: 0;
@@ -14,7 +15,6 @@
             overflow: hidden; /* Mencegah scrollbar muncul di seluruh halaman */
         }
 
-
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f2f5;
@@ -22,7 +22,6 @@
             justify-content: center;
             align-items: center;
         }
-
 
         .container {
             display: flex;
@@ -37,7 +36,6 @@
             position: relative; /* Untuk positioning di dalamnya */
         }
 
-
         .sidebar {
             width: 250px;
             background-color: #fff;
@@ -50,20 +48,17 @@
             flex-shrink: 0;
         }
 
-
         .sidebar .logo {
             margin-bottom: 30px;
             display: flex;
             align-items: center;
         }
 
-
         .sidebar .logo img {
             height: 40px;
             width: auto;
             margin-left: 0;
         }
-
 
         .sidebar .search-box {
             display: flex;
@@ -74,7 +69,6 @@
             margin-bottom: 30px;
         }
 
-
         .sidebar .search-box input {
             border: none;
             background: transparent;
@@ -84,13 +78,11 @@
             margin-left: 10px;
         }
 
-
         .sidebar .search-box svg {
             width: 18px;
             height: 18px;
             color: #888;
         }
-
 
         .sidebar nav ul {
             list-style: none;
@@ -98,11 +90,9 @@
             margin: 0;
         }
 
-
         .sidebar nav ul li {
             margin-bottom: 15px;
         }
-
 
         .sidebar nav ul li a {
             display: flex;
@@ -115,13 +105,11 @@
             transition: background-color 0.2s ease;
         }
 
-
         .sidebar nav ul li a:hover,
         .sidebar nav ul li a.active {
             background-color: #e0f7fa;
             color: #007bff;
         }
-
 
         .sidebar nav ul li a svg {
             margin-right: 15px;
@@ -130,11 +118,9 @@
             color: #888;
         }
 
-
         .sidebar nav ul li a.active svg {
             color: #007bff;
         }
-
 
         .main-content-wrapper {
             flex-grow: 1;
@@ -146,14 +132,12 @@
             position: relative;
         }
 
-
         .main-content {
             display: flex;
             align-items: center;
             height: 100%;
             flex-shrink: 0;
         }
-
 
         .video-column {
             position: relative;
@@ -166,14 +150,12 @@
             flex-shrink: 0;
         }
 
-
         .video-column video,
         .video-column img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
 
         .post-info-overlay {
             position: absolute;
@@ -188,19 +170,16 @@
             pointer-events: none;
         }
 
-
         .post-info-overlay .username {
             font-weight: 600;
             margin-bottom: 5px;
             font-size: 1.1em;
         }
 
-
         .post-info-overlay .description {
             font-size: 0.9em;
             line-height: 1.4;
         }
-
 
         .interaction-sidebar {
             width: 80px;
@@ -217,7 +196,6 @@
             margin-left: 15px; /* Jarak antara video dan sidebar interaksi */
         }
 
-
         .interaction-sidebar .user-avatar-single img {
             width: 40px;
             height: 40px;
@@ -227,7 +205,6 @@
             box-shadow: 0 0 5px rgba(0,0,0,0.1);
         }
 
-
         .interaction-sidebar .interaction-buttons {
             display: flex;
             flex-direction: column;
@@ -235,7 +212,6 @@
             gap: 25px;
             width: 100%;
         }
-
 
         .interaction-sidebar .icon-group {
             display: flex;
@@ -245,7 +221,6 @@
             color: #555;
             font-size: 13px;
         }
-
 
         .interaction-sidebar .icon-group .like-button {
             width: 48px;
@@ -260,11 +235,9 @@
             transition: background-color 0.2s ease, transform 0.2s ease;
         }
 
-
         .interaction-sidebar .icon-group .like-button:hover {
             background-color: #e0e2e5;
         }
-
 
         .interaction-sidebar .icon-group .like-button svg {
             width: 24px;
@@ -273,12 +246,10 @@
             transition: color 0.2s ease;
         }
 
-
         .interaction-sidebar .icon-group .like-button.liked svg {
             fill: #FFD700;
             color: #FFD700;
         }
-
 
         .interaction-sidebar .interaction-buttons svg {
             width: 24px;
@@ -288,11 +259,9 @@
             transition: color 0.2s ease;
         }
 
-
         .interaction-sidebar .interaction-buttons svg:hover {
             color: #007bff;
         }
-
 
         /* CSS untuk Scroll Arrows yang diposisikan di tengah area kosong di kanan tampilan */
         .scroll-arrows-right-centered {
@@ -305,7 +274,6 @@
             gap: 15px;
             z-index: 100;
         }
-
 
         .scroll-arrows-right-centered .arrow-button {
             width: 48px;
@@ -320,7 +288,6 @@
             transition: background-color 0.2s ease, transform 0.2s ease;
         }
 
-
         .scroll-arrows-right-centered .arrow-button:hover {
             background-color: #e0e2e5;
             transform: translateY(-2px);
@@ -329,13 +296,11 @@
             transform: translateY(2px);
         }
 
-
         .scroll-arrows-right-centered .arrow-button svg {
             width: 24px;
             height: 24px;
             color: #888;
         }
-
 
         /* ----- CSS untuk Comments Section (Gaya Baru: Tanpa Bubble) ----- */
         .comments-section {
@@ -354,11 +319,9 @@
             box-sizing: border-box; /* Pastikan padding masuk hitungan width */
         }
 
-
         .comments-section.active {
             transform: translateX(0);
         }
-
 
         .comments-header {
             padding: 15px 20px;
@@ -368,14 +331,12 @@
             align-items: center;
         }
 
-
         .comments-header h3 {
             margin: 0;
             font-size: 1.1em;
             font-weight: 600;
             color: #333;
         }
-
 
         .comments-header .close-button {
             background: none;
@@ -385,13 +346,11 @@
             color: #888;
         }
 
-
         .comments-list {
             flex-grow: 1;
             overflow-y: auto;
             padding: 20px;
         }
-
 
         /* Gaya Komentar Baru (Seperti Chat Inbox, Tapi Tanpa Bubble Background) */
         .comment-item {
@@ -401,7 +360,6 @@
             gap: 10px; /* Jarak antara avatar dan teks */
         }
 
-
         .comment-item .avatar {
             width: 40px;
             height: 40px;
@@ -410,13 +368,11 @@
             flex-shrink: 0; /* Pastikan avatar tidak mengecil */
         }
 
-
         .comment-item .comment-text-wrapper { /* Nama baru untuk mengganti .comment-bubble-wrapper */
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
-
 
         .comment-item .comment-meta-info {
             display: flex;
@@ -425,19 +381,16 @@
             margin-bottom: 5px;
         }
 
-
         .comment-item .comment-author {
             font-weight: 600;
             font-size: 0.9em;
             color: #333;
         }
 
-
         .comment-item .comment-time {
             font-size: 0.75em;
             color: #999;
         }
-
 
         .comment-item .comment-message { /* Nama baru untuk mengganti .comment-bubble */
             /* Hapus semua gaya bubble background, padding, border-radius */
@@ -458,7 +411,6 @@
             gap: 10px; /* Jarak antara input dan tombol */
         }
 
-
         .comment-input-area input {
             flex-grow: 1;
             border: 1px solid #ddd;
@@ -468,7 +420,6 @@
             font-size: 0.9em;
             /* margin-right: 10px; */ /* Dihapus karena ada gap */
         }
-
 
         .comment-input-area .send-button {
             background: none;
@@ -481,7 +432,6 @@
             align-items: center;
             justify-content: center;
         }
-
 
         .comment-input-area .send-button svg {
             width: 24px; /* Sesuaikan ukuran SVG */
@@ -555,7 +505,6 @@
             </nav>
         </div>
 
-
         <div class="main-content-wrapper">
             <div class="main-content">
                 <div class="video-column">
@@ -568,12 +517,10 @@
                     </div>
                 </div>
 
-
                 <div class="interaction-sidebar">
                     <div class="user-avatar-single">
                         <img src="https://i.imgur.com/S2i43eS.jpg" alt="User Avatar">
                     </div>
-
 
                     <div class="interaction-buttons">
                         <div class="icon-group">
@@ -607,7 +554,6 @@
             </div>
         </div>
 
-
         <div class="scroll-arrows-right-centered">
             <div class="arrow-button" id="arrowUp">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -620,16 +566,17 @@
                 </svg>
             </div>
         </div>
+
         <div id="commentsSection" class="comments-section">
             <div class="comments-header">
-                <h3 id="commentsHeaderCount">Comments (765)</h3>
+                <h3 id="commentsHeaderCount">Comments (0)</h3>
                 <button class="close-button" id="closeComments">&times;</button>
             </div>
             <div class="comments-list">
                 </div>
             <div class="comment-input-area">
-                <input type="text" placeholder="Add comment...">
-                <button class="send-button">
+                <input type="text" id="commentInput" placeholder="Add comment...">
+                <button class="send-button" id="sendCommentButton">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
@@ -638,22 +585,13 @@
         </div>
     </div>
 
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Hapus array 'videos' statis yang lama
-            // const videos = [
-            //     { /* ... data video statis ... */ },
-            //     { /* ... data video statis ... */ },
-            //     { /* ... data video statis ... */ }
-            // ];
-
-            let videos = []; // Inisialisasi array videos kosong, akan diisi dari API
-
+            let videos = []; // Array to store video data from API
             let currentVideoIndex = 0;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-
-            // Dapatkan elemen-elemen yang relevan
+            // Get relevant elements
             const mainVideo = document.getElementById('mainVideo');
             const videoUsername = document.getElementById('videoUsername');
             const videoDescription = document.getElementById('videoDescription');
@@ -662,9 +600,6 @@
             const commentsList = document.querySelector('.comments-list');
             const commentsHeaderCount = document.getElementById('commentsHeaderCount');
 
-
-
-
             const arrowUp = document.getElementById('arrowUp');
             const arrowDown = document.getElementById('arrowDown');
             const commentIcon = document.getElementById('commentIcon');
@@ -672,98 +607,126 @@
             const closeCommentsButton = document.getElementById('closeComments');
             const likeButton = document.getElementById('likeButton');
 
+            // Elements for comment input
+            const commentInput = document.getElementById('commentInput');
+            const sendCommentButton = document.getElementById('sendCommentButton');
 
-            // Fungsi untuk memuat video dan info terkait
+            // --- Helper function to format likes (e.g., 100000 -> 100K) ---
+            function formatNumberToK(num) {
+                if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'K';
+                }
+                return num.toString();
+            }
+
+            // --- Helper function to format comment time (e.g., "2023-05-25 10:30:00" -> "2 jam lalu") ---
+            function formatTimeAgo(timestamp) {
+                const now = new Date();
+                const commentDate = new Date(timestamp);
+                const seconds = Math.floor((now - commentDate) / 1000);
+
+                if (seconds < 60) return `${seconds} detik lalu`;
+                const minutes = Math.floor(seconds / 60);
+                if (minutes < 60) return `${minutes} menit lalu`;
+                const hours = Math.floor(minutes / 60);
+                if (hours < 24) return `${hours} jam lalu`;
+                const days = Math.floor(hours / 24);
+                if (days < 30) return `${days} hari lalu`;
+                const months = Math.floor(days / 30);
+                if (months < 12) return `${months} bulan lalu`;
+                const years = Math.floor(months / 12);
+                return `${years} tahun lalu`;
+            }
+
+
+            // Function to load video and related info
             function loadVideo(index) {
                 const videoData = videos[index];
-                if (!videoData) return; // Hentikan jika indeks tidak valid
+                if (!videoData) {
+                    console.warn(`Video data at index ${index} is undefined or null.`);
+                    // Tampilkan pesan placeholder jika tidak ada data video
+                    mainVideo.src = ''; // Bersihkan sumber untuk mencegah error
+                    videoUsername.textContent = 'Tidak Ada Video';
+                    videoDescription.textContent = 'Mohon periksa database atau respon API.';
+                    likeCountSpan.textContent = '0';
+                    commentCountSpan.textContent = '0';
+                    commentsHeaderCount.textContent = 'Comments (0)';
+                    commentsList.innerHTML = '<p style="text-align: center; color: #888;">Tidak ada komentar.</p>';
+                    return; // Hentikan eksekusi jika videoData tidak valid
+                }
 
-
+                // Ini adalah perbaikan utama untuk masalah 'undefined'
+                // Gunakan langsung properti 'src' yang sudah diformat dari respons API
                 mainVideo.src = videoData.src;
-                mainVideo.load(); // Memuat video baru
-                mainVideo.play(); // Memulai pemutaran
-
+                mainVideo.load();
+                mainVideo.play();
 
                 videoUsername.textContent = videoData.username;
                 videoDescription.textContent = videoData.description;
-                likeCountSpan.textContent = videoData.likes;
-                commentCountSpan.textContent = videoData.commentsCount;
-                commentsHeaderCount.textContent = `Comments (${videoData.commentsCount})`;
+                likeCountSpan.textContent = videoData.likes; // Sesuaikan format angka jika perlu
+                const currentCommentsCount = parseInt(videoData.comments_count) || 0; // Parse to int, fallback to 0
+                commentCountSpan.textContent = currentCommentsCount;
+                commentsHeaderCount.textContent = `Comments (${currentCommentsCount})`;
 
-
-                // Reset like state saat video berganti
+                // Reset like state
                 likeButton.classList.remove('liked');
-                // Asumsi status like awal adalah false untuk setiap video baru
                 likeButton.dataset.isLiked = 'false';
 
-
                 // Muat komentar untuk video ini
-                loadComments(videoData.comments);
+                loadComments(videoData.comments || []);
             }
 
+            // ... (fungsi loadComments dan lainnya) ...
 
-            // Fungsi untuk memuat komentar
-            function loadComments(comments) {
-                commentsList.innerHTML = ''; // Bersihkan komentar yang ada
-                comments.forEach(comment => {
-                    const commentItem = document.createElement('div');
-                    commentItem.classList.add('comment-item');
-                    commentItem.innerHTML = `
-                        <img src="<span class="math-inline">\{comment\.avatar\}" alt\="</span>{comment.author}" class="avatar">
-                        <div class="comment-text-wrapper"> <div class="comment-meta-info">
-                                <div class="comment-author"><span class="math-inline">\{comment\.author\}</div\>
-<div class\="comment\-time"\></span>{comment.time}</div>
-                            </div>
-                            <div class="comment-message">${comment.text}</div> </div>
-                    `;
-                    commentsList.appendChild(commentItem);
-                });
-            }
-
-
-
-
-            // Fungsi baru untuk mengambil data video dari API Laravel
+            // Fungsi untuk mengambil data video dari API Laravel
             async function fetchVideos() {
                 try {
-                    // Gunakan helper route() Laravel untuk mendapatkan URL API yang benar
                     const response = await fetch('{{ route('api.videos') }}');
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
+                        // Ini akan menangkap status HTTP error (4xx, 5xx)
+                        throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                     }
-                    const data = await response.json();
-                    videos = data; // Mengisi array 'videos' dengan data dari database
+                    const data = await response.json(); // Data sudah diformat oleh VideoController
+
+                    videos = data.map(video => {
+                        return {
+                            ...video, // Salin semua properti yang ada
+                            comments_count: parseInt(video.comments_count) || 0 // Parse to integer saat data dimuat
+                        };
+                    });
 
                     if (videos.length > 0) {
                         loadVideo(currentVideoIndex); // Muat video pertama setelah data diambil
                     } else {
-                        console.warn("Tidak ada video yang ditemukan dari database.");
+                        console.warn("Tidak ada video yang ditemukan dari database atau API mengembalikan array kosong.");
+                        loadVideo(0); // Panggil loadVideo(0) untuk menampilkan pesan "Tidak Ada Video"
                     }
                 } catch (error) {
+                    // HANYA MENCETAK ERROR KE KONSOLE DAN MEMANGGIL loadVideo(0)
+                    // TIDAK ADA LAGI ALERT DI SINI
                     console.error("Error fetching videos:", error);
-                    // Tampilkan pesan kesalahan kepada pengguna jika terjadi masalah
-                    alert("Gagal memuat video. Silakan coba lagi nanti.");
+                    loadVideo(0); // Panggil loadVideo(0) untuk menampilkan pesan error di UI
                 }
             }
 
             // Panggil fungsi untuk mengambil video saat halaman dimuat
             fetchVideos();
 
-            // Event Listener untuk tombol panah bawah
+            // Event Listener for scroll arrows (down)
             arrowDown.addEventListener('click', () => {
-                if (videos.length === 0) return; // Tambahkan cek untuk memastikan ada video
+                if (videos.length === 0) return;
                 currentVideoIndex = (currentVideoIndex + 1) % videos.length;
                 loadVideo(currentVideoIndex);
             });
 
-            // Event Listener untuk tombol panah atas
+            // Event Listener for scroll arrows (up)
             arrowUp.addEventListener('click', () => {
-                if (videos.length === 0) return; // Tambahkan cek untuk memastikan ada video
+                if (videos.length === 0) return;
                 currentVideoIndex = (currentVideoIndex - 1 + videos.length) % videos.length;
                 loadVideo(currentVideoIndex);
             });
 
-            // Event Listener untuk Komentar
+            // Event Listener for Comment Icon
             commentIcon.addEventListener('click', () => {
                 commentsSection.classList.add('active');
             });
@@ -772,23 +735,83 @@
                 commentsSection.classList.remove('active');
             });
 
-            // Event Listener untuk Like
+            // Event Listener for Like Button
             likeButton.addEventListener('click', () => {
-                let isLiked = likeButton.classList.toggle('liked'); // Menggunakan toggle untuk menambah/menghapus kelas 'liked'
-                let currentLikesText = likeCountSpan.textContent; // Ambil teks "199.7K"
-                let currentLikes = parseFloat(currentLikesText.replace('K', '')) * 1000; // Konversi ke angka murni (misal: 199700)
-
+                // This is still client-side only. For persistent likes, you'd send an API request.
+                let isLiked = likeButton.classList.toggle('liked');
+                let currentLikes = parseInt(likeCountSpan.textContent.replace('K', '')) * (likeCountSpan.textContent.includes('K') ? 1000 : 1);
 
                 if (isLiked) {
-                    currentLikes += 100; // Tambah 100 like
+                    currentLikes += 1; // Increment by 1 for actual like
                 } else {
-                    currentLikes -= 100; // Kurangi 100 like
+                    currentLikes -= 1; // Decrement by 1
                 }
-                // Format kembali ke "XX.X K"
-                likeCountSpan.textContent = (currentLikes / 1000).toFixed(1) + 'K';
+                videos[currentVideoIndex].likes = currentLikes; // Update local video data
+                likeCountSpan.textContent = formatNumberToK(currentLikes);
+
+                // TODO: Send API request to update like count in database for videos[currentVideoIndex].id
+                // fetch('/api/videos/' + videos[currentVideoIndex].id + '/like', { /* ... */ });
             });
-            // Hapus baris ini: loadVideo(currentVideoIndex);
-            // Karena kita sekarang memanggil loadVideo di dalam fetchVideos() setelah data diterima.
+
+            // Event Listener for sending a comment
+            sendCommentButton.addEventListener('click', async () => {
+                const commentText = commentInput.value.trim();
+                const videoId = videos[currentVideoIndex] ? videos[currentVideoIndex].id : null;
+
+                if (commentText === '' || videoId === null) {
+                    alert('Komentar tidak boleh kosong atau video tidak ditemukan.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('{{ route('api.comments.store') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken // Use the token from meta tag
+                        },
+                        body: JSON.stringify({
+                            video_id: videoId,
+                            comment: commentText,
+                            // Anda mungkin perlu mengirim idPengguna dari sesi atau autentikasi Laravel
+                            // For demonstration, let's assume current user is ID 1 for now
+                            // user_id: {{ auth()->id() ?? '1' }} // Placeholder if user is logged in
+                            // Anda juga bisa mengirim data user_id jika ada di JS
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        // Create a new comment item
+                        const newCommentItem = document.createElement('div');
+                        newCommentItem.classList.add('comment-item');
+                        newCommentItem.innerHTML = `
+                            <img src="https://i.imgur.com/S2i43eS.jpg" alt="Anda" class="avatar"> <div class="comment-text-wrapper">
+                                <div class="comment-meta-info">
+                                    <div class="comment-author">Anda</div> <div class="comment-time">Baru Saja</div>
+                                </div>
+                                <div class="comment-message">${commentText}</div>
+                            </div>
+                        `;
+                        commentsList.prepend(newCommentItem); // Add to the top of the list
+
+                        // Update comments count in UI and local data
+                        videos[currentVideoIndex].comments_count++;
+                        commentsHeaderCount.textContent = `Comments (${videos[currentVideoIndex].comments_count})`;
+                        commentCountSpan.textContent = videos[currentVideoIndex].comments_count;
+
+                        commentInput.value = ''; // Clear the input field
+                        commentsList.scrollTop = 0; // Scroll to the top to see the new comment
+                    } else {
+                        alert('Gagal mengirim komentar: ' + (data.message || 'Unknown error'));
+                        console.error('Comment submission error:', data);
+                    }
+                } catch (error) {
+                    console.error('Error submitting comment:', error);
+                    alert('Terjadi kesalahan saat mengirim komentar.');
+                }
+            });
         });
     </script>
 </body>

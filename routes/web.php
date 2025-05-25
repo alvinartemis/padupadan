@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StylistAuthController;
 use App\Http\Controllers\SetPreferenceController;
@@ -22,6 +23,8 @@ Route::get('/home', [VideoController::class, 'home'])->name('home'); // <-- UBAH
 
 // Tambahkan rute API untuk mengambil data video
 Route::get('/api/videos', [VideoController::class, 'index'])->name('api.videos'); // <-- TAMBAH BARIS INI
+
+Route::post('/comments', [CommentController::class, 'store'])->name('api.comments.store');
 
 
 Route::middleware('auth')->group(function () {

@@ -2,43 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\VideoFashion; // Gunakan model VideoFashion Anda
+use App\Models\VideoFashion;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage; // Pastikan ini di-import
 
 class VideoController extends Controller
 {
     public function index()
     {
-        // Mengambil semua video dari tabel videofashion, sekaligus memuat data user yang terkait
-        // Karena model User Anda terdefinisi dengan baik, relasi 'user' ini akan bekerja
-        $videos = VideoFashion::with('user')->get();
+        $videos = VideoFashion::withCount('comments')
+            ->with(['user', 'comments.user'])
+            ->get();
 
         $formattedVideos = $videos->map(function ($video) {
-            // Untuk likes dan commentsCount, kita masih akan menggunakan dummy values
-            // atau Anda bisa menambahkan kolom ini ke tabel videofashion/pengguna
-            $likes = '199.7K';
-            $commentsCount = 765;
+            $likes = '199.7K'; // Masih dummy
 
-            // Pastikan pathFile berisi path relatif dari folder public (misal: 'videos/nama_video.mp4')
             $videoSrc = Storage::url($video->pathFile);
 
-            // Mengambil nama pengguna dari relasi user.
-            // Gunakan $video->user->nama jika Anda ingin menampilkan nama lengkap.
-            // Gunakan $video->user->username jika Anda ingin menampilkan username.
             $uploaderName = $video->user->nama ?? ($video->user->username ?? 'Unknown User');
-            // Menambahkan ?? ($video->user->username ?? 'Unknown User')
-            // untuk menangani kasus di mana 'nama' mungkin kosong, lalu fallback ke 'username',
-            // dan jika keduanya kosong/user tidak ditemukan, fallback ke 'Unknown User'.
 
             return [
                 'id' => $video->idVideoFashion,
                 'src' => $videoSrc,
-                'username' => $uploaderName, // Menggunakan nama dari tabel pengguna
+                'username' => $uploaderName,
                 'description' => $video->deskripsi,
                 'likes' => $likes,
-                'commentsCount' => $commentsCount,
-                'comments' => [], // Masih dummy untuk komentar
+                'comments_count' => $video->comments_count,
+                'comments' => $video->comments->map(function ($comment) {
+                    // Pastikan $comment->user tidak null sebelum mengakses propertinya
+                    $commentAuthor = $comment->user ? ($comment->user->nama ?? $comment->user->username) : 'Anonim';
+
+                    // Pastikan profilepicture ada dan bentuknya URL yang benar
+                    $commentAvatar = 'https://i.imgur.com/S2i43eS.jpg'; // Fallback default
+                    if ($comment->user && !empty($comment->user->profilepicture)) {
+                        // Asumsi profilepicture menyimpan path relatif dari storage/app/public
+                        $commentAvatar = Storage::url($comment->user->profilepicture);
+                    }
+
+                    return [
+                        'id' => $comment->idKomentar,
+                        'author' => $commentAuthor, // <<< PERBAIKAN DI SINI
+                        'avatar' => $commentAvatar, // <<< PERBAIKAN DI SINI
+                        'text' => $comment->isiKomentar, // Pastikan ini nama kolom teks komentar yang benar
+                        'time' => $comment->tanggalKomentar,
+                    ];
+                })->sortByDesc('time')->values()->all()
             ];
         });
 

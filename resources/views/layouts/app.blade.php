@@ -79,7 +79,7 @@
             display: flex;
             align-items: center;
             text-decoration: none;
-            color: #555;
+            color: #A3A3A3;
             font-weight: 500;
             padding: 10px 15px;
             border-radius: 8px;
@@ -90,19 +90,18 @@
 
         .sidebar nav ul li a:hover,
         .sidebar nav ul li a.active {
-            color: #007bff;
-            /background-color: #e0f7fa; / Warna hover/active disesuaikan agar terlihat */
+            color: #173F63;
         }
 
         .sidebar nav ul li a svg {
             margin-right: 15px;
             width: 20px;
             height: 20px;
-            color: #888;
+            color: #A3A3A3;
         }
 
         .sidebar nav ul li a.active svg {
-            color: #007bff;
+            color: #173F63;
         }
 
         .content-area {
@@ -137,7 +136,7 @@
         <nav>
             <ul>
                 <li>
-                    <a href="#" class="">
+                    <a href="{{ route('home') }}" class="">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l-7 7m7-7v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001 1h3v-3m0 0h3m-3 0h-3v-3m9 2h3a1 1 0 001-1v-3m-4-7v4m-3 0h-4a1 1 0 00-1 1v3" />
                         </svg>
@@ -145,7 +144,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('upload') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
@@ -153,7 +152,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="active">
+                    <a href="{{ route('digital.wardrobe.index') }}" class="active">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4v10l8 4 8-4V7m-4 5v6m-4-6v6m-4-6v6" />
                         </svg>
@@ -169,7 +168,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('chat.index')}}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                         </svg>
@@ -177,7 +176,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('profile') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>

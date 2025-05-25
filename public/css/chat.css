@@ -2,7 +2,7 @@ body {
     font-family: 'Poppins', sans-serif;
     background-color: #f4f4f4;
     margin: 0;
-    padding: 20px; /* Atau sesuai kebutuhan layout utama */
+    padding: 20px;
 }
 
 .chat-container {
@@ -54,3 +54,4 @@ body {
 
 .chat-last-message {
     font-size: 0.9rem
+}

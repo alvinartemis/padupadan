@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,9 +18,8 @@
 
         .sidebar {
             width: 250px;
-            background-color: #fff;
+            background-color: #f4f4f4;
             padding: 20px;
-            border-right: 1px solid #eee;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -30,30 +29,30 @@
             top: 0;
             left: 0;
             z-index: 100;
+            align-items: flex-start;
         }
 
 
         .sidebar .logo {
             margin-bottom: 30px;
-            display: flex;
-            align-items: center;
         }
 
 
         .sidebar .logo img {
             height: 40px;
             width: auto;
-            margin-left: 0;
         }
 
 
         .sidebar .search-box {
             display: flex;
             align-items: center;
-            background-color: #f0f2f5;
+            background-color: #e0e0e0;
             border-radius: 20px;
             padding: 8px 15px;
             margin-bottom: 30px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
 
@@ -78,6 +77,7 @@
             list-style: none;
             padding: 0;
             margin: 0;
+            width: 100%;
         }
 
 
@@ -90,18 +90,19 @@
             display: flex;
             align-items: center;
             text-decoration: none;
-            color: #555;
+            color: #A3A3A3;
             font-weight: 500;
             padding: 10px 15px;
             border-radius: 8px;
             transition: background-color 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
         }
 
 
         .sidebar nav ul li a:hover,
         .sidebar nav ul li a.active {
-            background-color: #e0f7fa;
-            color: #007bff;
+            color: #173F63;
         }
 
 
@@ -109,27 +110,25 @@
             margin-right: 15px;
             width: 20px;
             height: 20px;
-            color: #888;
+            color: #A3A3A3;
         }
 
 
         .sidebar nav ul li a.active svg {
-            color: #007bff;
+            color: #173F63;
         }
 
 
         /* Styles for the Upload Content Area */
         .upload-content-area {
             flex-grow: 1;
-            padding: 20px 40px;
+            padding: 20px;
+            border-radius: 5px;
+            margin-left: 250px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            background-color: #f0f2f5;
-            overflow-y: auto;
-            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
-            justify-content: flex-start;
         }
 
 
@@ -384,7 +383,7 @@
 <body>
     <div class="sidebar">
         <div class="logo">
-            <img src="https://i.imgur.com/P4WfI0h.png" alt="Padu Padan Logo">
+            <img src="{{ asset('img/logoy.png') }}" alt="Padu Padan Logo">
         </div>
         <div class="search-box">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -411,7 +410,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('digital.wardrobe.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m-8-4v10l8 4 8-4V7m-4 5v6m-4-6v6m-4-6v6" />
                         </svg>
@@ -427,7 +426,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('chat.index')}}">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                         </svg>

@@ -55,7 +55,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'])->name('profile.edit');
-Route::post('/settings/editprofile', [EditProfileController::class, 'update'])->name('profile.update');
+Route::put('/profile/update', [EditProfileController::class, 'update'])->name('profile.update');
 Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
 Route::post('/logout', [Controller::class, 'logout'])->name('logout');

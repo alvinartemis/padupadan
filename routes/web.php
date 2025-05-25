@@ -6,7 +6,7 @@ use App\Http\Controllers\StylistAuthController;
 use App\Http\Controllers\SetPreferenceController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
-use App\Models\VideoFashion;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -57,4 +57,5 @@ Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'
 Route::post('/settings/editprofile', [EditProfileController::class, 'update'])->name('profile.update');
 Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
-Route::post('/logout', [App\Http\Controllers\Controller::class, 'logout'])->name('logout');
+Route::post('/logout', [Controller::class, 'logout'])->name('logout');
+

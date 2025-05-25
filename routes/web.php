@@ -88,3 +88,13 @@ Route::put('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWa
 Route::delete('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWardrobeController::class, 'destroy'])
     ->name('digital.wardrobe.destroy')
     ->middleware('auth');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/stylists', [App\Http\Controllers\ChatController::class, 'getStylists'])->name('chat.stylists');
+    Route::get('/chat/stylist/{stylist}', [App\Http\Controllers\ChatController::class, 'showChatWithStylist'])->name('chat.show');
+    Route::get('/chat/stylist/{stylist}/profile', [App\Http\Controllers\StylistProfileController::class, 'show'])->name('chat.profilestylist');
+    Route::post('/chat/stylist/{stylist}/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/stylist/{stylist}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/message/{pesan}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
+});

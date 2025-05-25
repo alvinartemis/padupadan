@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StylistAuthController;
 use App\Http\Controllers\SetPreferenceController;
@@ -21,6 +22,8 @@ Route::get('/home', [VideoController::class, 'home'])->name('home'); // <-- UBAH
 
 // Tambahkan rute API untuk mengambil data video
 Route::get('/api/videos', [VideoController::class, 'index'])->name('api.videos'); // <-- TAMBAH BARIS INI
+
+Route::post('/comments', [CommentController::class, 'store'])->name('api.comments.store');
 
 
 Route::middleware('auth')->group(function () {
@@ -55,7 +58,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'])->name('profile.edit');
-Route::post('/settings/editprofile', [EditProfileController::class, 'update'])->name('profile.update');
+Route::put('/profile/update', [EditProfileController::class, 'update'])->name('profile.update');
 Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
 Route::post('/logout', [Controller::class, 'logout'])->name('logout');
@@ -99,5 +102,3 @@ Route::put('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWa
 Route::delete('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWardrobeController::class, 'destroy'])
     ->name('digital.wardrobe.destroy')
     ->middleware('auth');
-
-

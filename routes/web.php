@@ -1,12 +1,12 @@
 <?php
 
-
+use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StylistAuthController;
 use App\Http\Controllers\SetPreferenceController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
-
+use App\Models\VideoFashion;
 
 Route::get('/', function () {
     return view('welcome');
@@ -14,7 +14,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Ubah rute home yang lama ini, atau tambahkan yang baru jika Anda ingin tetap mempertahankan yang lama
+// Jika Anda ingin VideoController yang menangani halaman home utama untuk video:
+Route::get('/home', [VideoController::class, 'home'])->name('home'); // <-- UBAH KE INI
+
+// Tambahkan rute API untuk mengambil data video
+Route::get('/api/videos', [VideoController::class, 'index'])->name('api.videos'); // <-- TAMBAH BARIS INI
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/upload', function () {
@@ -51,5 +57,4 @@ Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'
 Route::post('/settings/editprofile', [EditProfileController::class, 'update'])->name('profile.update');
 Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
-Route::post('/logout', [Controller::class, 'logout'])->name('logout');
-
+Route::post('/logout', [App\Http\Controllers\Controller::class, 'logout'])->name('logout');

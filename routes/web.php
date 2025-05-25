@@ -1,8 +1,13 @@
 <?php
 
-
+use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StylistAuthController;
+use App\Http\Controllers\SetPreferenceController;
+use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\DigitalWardrobeController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -10,7 +15,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Ubah rute home yang lama ini, atau tambahkan yang baru jika Anda ingin tetap mempertahankan yang lama
+// Jika Anda ingin VideoController yang menangani halaman home utama untuk video:
+Route::get('/home', [VideoController::class, 'home'])->name('home'); // <-- UBAH KE INI
+
+// Tambahkan rute API untuk mengambil data video
+Route::get('/api/videos', [VideoController::class, 'index'])->name('api.videos'); // <-- TAMBAH BARIS INI
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/upload', function () {
@@ -43,11 +54,11 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/settings/editprofile', [App\Http\Controllers\EditProfileController::class, 'editprofile'])->name('profile.edit');
-Route::post('/settings/editprofile', [App\Http\Controllers\EditProfileController::class, 'update'])->name('profile.update');
-Route::get('/settings/bookmark', [App\Http\Controllers\BookmarkController::class, 'bookmark'])->name('bookmark');
-Route::get('/settings/bookmark/item/{id}', [App\Http\Controllers\BookmarkController::class, 'showItem'])->name('bookmark.show_item');
-Route::post('/logout', [App\Http\Controllers\Controller::class, 'logout'])->name('logout');
+Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'])->name('profile.edit');
+Route::put('/profile/update', [EditProfileController::class, 'update'])->name('profile.update');
+Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
+Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
+Route::post('/logout', [Controller::class, 'logout'])->name('logout');
 
 // Digital Wardrobe Route
 Route::get('/digital-wardrobe', [App\Http\Controllers\DigitalWardrobeController::class, 'index'])
@@ -63,7 +74,7 @@ Route::post('/digital-wardrobe/process-photo', [App\Http\Controllers\DigitalWard
     ->name('digital.wardrobe.processPhoto')
     ->middleware('auth');
 
-// Menyimpan detail item ke database (ini akan jadi target form detail)
+ // Menyimpan detail item ke database (ini akan jadi target form detail)
 Route::post('/digital-wardrobe/store', [App\Http\Controllers\DigitalWardrobeController::class, 'storeDetails'])
     ->name('digital.wardrobe.storeDetails')
     ->middleware('auth');
@@ -88,13 +99,3 @@ Route::put('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWa
 Route::delete('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWardrobeController::class, 'destroy'])
     ->name('digital.wardrobe.destroy')
     ->middleware('auth');
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
-    Route::get('/chat/stylists', [App\Http\Controllers\ChatController::class, 'getStylists'])->name('chat.stylists');
-    Route::get('/chat/stylist/{stylist}', [App\Http\Controllers\ChatController::class, 'showChatWithStylist'])->name('chat.show');
-    Route::get('/chat/stylist/{stylist}/profile', [App\Http\Controllers\StylistProfileController::class, 'show'])->name('chat.profilestylist');
-    Route::post('/chat/stylist/{stylist}/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
-    Route::get('/chat/stylist/{stylist}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
-    Route::post('/chat/message/{pesan}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
-});

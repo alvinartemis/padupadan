@@ -563,10 +563,8 @@
                         <source src="" type="video/mp4"> Your browser does not support the video tag.
                     </video>
                     <div class="post-info-overlay">
-                        <div class="username" id="videoUsername">blakelively</div>
-                        <div class="description" id="videoDescription">
-                            Heading out with flair! This ensemble combines comfort and style, ideal for a fun day out or a relaxed night in. Really enjoying the atmosphere!
-                        </div>
+                        <div class="username" id="videoUsername"></div>
+                        <div class="description" id="videoDescription"></div>
                     </div>
                 </div>
 
@@ -584,13 +582,13 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                             </div>
-                            <span id="likeCount">199.7K</span>
+                            <span id="likeCount"></span>
                         </div>
                         <div class="icon-group">
                             <svg id="commentIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
-                            <span id="commentCount">765</span>
+                            <span id="commentCount"></span>
                         </div>
                         <div class="icon-group">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -638,49 +636,19 @@
                 </button>
             </div>
         </div>
-        </div>
+    </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Data Video (bisa ditambahkan lebih banyak)
-            const videos = [
-                {
-                    src: "https://www.w3schools.com/html/mov_bbb.mp4",
-                    username: "blakelively",
-                    description: "Heading out with flair! This ensemble combines comfort and style, ideal for a fun day out or a relaxed night in. Really enjoying the atmosphere!",
-                    likes: "199.7K",
-                    commentsCount: "765",
-                    comments: [
-                        { avatar: "https://i.imgur.com/uVj08Pz.jpg", author: "Audrey", text: "So cool! Nice outfit!", time: "3d ago", replies: 3, likes: 12 },
-                        { avatar: "https://i.imgur.com/xXkY8pZ.jpg", author: "Samantha Blair", text: "I want these outfit!!!", time: "1d ago", replies: 5, likes: 8 },
-                        { avatar: "https://i.imgur.com/w9X3p1R.jpg", author: "Andrew", text: "Where did you get those outfit bruh?", time: "2d ago", replies: 0, likes: 5 },
-                        { avatar: "https://i.imgur.com/aA2g0G3.jpg", author: "Jane Catherine", text: "Love it!", time: "1d ago", replies: 0, likes: 3 }
-                    ]
-                },
-                {
-                    src: "https://www.w3schools.com/html/movie.mp4", // Contoh video lain
-                    username: "fashion_guru_x",
-                    description: "New collection vibes! Perfect for a casual yet chic look. What do you guys think?",
-                    likes: "85.2K",
-                    commentsCount: "321",
-                    comments: [
-                        { avatar: "https://i.imgur.com/uVj08Pz.jpg", author: "Alex", text: "Love the style!", time: "5h ago", replies: 0, likes: 7 },
-                        { avatar: "https://i.imgur.com/xXkY8pZ.jpg", author: "ChicDiva", text: "Where can I buy this?", time: "2h ago", replies: 2, likes: 15 }
-                    ]
-                },
-                {
-                    src: "https://www.w3schools.com/tags/mov_bbb.mp4", // Contoh video lain lagi
-                    username: "style_explorer",
-                    description: "Exploring urban fashion trends. This combination is a must-try!",
-                    likes: "120.5K",
-                    commentsCount: "500",
-                    comments: [
-                        { avatar: "https://i.imgur.com/w9X3p1R.jpg", author: "Mark", text: "Super cool!", time: "1d ago", replies: 0, likes: 10 }
-                    ]
-                }
-            ];
+            // Hapus array 'videos' statis yang lama
+            // const videos = [
+            //     { /* ... data video statis ... */ },
+            //     { /* ... data video statis ... */ },
+            //     { /* ... data video statis ... */ }
+            // ];
 
+            let videos = []; // Inisialisasi array videos kosong, akan diisi dari API
 
             let currentVideoIndex = 0;
 
@@ -741,10 +709,10 @@
                     const commentItem = document.createElement('div');
                     commentItem.classList.add('comment-item');
                     commentItem.innerHTML = `
-                        <img src="${comment.avatar}" alt="${comment.author}" class="avatar">
+                        <img src="<span class="math-inline">\{comment\.avatar\}" alt\="</span>{comment.author}" class="avatar">
                         <div class="comment-text-wrapper"> <div class="comment-meta-info">
-                                <div class="comment-author">${comment.author}</div>
-                                <div class="comment-time">${comment.time}</div>
+                                <div class="comment-author"><span class="math-inline">\{comment\.author\}</div\>
+<div class\="comment\-time"\></span>{comment.time}</div>
                             </div>
                             <div class="comment-message">${comment.text}</div> </div>
                     `;
@@ -755,51 +723,73 @@
 
 
 
+            // Fungsi baru untuk mengambil data video dari API Laravel
+            async function fetchVideos() {
+                try {
+                    // Gunakan helper route() Laravel untuk mendapatkan URL API yang benar
+                    const response = await fetch('{{ route('api.videos') }}');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    videos = data; // Mengisi array 'videos' dengan data dari database
+
+                    if (videos.length > 0) {
+                        loadVideo(currentVideoIndex); // Muat video pertama setelah data diambil
+                    } else {
+                        console.warn("Tidak ada video yang ditemukan dari database.");
+                    }
+                } catch (error) {
+                    console.error("Error fetching videos:", error);
+                    // Tampilkan pesan kesalahan kepada pengguna jika terjadi masalah
+                    alert("Gagal memuat video. Silakan coba lagi nanti.");
+                }
+            }
+
+            // Panggil fungsi untuk mengambil video saat halaman dimuat
+            fetchVideos();
+
             // Event Listener untuk tombol panah bawah
             arrowDown.addEventListener('click', () => {
+                if (videos.length === 0) return; // Tambahkan cek untuk memastikan ada video
                 currentVideoIndex = (currentVideoIndex + 1) % videos.length;
                 loadVideo(currentVideoIndex);
             });
 
-
             // Event Listener untuk tombol panah atas
             arrowUp.addEventListener('click', () => {
+                if (videos.length === 0) return; // Tambahkan cek untuk memastikan ada video
                 currentVideoIndex = (currentVideoIndex - 1 + videos.length) % videos.length;
                 loadVideo(currentVideoIndex);
             });
-
 
             // Event Listener untuk Komentar
             commentIcon.addEventListener('click', () => {
                 commentsSection.classList.add('active');
             });
 
-
             closeCommentsButton.addEventListener('click', () => {
                 commentsSection.classList.remove('active');
             });
 
-
             // Event Listener untuk Like
             likeButton.addEventListener('click', () => {
                 let isLiked = likeButton.classList.toggle('liked'); // Menggunakan toggle untuk menambah/menghapus kelas 'liked'
-                let currentLikes = parseFloat(likeCountSpan.textContent); // Mengambil nilai angka
+                let currentLikesText = likeCountSpan.textContent; // Ambil teks "199.7K"
+                let currentLikes = parseFloat(currentLikesText.replace('K', '')) * 1000; // Konversi ke angka murni (misal: 199700)
 
 
                 if (isLiked) {
-                    likeCountSpan.textContent = (currentLikes + 0.1).toFixed(1) + 'K';
+                    currentLikes += 100; // Tambah 100 like
                 } else {
-                    likeCountSpan.textContent = (currentLikes - 0.1).toFixed(1) + 'K';
+                    currentLikes -= 100; // Kurangi 100 like
                 }
+                // Format kembali ke "XX.X K"
+                likeCountSpan.textContent = (currentLikes / 1000).toFixed(1) + 'K';
             });
-
-
-            // Muat video pertama saat halaman dimuat
-            loadVideo(currentVideoIndex);
+            // Hapus baris ini: loadVideo(currentVideoIndex);
+            // Karena kita sekarang memanggil loadVideo di dalam fetchVideos() setelah data diterima.
         });
     </script>
 </body>
 </html>
-
-
-

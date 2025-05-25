@@ -17,21 +17,21 @@ class User extends Authenticatable
      *
      * @var string
      */
-    protected $table = 'pengguna'; // Ubah nama tabel menjadi 'pengguna'
+    protected $table = 'pengguna';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'idPengguna'; // Ubah primary key menjadi 'idPengguna'
+    protected $primaryKey = 'idPengguna';
 
     /**
      * Indicates if the primary key is auto-incrementing.
      *
      * @var bool
      */
-    public $incrementing = true; // Sesuaikan jika 'idPengguna' Anda auto-increment
+    public $incrementing = true;
 
     public $timestamps = false;
     /**
@@ -45,11 +45,11 @@ class User extends Authenticatable
         'email',
         // 'profilepicture',
         'password',
-        // 'gender',
-        // 'bodytype',
-        // 'skintone',
-        // 'style',
-        // 'preferences',
+        'gender',
+        'bodytype',
+        'skintone',
+        'style',
+        'preferences',
     ];
 
     /**
@@ -69,7 +69,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'preferences' => 'array', // Jika preferences Anda disimpan sebagai array JSON
+        'preferences' => 'array',
     ];
 
     /**
@@ -79,6 +79,18 @@ class User extends Authenticatable
      */
     public function username()
     {
-        return 'username'; // Memberitahu Laravel untuk menggunakan kolom 'username' saat login
+        return 'username';
+    }
+
+    public function chatsWithStylists()
+    {
+        return $this->belongsToMany(Stylist::class, 'pesan', 'idPengguna', 'idStylist')
+                    ->select('stylist.idStylist')
+                    ->withTimestamps('waktukirim');
+    }
+
+    public function pesanKirim()
+    {
+        return $this->hasMany(Pesan::class, 'idPengguna', 'idPengguna');
     }
 }

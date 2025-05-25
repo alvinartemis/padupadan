@@ -115,10 +115,9 @@
         }
 
         .content {
-            background-color: #fff;
+            background-color: #f4f4f4;
             padding: 20px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             flex-grow: 1;
         }
     </style>
@@ -193,6 +192,5 @@
             @yield('content')
         </div>
     </div>
-@stack('scripts')
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selamat Datang di Padu Padan</title>
+    <title>Padu Padan</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -102,7 +102,7 @@
                     <a href="{{ url('/login') }}" class="account-link">Sign In</a>
                 </p>
                 <p class="account-text text-sm text-center">
-                    <a href="#" class="account-link">Sign In as Stylist</a>
+                    <a href="{{ route('stylist.login') }}" class="account-link">Sign In as Stylist</a>
                 </p>
             </div>
         </div>

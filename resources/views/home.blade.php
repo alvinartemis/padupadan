@@ -587,7 +587,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            let videos = []; // Array to store video data from API
+            let videos = [];
             let currentVideoIndex = 0;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -638,76 +638,113 @@
                 return `${years} tahun lalu`;
             }
 
+            // --- Main Logic Functions (Definisikan sebelum mereka dipanggil pertama kali) ---
 
-            // Function to load video and related info
+            // Fungsi loadComments (Dipindahkan ke atas)
+            function loadComments(comments) {
+                console.log("DEBUG: --- Memulai loadComments ---");
+                console.log("DEBUG: loadComments dipanggil dengan array:", comments);
+                console.log("DEBUG: Panjang array komentar:", comments.length);
+
+                commentsList.innerHTML = ''; // Bersihkan komentar yang ada
+
+                if (comments.length === 0) {
+                    commentsList.innerHTML = '<p style="text-align: center; color: #888;">Belum ada komentar.</p>';
+                    console.log("DEBUG: Array komentar kosong, menampilkan pesan 'Belum ada komentar'.");
+                    console.log("DEBUG: --- loadComments selesai (array kosong) ---");
+                    return;
+                }
+
+                comments.forEach(comment => {
+                    console.log("DEBUG: Memproses komentar:", comment);
+                    const commentItem = document.createElement('div');
+                    commentItem.classList.add('comment-item');
+
+                    const displayAuthor = comment.author || 'Anonim';
+                    // >>> PERBAIKAN URL AVATAR UNTUK FALLBACK LOKAL <<<
+                    const displayAvatar = comment.avatar || '{{ asset('images/default_avatar.jpg') }}'; // Ganti dengan asset lokal Anda
+                    // >>> AKHIR PERBAIKAN <<<
+
+                    commentItem.innerHTML = `
+                        <img src="${displayAvatar}" alt="${displayAuthor}" class="avatar">
+                        <div class="comment-text-wrapper">
+                            <div class="comment-meta-info">
+                                <div class="comment-author">${displayAuthor}</div>
+                                <div class="comment-time">${formatTimeAgo(comment.time)}</div>
+                            </div>
+                            <div class="comment-message">${comment.text}</div>
+                        </div>
+                    `;
+                    commentsList.appendChild(commentItem);
+                    console.log("DEBUG: Komentar ditambahkan ke DOM:", commentItem);
+                });
+                console.log("DEBUG: Komentar selesai dimuat ke DOM.");
+                console.log("DEBUG: --- loadComments selesai ---");
+            }
+
+            // Fungsi loadVideo (Dipindahkan ke atas, karena dipanggil oleh fetchVideos)
             function loadVideo(index) {
                 const videoData = videos[index];
                 if (!videoData) {
                     console.warn(`Video data at index ${index} is undefined or null.`);
                     // Tampilkan pesan placeholder jika tidak ada data video
-                    mainVideo.src = ''; // Bersihkan sumber untuk mencegah error
+                    mainVideo.src = '';
                     videoUsername.textContent = 'Tidak Ada Video';
                     videoDescription.textContent = 'Mohon periksa database atau respon API.';
                     likeCountSpan.textContent = '0';
                     commentCountSpan.textContent = '0';
                     commentsHeaderCount.textContent = 'Comments (0)';
                     commentsList.innerHTML = '<p style="text-align: center; color: #888;">Tidak ada komentar.</p>';
-                    return; // Hentikan eksekusi jika videoData tidak valid
+                    return;
                 }
 
-                // Ini adalah perbaikan utama untuk masalah 'undefined'
-                // Gunakan langsung properti 'src' yang sudah diformat dari respons API
                 mainVideo.src = videoData.src;
                 mainVideo.load();
                 mainVideo.play();
 
                 videoUsername.textContent = videoData.username;
                 videoDescription.textContent = videoData.description;
-                likeCountSpan.textContent = videoData.likes; // Sesuaikan format angka jika perlu
-                const currentCommentsCount = parseInt(videoData.comments_count) || 0; // Parse to int, fallback to 0
+                likeCountSpan.textContent = videoData.likes;
+                const currentCommentsCount = parseInt(videoData.comments_count) || 0;
                 commentCountSpan.textContent = currentCommentsCount;
                 commentsHeaderCount.textContent = `Comments (${currentCommentsCount})`;
 
-                // Reset like state
                 likeButton.classList.remove('liked');
                 likeButton.dataset.isLiked = 'false';
 
-                // Muat komentar untuk video ini
-                loadComments(videoData.comments || []);
+                console.log("Di loadVideo: videoData.comments =", videoData.comments);
+                loadComments(videoData.comments || []); // Panggilan ini sekarang akan menemukan loadComments
             }
 
-            // ... (fungsi loadComments dan lainnya) ...
-
-            // Fungsi untuk mengambil data video dari API Laravel
+            // Fungsi fetchVideos (Dipindahkan ke atas, karena dipanggil saat DOMContentLoaded)
             async function fetchVideos() {
                 try {
                     const response = await fetch('{{ route('api.videos') }}');
                     if (!response.ok) {
-                        // Ini akan menangkap status HTTP error (4xx, 5xx)
                         throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                     }
-                    const data = await response.json(); // Data sudah diformat oleh VideoController
+                    const data = await response.json();
 
                     videos = data.map(video => {
                         return {
-                            ...video, // Salin semua properti yang ada
-                            comments_count: parseInt(video.comments_count) || 0 // Parse to integer saat data dimuat
+                            ...video,
+                            comments_count: parseInt(video.comments_count) || 0
                         };
                     });
 
                     if (videos.length > 0) {
-                        loadVideo(currentVideoIndex); // Muat video pertama setelah data diambil
+                        loadVideo(currentVideoIndex);
                     } else {
                         console.warn("Tidak ada video yang ditemukan dari database atau API mengembalikan array kosong.");
-                        loadVideo(0); // Panggil loadVideo(0) untuk menampilkan pesan "Tidak Ada Video"
+                        loadVideo(0);
                     }
                 } catch (error) {
-                    // HANYA MENCETAK ERROR KE KONSOLE DAN MEMANGGIL loadVideo(0)
-                    // TIDAK ADA LAGI ALERT DI SINI
                     console.error("Error fetching videos:", error);
-                    loadVideo(0); // Panggil loadVideo(0) untuk menampilkan pesan error di UI
+                    loadVideo(0);
                 }
             }
+
+            // --- 4. Panggilan Awal & Event Listener (di bagian paling bawah script) ---
 
             // Panggil fungsi untuk mengambil video saat halaman dimuat
             fetchVideos();
@@ -786,23 +823,28 @@
                         // Create a new comment item
                         const newCommentItem = document.createElement('div');
                         newCommentItem.classList.add('comment-item');
+                        // >>> PERBAIKAN URL AVATAR UNTUK KOMENTAR BARU <<<
                         newCommentItem.innerHTML = `
-                            <img src="https://i.imgur.com/S2i43eS.jpg" alt="Anda" class="avatar"> <div class="comment-text-wrapper">
+                            <img src="{{ asset('images/default_avatar.jpg') }}" alt="Anda" class="avatar">
+                            <div class="comment-text-wrapper">
                                 <div class="comment-meta-info">
-                                    <div class="comment-author">Anda</div> <div class="comment-time">Baru Saja</div>
+                                    <div class="comment-author">Anda</div>
+                                    <div class="comment-time">Baru Saja</div>
                                 </div>
                                 <div class="comment-message">${commentText}</div>
                             </div>
                         `;
+                        // >>> AKHIR PERBAIKAN <<<
                         commentsList.prepend(newCommentItem); // Add to the top of the list
 
                         // Update comments count in UI and local data
+                        videos[currentVideoIndex].comments_count = parseInt(videos[currentVideoIndex].comments_count) || 0;
                         videos[currentVideoIndex].comments_count++;
                         commentsHeaderCount.textContent = `Comments (${videos[currentVideoIndex].comments_count})`;
                         commentCountSpan.textContent = videos[currentVideoIndex].comments_count;
 
-                        commentInput.value = ''; // Clear the input field
-                        commentsList.scrollTop = 0; // Scroll to the top to see the new comment
+                        commentInput.value = '';
+                        commentsList.scrollTop = 0;
                     } else {
                         alert('Gagal mengirim komentar: ' + (data.message || 'Unknown error'));
                         console.error('Comment submission error:', data);

@@ -443,7 +443,7 @@
     <div class="container">
         <div class="sidebar">
             <div class="logo">
-                <img src="https://i.imgur.com/P4WfI0h.png" alt="Padu Padan Logo">
+                <img src="{{ asset('img/logoy.png') }}" alt="Logo Padu Padan">
             </div>
             <div class="search-box">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

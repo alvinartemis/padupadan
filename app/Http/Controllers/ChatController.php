@@ -7,151 +7,180 @@ use App\Models\Stylist;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class ChatController extends Controller
 {
     /**
-     * Menampilkan halaman utama chat (daftar pesan terakhir dan daftar stylist).
+     * Menampilkan halaman index chat, berisi daftar chat terakhir dan daftar stylist.
+     *
+     * @return \Illuminate\Contracts\View\View
      */
+
     public function index()
     {
-        $stylists = Stylist::all();
-        $pengguna = Auth::user();
-        $existingChatStylistIds = $pengguna->chatsWithStylists()->pluck('idStylist')->toArray();
-        $lastMessages = Pesan::where('idPengguna', $pengguna->idPengguna)
-            ->whereIn('idStylist', $existingChatStylistIds)
-            ->orWhere(function ($query) use ($pengguna, $existingChatStylistIds) {
-                $query->where('idStylist', $pengguna->idPengguna)
-                      ->whereIn('idPengguna', $existingChatStylistIds);
-            })
-            ->orderBy('waktukirim', 'desc')
+        $user = Auth::user();
+        $recentChatsArray = [];
+
+        $stylistsWithChats = Pesan::where('idPengguna', $user->idPengguna)
+            ->select('idStylist')
+            ->distinct()
             ->get()
-            ->unique(function ($item) {
-                return ($item->idPengguna == Auth::id()) ? $item->idStylist : $item->idPengguna;
+            ->pluck('idStylist')
+            ->toArray();
+
+        foreach ($stylistsWithChats as $stylistId) {
+            $stylist = Stylist::findOrFail($stylistId);
+            $lastMessage = Pesan::where(function ($query) use ($user, $stylist) {
+                $query->where('idPengguna', $user->idPengguna)
+                    ->where('idStylist', $stylist->idStylist);
+            })->orWhere(function ($query) use ($user, $stylist) {
+                $query->where('idPengguna', $stylist->idStylist)
+                    ->where('idStylist', $user->idPengguna);
             })
-            ->take(10);
+                ->orderBy('waktuKirim', 'desc')
+                ->first();
 
-        $stylists = Stylist::whereNotIn('idStylist', $existingChatStylistIds)->get();
-
-        $recentChats = $lastMessages->map(function ($message) use ($pengguna) {
-            $stylistId = ($message->idPengguna == $pengguna->idPengguna) ? $message->idStylist : $message->idPengguna;
-            $stylist = Stylist::find($stylistId);
-            $lastMessage = Pesan::where(function ($q) use ($pengguna, $stylistId) {
-                $q->where('idPengguna', $pengguna->idPengguna)->where('idStylist', $stylistId);
-            })->orWhere(function ($q) use ($pengguna, $stylistId) {
-                $q->where('idStylist', $pengguna->idPengguna)->where('idPengguna', $stylistId);
-            })->orderBy('waktukirim', 'desc')->first();
-
-            $unreadCount = Pesan::where('idPengguna', $stylistId)
-                ->where('idStylist', $pengguna->idPengguna)
+            $unreadCount = Pesan::where('idPengguna', $stylist->idStylist)
+                ->where('idStylist', $user->idPengguna)
                 ->where('statusBacaPengguna', 0)
                 ->count();
 
-            return [
+            $recentChats[] = [
                 'stylist' => $stylist,
                 'last_message' => $lastMessage,
                 'unread_count' => $unreadCount,
             ];
-        })->filter(function ($chat) {
-            return $chat['stylist'] !== null;
+        }
+
+        $recentChats = collect($recentChatsArray);
+        $recentChats = $recentChats->sortByDesc(function ($chat) {
+            return optional($chat['last_message'])->waktuKirim;
         });
+
+        $stylists = Stylist::all();
 
         return view('chat.index', compact('recentChats', 'stylists'));
     }
 
     /**
-     * Mengambil daftar stylist untuk ditampilkan kepada pengguna yang belum pernah chat.
+     * Menampilkan daftar semua stylist.
+     *
+     * @return \Illuminate\Contracts\View\View
      */
     public function getStylists()
     {
         $stylists = Stylist::all();
-        return response()->json($stylists);
+        return view('chat.liststylist', compact('stylists'));
     }
 
     /**
-     * Menampilkan halaman percakapan dengan stylist tertentu.
+     * Menampilkan halaman profil stylist.
+     *
+     * @param  \App\Models\Stylist  $stylist
+     * @return \Illuminate\Contracts\View\View
      */
     public function showChatWithStylist(Stylist $stylist)
     {
-        $pengguna = Auth::user();
-        $messages = Pesan::where(function ($query) use ($pengguna, $stylist) {
-            $query->where('idPengguna', $pengguna->idPengguna)
-                  ->where('idStylist', $stylist->idStylist);
-        })->orWhere(function ($query) use ($pengguna, $stylist) {
-            $query->where('idStylist', $pengguna->idPengguna)
-                  ->where('idPengguna', $stylist->idStylist);
-        })
-        ->orderBy('waktukirim', 'asc')
-        ->get();
+        $user = Auth::user();
 
-        // Tandai pesan dari stylist ke pengguna sebagai sudah dibaca
-        Pesan::where('idPengguna', $stylist->idStylist)
-            ->where('idStylist', $pengguna->idPengguna)
-            ->where('statusBacaPengguna', 0)
-            ->update(['statusBacaPengguna' => 1]);
+        $messages = Pesan::where(function ($query) use ($user, $stylist) {
+            $query->where('idPengguna', $user->idPengguna)
+                ->where('idStylist', $stylist->idStylist);
+        })->orWhere(function ($query) use ($user, $stylist) {
+            $query->where('idPengguna', $stylist->idStylist)
+                ->where('idStylist', $user->idPengguna);
+        })
+            ->orderBy('waktuKirim', 'asc')
+            ->get();
 
         return view('chat.show', compact('stylist', 'messages'));
     }
 
     /**
-     * Menerima dan menyimpan pesan baru.
+     * Menampilkan halaman profil stylist.
+     *
+     * @param  \App\Models\Stylist  $stylist
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function showProfileStylist(Stylist $stylist)
+    {
+        return view('chat.profilestylist', compact('stylist'));
+    }
+
+    /**
+     * Mengirim pesan dari pengguna ke stylist.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Stylist  $stylist
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendMessage(Request $request, Stylist $stylist)
     {
         $request->validate([
-            'isiPesan' => 'required|string',
-            'lampiranPesan' => 'nullable|file|max:2048', // Contoh validasi lampiran
+            'isiPesan' => 'required|string|max:1000',
+            'lampiranPesan' => 'nullable|file|mimes:png,jpg,jpeg,heic|max:2048',
         ]);
 
-        $pengguna = Auth::user();
-
-        $pesan = new Pesan();
-        $pesan->idPengguna = $pengguna->idPengguna;
-        $pesan->idStylist = $stylist->idStylist;
-        $pesan->isiPesan = $request->input('isiPesan');
-        $pesan->waktukirim = now();
-        $pesan->statusBacaPengguna = 1;
-        $pesan->statusBacaStylist = 0;
-
+        $lampiranPath = null;
         if ($request->hasFile('lampiranPesan')) {
-            $path = $request->file('lampiranPesan')->store('chat_attachments', 'public');
-            $pesan->lampiranPesan = $path;
+            $lampiranPath = $request->file('lampiranPesan')->store('chat_attachments', 'public');
         }
 
-        $pesan->save();
+        Pesan::create([
+            'idPengguna' => Auth::id(),
+            'idStylist' => $stylist->idStylist,
+            'isiPesan' => $request->input('isiPesan'),
+            'lampiranPesan' => $lampiranPath,
+            'waktuKirim' => Carbon::now(),
+            'statusBacaPengguna' => 1,
+            'statusBacaStylist' => 0,
+        ]);
 
         return redirect()->route('chat.show', $stylist);
     }
 
     /**
-     * Mengambil riwayat pesan dengan stylist tertentu (untuk AJAX).
+     * Mendapatkan daftar pesan antara pengguna dan stylist.
+     *
+     * @param  \App\Models\Stylist  $stylist
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getMessages(Stylist $stylist)
     {
-        $pengguna = Auth::user();
-        $messages = Pesan::where(function ($query) use ($pengguna, $stylist) {
-            $query->where('idPengguna', $pengguna->idPengguna)
-                  ->where('idStylist', $stylist->idStylist);
-        })->orWhere(function ($query) use ($pengguna, $stylist) {
-            $query->where('idStylist', $pengguna->idPengguna)
-                  ->where('idPengguna', $stylist->idStylist);
-        })
-        ->orderBy('waktukirim', 'asc')
-        ->get();
+        $user = Auth::user();
 
-        return response()->json($messages);
+        $messages = Pesan::where(function ($query) use ($user, $stylist) {
+            $query->where('idPengguna', $user->idPengguna)
+                ->where('idStylist', $stylist->idStylist);
+        })->orWhere(function ($query) use ($user, $stylist) {
+            $query->where('idPengguna', $stylist->idStylist)
+                ->where('idStylist', $user->idPengguna);
+        })
+            ->orderBy('waktuKirim', 'asc')
+            ->get();
+
+        return view('chat.listmessage', compact('messages'));
     }
 
     /**
      * Menandai pesan sebagai sudah dibaca oleh pengguna.
+     *
+     * @param  \App\Models\Pesan  $pesan
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function markAsRead(Request $request, Pesan $pesan)
+    public function markAsRead(Pesan $pesan)
     {
-        if ($pesan->idPengguna == $request->user()->idPengguna) {
-            $pesan->statusBacaPengguna = 1;
-            $pesan->save();
+        if ($pesan->idStylist == Auth::id() && $pesan->statusBacaStylist == 0) {
+            $pesan->update(['statusBacaStylist' => 1]);
+            return response()->json(['success' => true]);
+        } elseif ($pesan->idPengguna == Auth::id() && $pesan->statusBacaPengguna == 0) {
+            $pesan->update(['statusBacaPengguna' => 1]);
             return response()->json(['success' => true]);
         }
-        return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+
+        return response()->json(['success' => false, 'message' => 'Pesan tidak dapat ditandai sebagai dibaca.'], 400);
     }
 }

@@ -18,10 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [VideoController::class, 'home'])->name('home');
-
-// Tambahkan rute API untuk mengambil data video
 Route::get('/api/videos', [VideoController::class, 'index'])->name('api.videos');
-
 Route::post('/comments', [CommentController::class, 'store'])->name('api.comments.store');
 
 
@@ -37,7 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 });
 
-
 Route::get('/stylist/login', [App\Http\Controllers\StylistAuthController::class, 'showLoginForm'])->name('stylist.login');
 Route::post('/stylist/login', [App\Http\Controllers\StylistAuthController::class, 'login'])->name('stylist.login.submit');
 Route::post('/stylist/logout', [App\Http\Controllers\StylistAuthController::class, 'logout'])->name('stylist.logout');
@@ -51,7 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/set-preference/{step}', [App\Http\Controllers\SetPreferenceController::class, 'showStep'])->name('set_preference.step');
     Route::post('/set-preference/{step}', [App\Http\Controllers\SetPreferenceController::class, 'saveStep'])->name('set_preference.save_step');
     Route::get('/quiz/countdown', [App\Http\Controllers\SetPreferenceController::class, 'showCountdown'])->name('set_preference.countdown');
-    Route::get('set-preference/result', [App\Http\Controllers\SetPreferenceController::class, 'showResult'])->name('set_preference.result');
+    Route::get('/set-preference/result', [App\Http\Controllers\SetPreferenceController::class, 'showResult'])->name('set_preference.result');
     Route::post('/set-preference/complete', [App\Http\Controllers\SetPreferenceController::class, 'complete'])->name('set_preference.complete');
 });
 
@@ -105,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat/stylist/{stylist}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/chat/message/{pesan}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
 
-    // ROUTES UNTUK PENCARIAN
-    Route::get('/search', [SearchController::class, 'index'])->name('search.index'); // Halaman hasil pencarian
-    Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent'); // API untuk pencarian terkini
+
+    Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+    Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent');
 });

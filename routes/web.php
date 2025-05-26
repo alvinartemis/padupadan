@@ -8,6 +8,7 @@ use App\Http\Controllers\SetPreferenceController;
 use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\DigitalWardrobeController;
+use App\Http\Controllers\ForgotPasswordController;
 
 
 Route::get('/', function () {
@@ -56,49 +57,53 @@ Route::middleware('auth')->group(function () {
     Route::post('/set-preference/complete', [App\Http\Controllers\SetPreferenceController::class, 'complete'])->name('set_preference.complete');
 });
 
-
 Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'])->name('profile.edit');
 Route::put('/profile/update', [EditProfileController::class, 'update'])->name('profile.update');
 Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
 Route::post('/logout', [Controller::class, 'logout'])->name('logout');
 
-// Digital Wardrobe Route
 Route::get('/digital-wardrobe', [App\Http\Controllers\DigitalWardrobeController::class, 'index'])
     ->name('digital.wardrobe.index')
-    ->middleware('auth'); // Assuming only authenticated users can access their wardrobe
-
+    ->middleware('auth'); 
 Route::get('/digital-wardrobe/create', [App\Http\Controllers\DigitalWardrobeController::class, 'create'])
     ->name('digital.wardrobe.create')
     ->middleware('auth');
-
-// Menangani submit foto dan menampilkan form detail
 Route::post('/digital-wardrobe/process-photo', [App\Http\Controllers\DigitalWardrobeController::class, 'processPhoto'])
     ->name('digital.wardrobe.processPhoto')
     ->middleware('auth');
-
- // Menyimpan detail item ke database (ini akan jadi target form detail)
 Route::post('/digital-wardrobe/store', [App\Http\Controllers\DigitalWardrobeController::class, 'storeDetails'])
     ->name('digital.wardrobe.storeDetails')
     ->middleware('auth');
-
 Route::post('/digital-wardrobe/discard-temporary-photo', [App\Http\Controllers\DigitalWardrobeController::class, 'discardTemporaryPhoto'])
     ->name('digital.wardrobe.discardTemporaryPhoto')
     ->middleware('auth');
-
 Route::get('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWardrobeController::class, 'show'])
     ->name('digital.wardrobe.show')
     ->middleware('auth');
-
-// Route untuk menampilkan form edit item pakaian (persiapan)
 Route::get('/digital-wardrobe/{koleksiPakaian}/edit', [App\Http\Controllers\DigitalWardrobeController::class, 'edit'])
     ->name('digital.wardrobe.edit')
     ->middleware('auth');
-
 Route::put('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWardrobeController::class, 'update'])
     ->name('digital.wardrobe.update')
     ->middleware('auth');
-
 Route::delete('/digital-wardrobe/{koleksiPakaian}', [App\Http\Controllers\DigitalWardrobeController::class, 'destroy'])
     ->name('digital.wardrobe.destroy')
     ->middleware('auth');
+
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password/send-otp', [ForgotPasswordController::class, 'processEmailAndShowOtpForm'])->name('password.email.otp');
+Route::get('/otp-verification', [ForgotPasswordController::class, 'showOtpForm'])->name('password.otp.form');
+Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->name('password.otp.verify');
+Route::get('/reset-password-form', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('password.reset.form');
+Route::post('/reset-password-update', [ForgotPasswordController::class, 'resetPassword'])->name('password.update.new');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/stylists', [App\Http\Controllers\ChatController::class, 'getStylists'])->name('chat.stylists');
+    Route::get('/chat/stylist/{stylist}', [App\Http\Controllers\ChatController::class, 'showChatWithStylist'])->name('chat.show');
+    Route::get('/chat/stylist/{stylist}/profile', [App\Http\Controllers\StylistProfileController::class, 'show'])->name('chat.profilestylist');
+    Route::post('/chat/stylist/{stylist}/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/stylist/{stylist}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('/chat/message/{pesan}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
+});

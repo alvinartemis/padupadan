@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
+        /* ... (CSS yang sudah ada, sama persis seperti home.blade.php sebelumnya) ... */
         html, body {
             margin: 0;
             padding: 0;
@@ -481,21 +482,21 @@
             transform: translateX(0); /* Munculkan dari kiri */
         }
 
-        .search-header {
+        .search-header-overlay { /* Mengganti .search-header */
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        .search-header h2 {
+        .search-header-overlay h2 {
             margin: 0;
             font-size: 1.8em;
             color: #333;
             font-weight: 600;
         }
 
-        .search-header .close-search {
+        .search-header-overlay .close-search {
             background: none;
             border: none;
             font-size: 2em;
@@ -722,46 +723,30 @@
 
     <div id="searchOverlay" class="search-overlay">
         <div class="search-content">
-            <div class="search-header">
+            <div class="search-header-overlay">
                 <h2>Search</h2>
                 <button class="close-search" id="closeSearchButton">&times;</button>
             </div>
-            <div class="search-input-overlay">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input type="text" placeholder="outfits for school" id="overlaySearchInput">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; height: 18px; cursor: pointer; margin-left: 10px; color: #aaa;">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </div>
+            <form id="searchFormOverlay" action="{{ route('search.index') }}" method="GET">
+                <div class="search-input-overlay">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input type="text" placeholder="outfits for school" id="overlaySearchInput" name="query">
+                    <button type="button" style="background: none; border: none; cursor: pointer; padding: 0;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; height: 18px; color: #aaa;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
 
             <div class="recent-searches">
                 <div class="search-section-title">Recent searches</div>
-                <ul class="search-list">
-                    <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        chic summer outfit
-                        <span class="clear-search-item">&times;</span>
-                    </li>
-                    <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        winter outfit girl
-                        <span class="clear-search-item">&times;</span>
-                    </li>
-                    <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        minimalist daily outfit
-                        <span class="clear-search-item">&times;</span>
-                    </li>
-                </ul>
+                <ul class="search-list" id="recentSearchesList">
+                    </ul>
             </div>
+
         </div>
     </div>
 
@@ -793,9 +778,13 @@
 
             // New elements for search overlay
             const sidebarSearchBox = document.getElementById('sidebarSearchBox');
+            const sidebarSearchInput = document.getElementById('sidebarSearchInput'); // added this
             const searchOverlay = document.getElementById('searchOverlay');
             const closeSearchButton = document.getElementById('closeSearchButton');
             const overlaySearchInput = document.getElementById('overlaySearchInput');
+            const recentSearchesList = document.getElementById('recentSearchesList'); // added this
+            const searchFormOverlay = document.getElementById('searchFormOverlay'); // added this
+            const clearOverlaySearchInputButton = searchFormOverlay.querySelector('button'); // Tombol 'x' di overlay
 
             // --- Helper function to format likes (e.g., 100000 -> 100K) ---
             function formatNumberToK(num) {
@@ -1041,26 +1030,66 @@
             sidebarSearchBox.addEventListener('click', () => {
                 searchOverlay.classList.add('active');
                 overlaySearchInput.focus(); // Fokuskan input di overlay
+                fetchRecentSearches(); // Muat pencarian terkini saat overlay dibuka
             });
 
             closeSearchButton.addEventListener('click', () => {
                 searchOverlay.classList.remove('active');
             });
 
-            // Untuk mengosongkan input pencarian di overlay (opsional)
-            // Anda bisa menambahkan event listener untuk ikon 'x' di input overlay
-            document.querySelector('.search-input-overlay svg:last-child').addEventListener('click', () => {
+            // Handle submission from the overlay search input
+            searchFormOverlay.addEventListener('submit', (event) => {
+                // Form akan disubmit secara normal ke route search.index
+            });
+
+            // Handle clear button for overlay search input
+            clearOverlaySearchInputButton.addEventListener('click', (event) => {
+                event.preventDefault(); // Mencegah submit form
                 overlaySearchInput.value = '';
             });
 
-            // Event listener untuk menghapus item pencarian terkini
-            document.querySelectorAll('.clear-search-item').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Mencegah event dari mengklik li
-                    button.closest('li').remove();
-                });
-            });
+            // Function to fetch and display recent searches
+            async function fetchRecentSearches() {
+                try {
+                    const response = await fetch('{{ route('api.search.recent') }}');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
 
+                    recentSearchesList.innerHTML = ''; // Clear existing list
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="search-text">${item}</span>
+                                <span class="clear-search-item" data-keyword="${item}">&times;</span>
+                            `;
+                            // Event listener for clicking on recent search item to perform search
+                            li.querySelector('.search-text').addEventListener('click', () => {
+                                overlaySearchInput.value = item;
+                                searchFormOverlay.submit(); // Submit form with the clicked keyword
+                            });
+                            // Event listener for clearing individual recent search item (future enhancement if needed, currently client-side only)
+                            li.querySelector('.clear-search-item').addEventListener('click', (e) => {
+                                e.stopPropagation(); // Prevent li click
+                                // Ideally, here you would make an API call to delete the recent search from the database
+                                // For now, just remove it from the UI
+                                li.remove();
+                            });
+                            recentSearchesList.appendChild(li);
+                        });
+                    } else {
+                        recentSearchesList.innerHTML = '<p style="text-align: center; color: #888;">Belum ada pencarian terkini.</p>';
+                    }
+                } catch (error) {
+                    console.error('Error fetching recent searches:', error);
+                    recentSearchesList.innerHTML = '<p style="text-align: center; color: #888;">Gagal memuat pencarian terkini.</p>';
+                }
+            }
         });
     </script>
 </body>

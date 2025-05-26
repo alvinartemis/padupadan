@@ -9,7 +9,7 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\DigitalWardrobeController;
 use App\Http\Controllers\ForgotPasswordController;
-
+use App\Http\Controllers\SearchController; // Tambahkan ini
 
 Route::get('/', function () {
     return view('welcome');
@@ -17,12 +17,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-// Ubah rute home yang lama ini, atau tambahkan yang baru jika Anda ingin tetap mempertahankan yang lama
-// Jika Anda ingin VideoController yang menangani halaman home utama untuk video:
-Route::get('/home', [VideoController::class, 'home'])->name('home'); // <-- UBAH KE INI
+Route::get('/home', [VideoController::class, 'home'])->name('home');
 
 // Tambahkan rute API untuk mengambil data video
-Route::get('/api/videos', [VideoController::class, 'index'])->name('api.videos'); // <-- TAMBAH BARIS INI
+Route::get('/api/videos', [VideoController::class, 'index'])->name('api.videos');
 
 Route::post('/comments', [CommentController::class, 'store'])->name('api.comments.store');
 
@@ -36,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/upload/post-final/{id}', [App\Http\Controllers\UploadVideoController::class, 'finalPost'])->name('upload.final.post');
     Route::post('/upload/discard', [App\Http\Controllers\UploadVideoController::class, 'discardUpload'])->name('upload.discard');
 
-    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile'); // Route untuk halaman profil
+    Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 });
 
 
@@ -65,7 +63,7 @@ Route::post('/logout', [Controller::class, 'logout'])->name('logout');
 
 Route::get('/digital-wardrobe', [App\Http\Controllers\DigitalWardrobeController::class, 'index'])
     ->name('digital.wardrobe.index')
-    ->middleware('auth'); 
+    ->middleware('auth');
 Route::get('/digital-wardrobe/create', [App\Http\Controllers\DigitalWardrobeController::class, 'create'])
     ->name('digital.wardrobe.create')
     ->middleware('auth');
@@ -106,4 +104,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/chat/stylist/{stylist}/send', [App\Http\Controllers\ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat/stylist/{stylist}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/chat/message/{pesan}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
+
+    // ROUTES UNTUK PENCARIAN
+    Route::get('/search', [SearchController::class, 'index'])->name('search.index'); // Halaman hasil pencarian
+    Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent'); // API untuk pencarian terkini
 });

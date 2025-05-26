@@ -33,7 +33,8 @@
             border-radius: 0;
             overflow: hidden;
             margin: 0;
-            position: relative; /* Untuk positioning di dalamnya */
+            position: relative;
+            /* Untuk positioning di dalamnya */
         }
 
         .sidebar {
@@ -67,6 +68,7 @@
             border-radius: 20px;
             padding: 8px 15px;
             margin-bottom: 30px;
+            cursor: pointer; /* Menambahkan cursor pointer untuk mengindikasikan dapat diklik */
         }
 
         .sidebar .search-box input {
@@ -76,6 +78,7 @@
             flex-grow: 1;
             font-size: 14px;
             margin-left: 10px;
+            cursor: pointer;
         }
 
         .sidebar .search-box svg {
@@ -316,7 +319,8 @@
             display: flex;
             flex-direction: column;
             z-index: 101;
-            box-sizing: border-box; /* Pastikan padding masuk hitungan width */
+            box-sizing: border-box;
+            /* Pastikan padding masuk hitungan width */
         }
 
         .comments-section.active {
@@ -437,6 +441,138 @@
             width: 24px; /* Sesuaikan ukuran SVG */
             height: 24px;
         }
+
+        /* Gaya baru untuk overlay pencarian */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparan overlay */
+            display: flex;
+            justify-content: flex-start; /* Untuk menempatkan konten di kiri */
+            align-items: flex-start;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .search-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .search-content {
+            background-color: #fff;
+            width: 500px; /* Lebar konten pencarian */
+            height: 100%;
+            padding: 30px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            transform: translateX(-100%); /* Sembunyikan ke kiri */
+            transition: transform 0.3s ease-out;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .search-overlay.active .search-content {
+            transform: translateX(0); /* Munculkan dari kiri */
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .search-header .close-search {
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .search-input-overlay {
+            display: flex;
+            align-items: center;
+            background-color: #f0f2f5;
+            border-radius: 20px;
+            padding: 8px 15px;
+            margin-bottom: 30px;
+        }
+
+        .search-input-overlay input {
+            border: none;
+            background: transparent;
+            outline: none;
+            flex-grow: 1;
+            font-size: 16px;
+            margin-left: 10px;
+            padding: 0; /* Hapus padding default */
+        }
+
+        .search-input-overlay svg {
+            width: 20px;
+            height: 20px;
+            color: #888;
+        }
+
+        .search-section-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .search-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .search-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            color: #444;
+            cursor: pointer;
+            padding: 8px 0;
+            transition: background-color 0.2s ease;
+        }
+
+        .search-list li:hover {
+            background-color: #f9f9f9;
+        }
+
+        .search-list li svg {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            color: #888;
+        }
+
+        .search-list li .clear-search-item {
+            margin-left: auto;
+            color: #bbb;
+            cursor: pointer;
+        }
+        .search-list li .clear-search-item:hover {
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -445,11 +581,11 @@
             <div class="logo">
                 <img src="{{ asset('img/logoy.png') }}" alt="Logo Padu Padan">
             </div>
-            <div class="search-box">
+            <div class="search-box" id="sidebarSearchBox">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <input type="text" placeholder="Search">
+                <input type="text" placeholder="Search" id="sidebarSearchInput" readonly>
             </div>
             <nav>
                 <ul>
@@ -509,8 +645,7 @@
             <div class="main-content">
                 <div class="video-column">
                     <video id="mainVideo" controls autoplay loop muted>
-                        <source src="" type="video/mp4"> Your browser does not support the video tag.
-                    </video>
+                        <source src="" type="video/mp4"> Your browser does not support the video tag.</video>
                     <div class="post-info-overlay">
                         <div class="username" id="videoUsername"></div>
                         <div class="description" id="videoDescription"></div>
@@ -573,7 +708,7 @@
                 <button class="close-button" id="closeComments">&times;</button>
             </div>
             <div class="comments-list">
-                </div>
+            </div>
             <div class="comment-input-area">
                 <input type="text" id="commentInput" placeholder="Add comment...">
                 <button class="send-button" id="sendCommentButton">
@@ -581,6 +716,51 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="searchOverlay" class="search-overlay">
+        <div class="search-content">
+            <div class="search-header">
+                <h2>Search</h2>
+                <button class="close-search" id="closeSearchButton">&times;</button>
+            </div>
+            <div class="search-input-overlay">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" placeholder="outfits for school" id="overlaySearchInput">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width: 18px; height: 18px; cursor: pointer; margin-left: 10px; color: #aaa;">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </div>
+
+            <div class="recent-searches">
+                <div class="search-section-title">Recent searches</div>
+                <ul class="search-list">
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        chic summer outfit
+                        <span class="clear-search-item">&times;</span>
+                    </li>
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        winter outfit girl
+                        <span class="clear-search-item">&times;</span>
+                    </li>
+                    <li>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        minimalist daily outfit
+                        <span class="clear-search-item">&times;</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -611,6 +791,12 @@
             const commentInput = document.getElementById('commentInput');
             const sendCommentButton = document.getElementById('sendCommentButton');
 
+            // New elements for search overlay
+            const sidebarSearchBox = document.getElementById('sidebarSearchBox');
+            const searchOverlay = document.getElementById('searchOverlay');
+            const closeSearchButton = document.getElementById('closeSearchButton');
+            const overlaySearchInput = document.getElementById('overlaySearchInput');
+
             // --- Helper function to format likes (e.g., 100000 -> 100K) ---
             function formatNumberToK(num) {
                 if (num >= 1000) {
@@ -624,7 +810,6 @@
                 const now = new Date();
                 const commentDate = new Date(timestamp);
                 const seconds = Math.floor((now - commentDate) / 1000);
-
                 if (seconds < 60) return `${seconds} detik lalu`;
                 const minutes = Math.floor(seconds / 60);
                 if (minutes < 60) return `${minutes} menit lalu`;
@@ -724,14 +909,12 @@
                         throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
                     }
                     const data = await response.json();
-
                     videos = data.map(video => {
                         return {
                             ...video,
                             comments_count: parseInt(video.comments_count) || 0
                         };
                     });
-
                     if (videos.length > 0) {
                         loadVideo(currentVideoIndex);
                     } else {
@@ -816,7 +999,6 @@
                             // Anda juga bisa mengirim data user_id jika ada di JS
                         })
                     });
-
                     const data = await response.json();
 
                     if (response.ok && data.success) {
@@ -854,6 +1036,31 @@
                     alert('Terjadi kesalahan saat mengirim komentar.');
                 }
             });
+
+            // Event Listeners for Search Overlay
+            sidebarSearchBox.addEventListener('click', () => {
+                searchOverlay.classList.add('active');
+                overlaySearchInput.focus(); // Fokuskan input di overlay
+            });
+
+            closeSearchButton.addEventListener('click', () => {
+                searchOverlay.classList.remove('active');
+            });
+
+            // Untuk mengosongkan input pencarian di overlay (opsional)
+            // Anda bisa menambahkan event listener untuk ikon 'x' di input overlay
+            document.querySelector('.search-input-overlay svg:last-child').addEventListener('click', () => {
+                overlaySearchInput.value = '';
+            });
+
+            // Event listener untuk menghapus item pencarian terkini
+            document.querySelectorAll('.clear-search-item').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.stopPropagation(); // Mencegah event dari mengklik li
+                    button.closest('li').remove();
+                });
+            });
+
         });
     </script>
 </body>

@@ -9,7 +9,8 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\DigitalWardrobeController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\SearchController; // Tambahkan ini
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\LookbookController; // Tambahkan ini
 
 Route::get('/', function () {
     return view('welcome');
@@ -105,3 +106,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
     Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent');
 });
+
+Route::get('/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');

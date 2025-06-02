@@ -8,8 +8,8 @@
                 @endif
             </div>
             <div style="font-size: 0.7rem; color: #999; margin-top: 3px;">
-                @if ($message->waktuKirim)
-                    {{ $message->waktuKirim->diffForHumans() }}
+                @if ($message->waktukirim)
+                    {{ $message->waktukirim->diffForHumans() }}
                 @else
                     Waktu tidak tersedia
                 @endif

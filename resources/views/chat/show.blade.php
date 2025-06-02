@@ -52,10 +52,10 @@
                     @elseif ($errors->has('lampiranPesan'))
                         The attachment file format is invalid. Allowed formats: png, jpg, jpeg, heic.
                     @else
-                        Oops, Ada Kesalahan!
+                        Oops, Something went wrong!
                     @endif
                 @else
-                    Oops, Ada Kesalahan!
+                    Oops, Something went wrong!
                 @endif
             </h4>
             <div id="errorMessage" style="display: none; margin-bottom: 20px; text-align: left;">

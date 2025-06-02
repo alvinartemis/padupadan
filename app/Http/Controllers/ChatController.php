@@ -22,12 +22,12 @@ class ChatController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $recentChatsArray = [];
+        $recentChats = []; // Inisialisasi sebagai array kosong
 
         $stylistsWithChats = Pesan::where('idPengguna', $user->idPengguna)
             ->select('idStylist')
+            ->union(Pesan::where('idStylist', $user->idPengguna)->select('idPengguna as idStylist'))
             ->distinct()
-            ->get()
             ->pluck('idStylist')
             ->toArray();
 
@@ -40,7 +40,7 @@ class ChatController extends Controller
                 $query->where('idPengguna', $stylist->idStylist)
                     ->where('idStylist', $user->idPengguna);
             })
-                ->orderBy('waktuKirim', 'desc')
+                ->orderBy('waktukirim', 'desc')
                 ->first();
 
             $unreadCount = Pesan::where('idPengguna', $stylist->idStylist)
@@ -48,16 +48,16 @@ class ChatController extends Controller
                 ->where('statusBacaPengguna', 0)
                 ->count();
 
-            $recentChats[] = [
+            $recentChats[] = [ // Langsung tambahkan ke $recentChats
                 'stylist' => $stylist,
                 'last_message' => $lastMessage,
                 'unread_count' => $unreadCount,
             ];
         }
 
-        $recentChats = collect($recentChatsArray);
+        $recentChats = collect($recentChats); // Sekarang buat collection dari $recentChats yang sudah terisi
         $recentChats = $recentChats->sortByDesc(function ($chat) {
-            return optional($chat['last_message'])->waktuKirim;
+            return optional($chat['last_message'])->waktukirim;
         });
 
         $stylists = Stylist::all();
@@ -93,7 +93,7 @@ class ChatController extends Controller
             $query->where('idPengguna', $stylist->idStylist)
                 ->where('idStylist', $user->idPengguna);
         })
-            ->orderBy('waktuKirim', 'asc')
+            ->orderBy('waktukirim', 'asc')
             ->get();
 
         return view('chat.show', compact('stylist', 'messages'));
@@ -134,7 +134,7 @@ class ChatController extends Controller
             'idStylist' => $stylist->idStylist,
             'isiPesan' => $request->input('isiPesan'),
             'lampiranPesan' => $lampiranPath,
-            'waktuKirim' => Carbon::now(),
+            'waktukirim' => Carbon::now(),
             'statusBacaPengguna' => 1,
             'statusBacaStylist' => 0,
         ]);
@@ -159,7 +159,7 @@ class ChatController extends Controller
             $query->where('idPengguna', $stylist->idStylist)
                 ->where('idStylist', $user->idPengguna);
         })
-            ->orderBy('waktuKirim', 'asc')
+            ->orderBy('waktukirim', 'asc')
             ->get();
 
         return view('chat.listmessage', compact('messages'));

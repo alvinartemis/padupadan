@@ -121,7 +121,7 @@ class ChatController extends Controller
     {
         $request->validate([
             'isiPesan' => 'required|string|max:1000',
-            'lampiranPesan' => 'nullable|file|mimes:png,jpg,jpeg,heic|max:2048',
+            'lampiranPesan' => 'nullable|file|mimes:png,jpg,jpeg,heic',
         ]);
 
         $lampiranPath = null;

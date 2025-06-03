@@ -27,7 +27,7 @@
           <i class="fas fa-user text-gray-400 text-[18px]"></i>
           Profile
         </a>
-        <a href="{{ route('profile') }}" class="flex items-center gap-3 text-[#0a1f44] text-[12px] font-extrabold">
+        <a href="{{ route('lookbook.create') }}" class="flex items-center gap-3 text-[#0a1f44] text-[12px] font-extrabold">
           <i class="fas fa-book-open text-[#0a1f44] text-[18px]"></i>
           Lookbook
         </a>

@@ -20,18 +20,18 @@
     <!-- Left Sidebar -->
     <aside class="flex flex-col items-start gap-8 w-[180px]">
       <div class="text-[#f4b92f] font-extrabold text-[24px] leading-[28px] tracking-tight">
-        p<span class="text-[18px] align-super">a</span>du<br />padan
+       <a href="{{ route('home') }}"><img src="{{ asset('img/logoy.png') }}" alt="Logo PaduPadan" class="w-24 h-auto" />
       </div>
       <nav class="flex flex-col gap-6 w-full">
-        <a href="#" class="flex items-center gap-3 text-gray-400 text-[12px] font-semibold">
+        <a href="{{ route('profile') }}" class="flex items-center gap-3 text-gray-400 text-[12px] font-semibold">
           <i class="fas fa-user text-gray-400 text-[18px]"></i>
           Profile
         </a>
-        <a href="#" class="flex items-center gap-3 text-[#0a1f44] text-[12px] font-extrabold">
+        <a href="{{ route('profile') }}" class="flex items-center gap-3 text-[#0a1f44] text-[12px] font-extrabold">
           <i class="fas fa-book-open text-[#0a1f44] text-[18px]"></i>
           Lookbook
         </a>
-        <a href="#" class="flex items-center gap-3 text-gray-400 text-[12px] font-semibold">
+        <a href="{{ route('chat.index')}}" class="flex items-center gap-3 text-gray-400 text-[12px] font-semibold">
           <i class="fas fa-comment-alt text-gray-400 text-[18px]"></i>
           Chat
         </a>

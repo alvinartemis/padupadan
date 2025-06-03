@@ -39,16 +39,17 @@
     </aside>
 
     <!-- Middle Search Bar -->
-    <div class="flex items-center justify-center flex-1">
-      <div class="relative w-full max-w-[400px]">
-        <input
-          type="text"
-          placeholder="search"
-          class="w-full py-2 pl-4 pr-10 rounded-full bg-[#d9d9d9] text-[12px] text-gray-400 placeholder-gray-400 focus:outline-none"
-        />
-        <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[14px]"></i>
-      </div>
+    <div class="w-full max-w-[1200px] mb-6">
+    <div class="relative w-full max-w-[400px] mx-auto">
+      <input
+        type="text"
+        placeholder="search"
+        class="w-full py-2 pl-4 pr-10 rounded-full bg-[#d9d9d9] text-[12px] text-gray-400 placeholder-gray-400 focus:outline-none"
+      />
+      <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-[14px]"></i>
     </div>
+  </div>
+
 
     <!-- Right Panel -->
     <section

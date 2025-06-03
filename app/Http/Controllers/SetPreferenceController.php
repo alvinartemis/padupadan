@@ -12,47 +12,34 @@ class SetPreferenceController extends Controller
 
     public function index()
     {
-        return view('index');
+        $genderOptions = ['male', 'female'];
+        $genderLabels = ['Male', 'Female'];
+
+        $bodytypeOptions = []; // Akan diisi oleh JavaScript berdasarkan gender
+        $bodytypeLabels = [];
+
+        $skintoneOptions = ['cool', 'warm', 'neutral', 'olive'];
+        $skintoneLabels = ['Cool', 'Warm', 'Neutral', 'Olive'];
+
+        $styleOptions = ['casual', 'formal', 'unique', 'stylish'];
+        $styleLabels = ['Casual', 'Formal', 'Unique', 'Stylish'];
+        $steps = $this->steps;
+
+        return view('set-preference-single', compact(
+            'genderOptions',
+            'genderLabels',
+            'bodytypeOptions',
+            'bodytypeLabels',
+            'skintoneOptions',
+            'skintoneLabels',
+            'styleOptions',
+            'styleLabels',
+            'steps'
+        ));
     }
 
-    public function showStep($step)
+    public function saveAll(Request $request)
     {
-        if (!in_array($step, $this->steps)) {
-            abort(404);
-        }
-
-        $options = [];
-        $labels = [];
-
-        switch ($step) {
-            case 'gender':
-                $options = ['male', 'female'];
-                $labels = ['Male', 'Female'];
-                break;
-            case 'bodytype':
-                $gender = session('quiz.gender') ?? Auth::user()?->gender;
-                $options = $this->getBodytypeOptions($gender);
-                $labels = array_map('ucfirst', $options);
-                break;
-            case 'skintone':
-                $options = ['cool', 'warm', 'neutral', 'olive'];
-                $labels = ['Cool', 'Warm', 'Neutral', 'Olive'];
-                break;
-            case 'style':
-                $options = ['casual', 'formal', 'unique', 'stylish'];
-                $labels = ['Casual', 'Formal', 'Unique', 'Stylish'];
-                break;
-        }
-
-        return view('step', compact('step', 'options', 'labels'));
-    }
-
-    public function saveStep(Request $request, $step)
-    {
-        if (!in_array($step, $this->steps)) {
-            abort(404);
-        }
-
         $validations = [
             'gender' => 'required|in:male,female',
             'bodytype' => 'required',
@@ -60,23 +47,21 @@ class SetPreferenceController extends Controller
             'style' => 'required|in:casual,formal,unique,stylish',
         ];
 
-        if ($step === 'bodytype') {
-            $gender = session('quiz.gender');
-            $validBodytypes = $this->getBodytypeOptions($gender);
-            $validations['bodytype'] = 'required|in:' . implode(',', $validBodytypes);
-        }
+        $gender = $request->input('gender');
+        $validBodytypes = $this->getBodytypeOptions($gender);
+        $validations['bodytype'] = 'required|in:' . implode(',', $validBodytypes);
 
-        $request->validate([$step => $validations[$step]]);
+        $request->validate($validations);
 
-        session(['quiz.' . $step => $request->$step]);
-        \Log::info("Set session quiz.{$step}: " . $request->$step);
+        session(['quiz.gender' => $request->input('gender')]);
+        session(['quiz.bodytype' => $request->input('bodytype')]);
+        session(['quiz.skintone' => $request->input('skintone')]);
+        session(['quiz.style' => $request->input('style')]);
 
-        $currentIndex = array_search($step, $this->steps);
-        if ($currentIndex < count($this->steps) - 1) {
-            return redirect()->route('set_preference.step', ['step' => $this->steps[$currentIndex + 1]]);
-        } else {
-            return redirect()->route('set_preference.countdown');
-        }
+        Log::info("Set session quiz:", session('quiz'));
+
+        // Redirect ke halaman hasil setelah menyimpan semua preferensi
+        return redirect()->route('set_preference.result');
     }
 
     public function showResult()
@@ -92,29 +77,30 @@ class SetPreferenceController extends Controller
             $resultTitle = $user->result_title;
             $resultDescription = $user->result_description ?? '';
             $resultImage = $user->result_image ?? null;
-        } else if ($quizData && isset($quizData['style']))
+        } else if ($quizData && isset($quizData['style'])) {
             switch ($quizData['style']) {
                 case 'casual':
                     $resultTitle = 'The Easygoing Explorer';
-                    $resultDescription = 'Effortless comfort is your style signature! You are a natural at looking effortlessly cool, proving that relaxation and style can go hand in hand. Your positive energy and down-to-earth spirit shine through every look. A perfect partner for any escapade, you are always prepared with a style that is both practical and captivating. So, are you ready to embrace your best?';
+                    $resultDescription = 'Effortless comfort is your style signature! ...';
                     $resultImage = asset('img/exp.png');
                     break;
                 case 'formal':
                     $resultTitle = 'The Authority';
-                    $resultDescription = 'The aura of a boss radiates from every fiber of your being! You are a true leader who knows exactly how to build trust and authority through your appearance. Every detail reflects meticulousness and professionalism. The world is yours to command. So, are you ready to step into your power?';
+                    $resultDescription = 'The aura of a boss radiates from every fiber of your being! ...';
                     $resultImage = asset('img/ta.png');
                     break;
                 case 'unique':
                     $resultTitle = 'The Trendsetter';
-                    $resultDescription = 'Dare to be different! You are a fashion virtuoso, boldly showcasing your true self through clothing. Style is your personal palette, where you craft your singular identity. A courageous trailblazer, you defy fashion norms and forge your own path. Ready to unveil a look that will set you apart even further?';
+                    $resultDescription = 'Dare to be different! You are a fashion virtuoso, ...';
                     $resultImage = asset('img/ts.png');
                     break;
                 case 'stylish':
                     $resultTitle = 'The Fashion Icon';
-                    $resultDescription = 'Look who is here! A genuine style icon graces us with their presence, consistently ahead and admired. Your style instinct is keen and fearless, expertly mixing the newest trends with your own distinct flair. Each appearance is a source of inspiration. You are a fashion luminary wherever you are! Ready to radiate even more?';
+                    $resultDescription = 'Look who is here! A genuine style icon graces us with ...';
                     $resultImage = asset('img/fi.png');
                     break;
             }
+        }
         return view('result', [
             'resultTitle' => $resultTitle,
             'resultDescription' => $resultDescription,
@@ -130,6 +116,8 @@ class SetPreferenceController extends Controller
 
         if ($user && $quizData && isset($quizData['gender'], $quizData['bodytype'], $quizData['skintone'], $quizData['style'])) {
             $resultTitle = '';
+            $resultDescription = '';
+            $resultImage = null;
 
             switch ($quizData['style']) {
                 case 'casual':
@@ -191,5 +179,4 @@ class SetPreferenceController extends Controller
         }
         return [];
     }
-
 }

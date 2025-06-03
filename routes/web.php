@@ -45,8 +45,7 @@ Route::middleware('auth:stylist')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/set-preference', [App\Http\Controllers\SetPreferenceController::class, 'index'])->name('set_preference.index');
-    Route::get('/set-preference/{step}', [App\Http\Controllers\SetPreferenceController::class, 'showStep'])->name('set_preference.step');
-    Route::post('/set-preference/{step}', [App\Http\Controllers\SetPreferenceController::class, 'saveStep'])->name('set_preference.save_step');
+    Route::post('/set-preference', [App\Http\Controllers\SetPreferenceController::class, 'saveAll'])->name('set_preference.save_all');
     Route::get('/quiz/countdown', [App\Http\Controllers\SetPreferenceController::class, 'showCountdown'])->name('set_preference.countdown');
     Route::get('/set-preference/result', [App\Http\Controllers\SetPreferenceController::class, 'showResult'])->name('set_preference.result');
     Route::post('/set-preference/complete', [App\Http\Controllers\SetPreferenceController::class, 'complete'])->name('set_preference.complete');

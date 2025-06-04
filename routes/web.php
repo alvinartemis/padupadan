@@ -9,8 +9,7 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\DigitalWardrobeController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\LookbookController; // Tambahkan ini
+use App\Http\Controllers\SearchController; // Tambahkan ini
 
 Route::get('/', function () {
     return view('welcome');
@@ -40,7 +39,7 @@ Route::post('/stylist/login', [App\Http\Controllers\StylistAuthController::class
 Route::post('/stylist/logout', [App\Http\Controllers\StylistAuthController::class, 'logout'])->name('stylist.logout');
 
 Route::middleware('auth:stylist')->group(function () {
-    Route::get('/stylist/dashboard', [App\Http\Controllers\StylistAuthController::class, 'dashboard'])->name('stylist.dashboard');
+    Route::get('/homestylist', [App\Http\Controllers\StylistAuthController::class, 'dashboard'])->name('stylist.homestylist');
 });
 
 Route::middleware('auth')->group(function () {
@@ -105,5 +104,3 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
     Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent');
 });
-
-Route::get('/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');

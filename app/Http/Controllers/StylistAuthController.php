@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Stylist;
 
 class StylistAuthController extends Controller
 {
     public function showLoginForm()
     {
-        return view('stylistlogin'); // pastikan nama view sesuai
+        return view('stylistlogin');
     }
 
     /**
@@ -22,11 +23,15 @@ class StylistAuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('username', 'password');
+        // Cari stylist berdasarkan username
+        $stylist = Stylist::where('username', $request->username)->first();
 
-        if (Auth::guard('stylist')->attempt($credentials)) {
+        // Cek apakah stylist ditemukan DAN password plain text cocok
+        if ($stylist && $request->password === $stylist->password) {
+            // Login stylist secara manual
+            Auth::guard('stylist')->login($stylist);
             $request->session()->regenerate();
-            return redirect()->intended(route('stylist.dashboard'));
+            return redirect()->intended(route('stylist.homestylist'));
         }
 
         return redirect()->back()
@@ -39,7 +44,9 @@ class StylistAuthController extends Controller
      */
     public function dashboard()
     {
-        return view('stylist.dashboard');
+        $stylist = Auth::guard('stylist')->user();
+        $lookbooks = []; //sesuaikan kalau ada data lookbook
+        return view('homestylist', compact('stylist', 'lookbooks'));
     }
 
     /**
@@ -52,6 +59,6 @@ class StylistAuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect(route('stylist.login'));
+        return redirect('/');
     }
 }

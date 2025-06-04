@@ -72,7 +72,7 @@ return [
         ],
 
         'stylists' => [
-            'driver' => 'stylist',
+            'driver' => 'eloquent',
             'model' => App\Models\Stylist::class,
         ],
     ],

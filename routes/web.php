@@ -9,7 +9,9 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\DigitalWardrobeController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\SearchController; // Tambahkan ini
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\StylistProfileController;
+use App\Http\Controllers\ChatStylistController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -39,7 +41,7 @@ Route::post('/stylist/login', [App\Http\Controllers\StylistAuthController::class
 Route::post('/stylist/logout', [App\Http\Controllers\StylistAuthController::class, 'logout'])->name('stylist.logout');
 
 Route::middleware('auth:stylist')->group(function () {
-    Route::get('/stylist/dashboard', [App\Http\Controllers\StylistAuthController::class, 'dashboard'])->name('stylist.dashboard');
+    Route::get('/homestylist', [App\Http\Controllers\StylistAuthController::class, 'dashboard'])->name('stylist.homestylist');
 });
 
 Route::middleware('auth')->group(function () {
@@ -103,4 +105,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
     Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent');
+});
+
+Route::middleware(['auth:stylist'])->group(function () {
+    // Stylist chat routes
+    Route::get('/stylist/chat', [ChatStylistController::class, 'index'])->name('stylist.chat.index');
+    Route::get('/stylist/chat/{user}', [ChatStylistController::class, 'showChatWithUser'])->name('stylist.chat.show');
+    Route::post('/stylist/chat/{user}/send', [ChatStylistController::class, 'sendMessage'])->name('stylist.chat.sendMessage');
+    Route::get('/stylist/chat/{user}/messages', [ChatStylistController::class, 'getMessages'])->name('stylist.chat.getMessages');
+    Route::post('/stylist/chat/messages/{pesan}/read', [ChatStylistController::class, 'markAsRead'])->name('stylist.chat.markAsRead');
 });

@@ -252,7 +252,7 @@
                     </svg><h3>File formats</h3><p>.jpg, .jpeg, .png</p></div>
                 <div class="info-box"><svg class="info-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M4 8h16M4 16h16" />
-                    </svg><h3>Aspect ratios</h3><p>Recommended: 1:1 (Square)</p></div>
+                    </svg><h3>Aspect ratios</h3><p>Recommended: 1:1 (Square) or 3:4</p></div>
             </div>
             <div class="form-actions">
                 <button type="submit" id="submitPhotoButton" class="submit-btn" disabled>Next</button>

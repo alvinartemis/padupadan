@@ -10,61 +10,101 @@
         padding: 0 15px;
     }
     .wardrobe-header {
-        margin-bottom: 20px; /* Increased margin for spacing after title */
+        margin-bottom: 20px;
         text-align: center;
     }
     .wardrobe-title {
         font-size: 28px;
         font-weight: 600;
-        margin-bottom: 15px;
+        margin-bottom: 25px;
+        color: #0C2842;
     }
 
-    /* Removed .filter-group and .filter-label as per request */
+    /* --- Tombol Section --- */
+    .section-tabs {
+        margin-bottom: 25px;
+        display: flex;
+        gap: 0;
+        justify-content: center;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        max-width: 250px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .section-tabs .btn {
+        flex: 1;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 0;
+        background-color: #fff;
+        color: #555;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 15px;
+        transition: background-color 0.3s, color 0.3s;
+        text-align: center; /* <<< PERUBAHAN DI SINI: Menambahkan text-align center */
+    }
+    .section-tabs .btn:not(:last-child) {
+        border-right: 1px solid #ddd;
+    }
+    .section-tabs .btn.active {
+        background-color: #173F63;
+        color: white;
+    }
+    .section-tabs .btn:not(.active):hover {
+        background-color: #f0f2f5;
+    }
 
-    .section-tabs, .category-filters {
+    /* --- Tombol Category --- */
+    .category-filters {
         margin-bottom: 15px;
         display: flex;
-        gap: 10px;
+        gap: 12px;
         flex-wrap: wrap;
         justify-content: center;
     }
-    .section-tabs .btn, .category-filters .btn {
-        padding: 8px 15px;
+    .category-filters .btn {
+        padding: 6px 18px;
         border: 1px solid #ddd;
         background-color: #f9f9f9;
         color: #333;
         text-decoration: none;
         border-radius: 20px;
         font-size: 14px;
-        transition: background-color 0.3s, color 0.3s;
+        font-weight: 400;
+        transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
-    .section-tabs .btn.active, .category-filters .btn.active,
-    .section-tabs .btn:hover, .category-filters .btn:hover {
-        background-color: #007bff;
+    .category-filters .btn.active,
+    .category-filters .btn:hover {
+        background-color: #173F63;
         color: white;
-        border-color: #007bff;
+        border-color: #173F63;
     }
 
+    /* --- Tombol Aksi (Add, Delete) --- */
     .action-buttons-container {
         display: flex;
-        justify-content: flex-end; /* Align buttons to the right */
-        gap: 10px; /* Space between buttons */
-        margin-top: 10px; /* Space after category filters */
-        margin-bottom: 25px; /* Space before the grid */
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+        margin-bottom: 25px;
     }
     .action-btn-icon {
         background-color: #f0f0f0;
         color: #555;
-        padding: 6px; /* Further reduced padding */
+        padding: 6px;
         text-decoration: none;
-        border-radius: 6px; /* Rounded square shape */
+        border-radius: 6px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 34px;  /* Further reduced width (e.g., 32px + 2px border) */
-        height: 34px; /* Further reduced height */
+        width: 34px;
+        height: 34px;
         border: 1px solid #e0e0e0;
         transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        cursor: pointer;
     }
     .action-btn-icon:hover {
         background-color: #e0e0e0;
@@ -72,79 +112,68 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     .action-btn-icon svg {
-        width: 18px; /* Further reduced icon size */
+        width: 18px;
         height: 18px;
     }
 
+    /* --- Card Pakaian --- */
     .clothing-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+    }
+    .clothing-item-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: transform 0.2s ease-out;
+    }
+    .clothing-item-link:hover {
+        transform: translateY(-5px);
     }
     .clothing-item {
-        border: 1px solid #eee;
-        border-radius: 8px;
-        padding: 10px;
-        text-align: center;
+        border: none;
+        border-radius: 12px;
         background-color: #fff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        transition: transform 0.2s;
-        position: relative; /* Untuk positioning badge visibilitas */
-    }
-    .clothing-item:hover {
-        transform: translateY(-5px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+        overflow: hidden;
+        padding: 0;
     }
     .clothing-item img {
         width: 100%;
-        height: 200px;
+        height: 220px;
         object-fit: cover;
-        border-radius: 4px;
-        margin-bottom: 10px;
+    }
+    .clothing-item-info {
+        padding: 12px 15px;
+        text-align: center;
     }
     .clothing-item-name {
-        font-weight: 500;
-        font-size: 15px;
+        font-weight: 600;
+        font-size: 16px;
         color: #333;
-        margin-bottom: 5px;
+        margin-bottom: 6px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    .clothing-item-link {
-        text-decoration: none;
-        color: inherit; /* Mewarisi warna teks dari parent */
-        display: block; /* Membuat link mengambil ruang dari div .clothing-item */
-    }
-    .clothing-item-link:hover {
-        text-decoration: none;
-        color: inherit;
-    }
-    .visibility-badge {
-        font-size: 11px;
+    .clothing-item-visibility {
+        font-size: 12px;
         font-weight: 500;
-        padding: 3px 8px;
+        padding: 2px 8px;
         border-radius: 10px;
-        position: absolute;
-        top: 15px; /* Sesuaikan posisi */
-        right: 15px; /* Sesuaikan posisi */
+        display: inline-block;
         text-transform: capitalize;
     }
     .visibility-public {
-        background-color: #d1e7dd; /* Bootstrap success light */
-        color: #0f5132;    /* Bootstrap success dark */
-        border: 1px solid #badbcc;
+        background-color: #d1e7dd;
+        color: #0f5132;
     }
     .visibility-private {
-        background-color: #f8d7da; /* Bootstrap danger light */
-        color: #58151c;    /* Bootstrap danger dark */
-        border: 1px solid #f5c2c7;
+        background-color: #f8d7da;
+        color: #58151c;
     }
 
-    /* Perbedaan visual untuk item private secara keseluruhan (opsional, contoh) */
-    .clothing-item.private-item {
-        /* border-left: 5px solid #6c757d; /* Contoh: border abu-abu di kiri */
-        /* opacity: 0.85; */ /* Contoh: sedikit transparan */
-    }
     .empty-wardrobe {
         text-align: center;
         padding: 40px 20px;
@@ -170,13 +199,13 @@
     .empty-wardrobe .add-initial-item-btn:hover {
         background-color: #F4BC43;
     }
-
 </style>
 
 <div class="wardrobe-container">
     <div class="wardrobe-header">
         <h1 class="wardrobe-title">Digital Wardrobe</h1>
     </div>
+
 
     <div class="section-tabs">
         @foreach($sections as $sectionValue)
@@ -202,11 +231,6 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
         </a>
-        <a href="#" id="deleteSelectedBtn" class="action-btn-icon delete-item-btn" title="Delete Selected">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12.56 0c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-            </svg>
-        </a>
     </div>
 
     @if(session('success'))
@@ -223,14 +247,15 @@
     @if($koleksiPakaian->count() > 0)
         <div class="clothing-grid">
             @foreach($koleksiPakaian as $item)
-                {{-- Tambahkan anchor tag yang mengelilingi item atau bagian kontennya --}}
                 <a href="{{ route('digital.wardrobe.show', $item->idPakaian) }}" class="clothing-item-link">
-                    <div class="clothing-item {{ $item->visibility == 'Private' ? 'private-item' : '' }}">
-                        <span class="visibility-badge {{ $item->visibility == 'Public' ? 'visibility-public' : 'visibility-private' }}">
-                            {{ ucfirst($item->visibility) }}
-                        </span>
+                    <div class="clothing-item">
                         <img src="{{ asset('storage/' . $item->foto) }}" alt="{{ $item->nama }}">
-                        <div class="clothing-item-name" title="{{ $item->nama }}">{{ $item->nama }}</div>
+                        <div class="clothing-item-info">
+                            <div class="clothing-item-name" title="{{ $item->nama }}">{{ $item->nama }}</div>
+                            <span class="clothing-item-visibility {{ $item->visibility == 'Public' ? 'visibility-public' : 'visibility-private' }}">
+                                {{ ucfirst($item->visibility) }}
+                            </span>
+                        </div>
                     </div>
                 </a>
             @endforeach

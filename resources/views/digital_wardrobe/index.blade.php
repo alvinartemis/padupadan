@@ -1,6 +1,6 @@
 @extends('layouts.app') {{-- Make sure this path is correct for your layout file --}}
 
-@section('title', 'Digital Wardrobe - Padu Padan')
+@section('title', 'Padu Padan')
 
 @section('content')
 <style>

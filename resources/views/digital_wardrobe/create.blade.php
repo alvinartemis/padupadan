@@ -24,8 +24,8 @@
         width: 100%;
         max-width: 800px;
     }
-    .upload-container h2 { font-size: 24px; font-weight: 600; color: #333; margin: 0 0 5px 0; }
-    .upload-container p.subtitle { font-size: 1em; color: #666; margin: 0 0 25px 0; }
+    .upload-container h2 { font-size: 24px; font-weight: 600; color: #0C2A42; margin: 0 0 5px 0; }
+    .upload-container p.subtitle { font-size: 1em; color: #0C2A42; margin: 0 0 25px 0; }
 
     /* Area untuk upload file */
     .upload-box {
@@ -90,10 +90,10 @@
         width: 100%;
         padding: 12px; /* Padding lebih nyaman */
         border: 1px solid #ccc;
-        border-radius: 8px; /* Lebih rounded */
+        border-radius: 20px; /* Lebih rounded */
         box-sizing: border-box;
         font-size: 16px;
-        font-family: 'Poppins', sans-serif
+        font-family: 'Poppins', sans-serif;
     }
     .form-group input:focus, .form-group select:focus { border-color: #173F63; outline: none; box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); }
     .form-group.has-error input, .form-group.has-error select { border-color: red; }

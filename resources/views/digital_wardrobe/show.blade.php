@@ -29,6 +29,7 @@
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
+        color: #0C2A42;
     }
     .page-header .action-icon-btn, .page-header .back-icon-btn {
         background-color: #f0f2f5;
@@ -93,6 +94,7 @@
         flex-basis: 500px; /* Lebar dasar untuk info */
         flex-grow: 1; /* Biarkan bisa membesar jika ada ruang */
         text-align: left;
+        color: #0C2A42; 
     }
     .detail-info h1.item-name { /* Nama item sebagai judul utama */
         font-size: 2.5rem;
@@ -108,22 +110,23 @@
         padding: 15px 10px;
         border-bottom: 1px solid #f0f2f5;
         font-size: 1rem;
+        color: #0C2A42;
     }
     .detail-info .info-item:first-of-type {
         border-top: 1px solid #f0f2f5;
     }
     .detail-info .info-item strong {
-        color: #666;
+        color: #173F63;;
         font-weight: 500;
     }
     .detail-info .info-item span,
     .detail-info .info-item a {
-        color: #333;
+        color: #0C2A42;;
         font-weight: 600;
         text-align: right;
     }
     .detail-info .info-item a {
-        color: #007bff;
+        color: #F4BC43;
         text-decoration: underline;
         word-break: break-all;
     }

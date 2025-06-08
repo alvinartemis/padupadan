@@ -32,17 +32,17 @@
             transform: translateX(-50%);
         }
         .status-badge {
-            width: 100px; /* Sesuaikan ukuran badge */
-            height: 100px; /* Sesuaikan ukuran badge */
+            width: 100px;
+            height: 100px;
             margin-bottom: 1.5rem;
             object-fit: contain;
         }
         h1 {
-            font-size: 2.8rem; /* Diperbesar dari 2.2rem */
-            font-weight: 700;  /* Sudah bold (700) */
+            font-size: 2.8rem;
+            font-weight: 700;
             color: #FFFFFF;
             margin-bottom: 1rem;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.4); /* Shadow sedikit lebih tebal */
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
         p {
             color: #F0F0F0;
@@ -79,7 +79,7 @@
     </p>
 
     <script>
-        let seconds = 15;
+        let seconds = 5;
         const countdownElement = document.getElementById('countdown');
 
         const interval = setInterval(function() {

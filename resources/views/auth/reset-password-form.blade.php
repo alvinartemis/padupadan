@@ -13,12 +13,12 @@
         h2 { font-size: 2.5rem; font-weight: 700; color: #173F63; margin-bottom: 0.5rem; text-align: center; }
         p.instruction { color: #173F63; margin-bottom: 1.5rem; text-align: center; font-size: 0.9rem; line-height: 1.5; }
         label { display: block; font-size: 0.875rem; font-weight: 600; color: #173F63; margin-bottom: 0.5rem; }
-        .input-group { position: relative; margin-bottom: 1.5rem; min-height: 5.5rem; /* Untuk ruang error & ikon mata */ }
-        input[type="password"], input[type="text"] { /* type text untuk saat password terlihat */
+        .input-group { position: relative; margin-bottom: 1.5rem; min-height: 5.5rem; }
+        input[type="password"], input[type="text"] { 
             width: 100%;
             height: 3rem;
             padding: 0.75rem 1rem;
-            padding-right: 2.5rem; /* Ruang untuk ikon mata */
+            padding-right: 2.5rem;
             border-radius: 0.5rem;
             border: 1px solid #e2e8f0;
             font-size: 1rem;
@@ -30,7 +30,7 @@
         .toggle-password {
             position: absolute;
             right: 0.75rem;
-            top: calc(50% - 0.5rem); /* Vertikal center setelah label */
+            top: calc(50% - 0.5rem);
             cursor: pointer;
             width: 1rem;
             height: 1rem;
@@ -82,7 +82,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Reset Password Script V2: DOM Loaded.'); // Untuk debugging
+    console.log('Reset Password Script V2: DOM Loaded.');
 
     const passwordInput = document.getElementById('password');
     const passwordConfirmationInput = document.getElementById('password_confirmation');
@@ -108,7 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const isPassword = inputField.type === 'password';
         inputField.type = isPassword ? 'text' : 'password';
-        // Pastikan path asset benar dan file Eye.png ada di public/img
         toggleButton.src = isPassword ? "{{ asset('img/Eye.png') }}" : "{{ asset('img/EyeSlash.png') }}";
         console.log('Toggled visibility for:', inputField.id, 'New type:', inputField.type);
     }
@@ -128,7 +127,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function checkPasswordMatch() {
         if (!passwordInput || !passwordConfirmationInput || !passwordMatchWarning || !passwordMatchSuccess || !savePasswordButton) {
-            // Salah satu elemen penting tidak ditemukan, keluar dari fungsi untuk mencegah error lebih lanjut
             console.error("Password matching check aborted: Critical elements not found.");
             return;
         }
@@ -137,16 +135,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const confirmPass = passwordConfirmationInput.value;
         let enableSaveButton = false;
 
-        // Reset pesan setiap kali ada input
         passwordMatchWarning.style.display = 'none';
         passwordMatchSuccess.style.display = 'none';
-        // Kembalikan teks default jika perlu, atau biarkan dari HTML
         passwordMatchWarning.textContent = 'Passwords do not match.';
 
 
         if (pass.length > 0 && confirmPass.length > 0) {
             if (pass === confirmPass) {
-                passwordMatchSuccess.textContent = 'Passwords match.'; // Pastikan teks ini ada atau sesuai keinginan
+                passwordMatchSuccess.textContent = 'Passwords match.';
                 passwordMatchSuccess.style.display = 'block';
                 enableSaveButton = true;
                 console.log('Passwords match. Save button will be enabled.');
@@ -156,10 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Passwords do NOT match. Save button will be disabled.');
             }
         } else {
-             // Jika salah satu field atau keduanya kosong, tombol save tidak aktif
             enableSaveButton = false;
-            // Jangan tampilkan pesan match/mismatch jika salah satu atau kedua field kosong,
-            // kecuali jika confirmPass diisi tapi pass utama kosong.
             if (confirmPass.length > 0 && pass.length === 0) {
                  passwordMatchWarning.textContent = 'Please enter your new password first.';
                  passwordMatchWarning.style.display = 'block';
@@ -182,8 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Event listener "input" added to passwordConfirmationInput.');
     }
 
-    // Panggil sekali saat load untuk inisialisasi state tombol dan pesan
-    // (misalnya jika ada old input dari server yang membuat password sudah terisi dan cocok)
     checkPasswordMatch();
     console.log('Initial checkPasswordMatch called on page load.');
 });

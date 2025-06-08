@@ -21,7 +21,7 @@ class ForgotPasswordController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return back()->withErrors(['email' => 'Email yang Anda masukkan tidak terdaftar.'])
+            return back()->withErrors(['email' => 'The email you entered is not registered.'])
                          ->withInput($request->only('email'));
         }
 
@@ -69,12 +69,12 @@ class ForgotPasswordController extends Controller
         $sessionOtpExpiry = session('password_reset_otp_expiry');
 
         if (!$sessionOtp || !$sessionEmail || !$sessionOtpExpiry) {
-            return redirect()->route('password.request')->withErrors(['email' => 'Sesi OTP tidak ditemukan atau tidak valid. Silakan coba lagi.']);
+            return redirect()->route('password.request')->withErrors(['email' => 'OTP session not found or invalid. Please try again.']);
         }
 
         if (now()->gt($sessionOtpExpiry)) {
             session()->forget(['password_reset_otp', 'password_reset_email', 'password_reset_otp_expiry', 'otp_to_display', 'email_for_otp']);
-            return back()->withErrors(['otp' => 'Kode OTP sudah kadaluarsa. Silakan minta yang baru.'])->withInput($request->except('otp'));
+            return back()->withErrors(['otp' => 'OTP code has expired. Please request a new one.'])->withInput($request->except('otp'));
         }
 
         if ($request->otp == $sessionOtp && $request->email == $sessionEmail) {
@@ -84,7 +84,7 @@ class ForgotPasswordController extends Controller
 
             return redirect()->route('password.reset.form');
         } else {
-            return back()->withErrors(['otp' => 'Kode OTP yang Anda masukkan salah.'])->withInput($request->except('otp'));
+            return back()->withErrors(['otp' => 'The OTP code you entered is incorrect.'])->withInput($request->except('otp'));
         }
     }
 
@@ -94,7 +94,7 @@ class ForgotPasswordController extends Controller
 
         if (!$email) {
             return redirect()->route('password.request')
-                             ->withErrors(['email' => 'Sesi reset password tidak valid atau sudah berakhir. Silakan ulangi proses lupa password.']);
+                             ->withErrors(['email' => 'The password reset session is invalid or has ended. Please repeat the forgotten password process.']);
         }
 
         return view('auth.reset-password-form', ['email' => $email]);
@@ -112,7 +112,7 @@ class ForgotPasswordController extends Controller
 
         if (!$user) {
             return redirect()->route('password.request')
-                             ->withErrors(['email' => 'Pengguna dengan email ini tidak ditemukan.']);
+                             ->withErrors(['email' => 'A user with this email was not found.']);
         }
 
         $user->password = Hash::make($request->password);

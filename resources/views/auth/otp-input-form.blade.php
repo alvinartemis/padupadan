@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter OTP</title>
+    <title>Forgot Password</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* ... (Gunakan style yang mirip dengan forgot-password.blade.php, sesuaikan judul dan instruksi) ... */
         body { font-family: 'Poppins', sans-serif; background-image: url('{{ asset('img/bgr.png') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 2rem; }
         .logo { width: 120px; height: auto; margin-bottom: 2rem; }
         .container { max-width: 450px; width: 100%; padding: 2rem; background-color: #F4F4F4; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); margin-bottom: 2rem; }
@@ -22,7 +21,7 @@
         .error-message { color: #e53e3e; font-size: 0.875rem; margin-top: 0.25rem; display: block; }
         .status-message { color: #38a169; background-color: #f0fff4; border: 1px solid #9ae6b4; padding: 0.75rem 1rem; border-radius: 0.375rem; margin-bottom: 1rem; font-size: 0.9rem; text-align: center; }
         .otp-display-popup {
-            background-color: #fff3cd; /* Warna kuning muda untuk info */
+            background-color: #fff3cd;
             color: #856404;
             border: 1px solid #ffeeba;
             padding: 1rem;
@@ -37,6 +36,22 @@
             display: block;
             margin-top: 0.5rem;
         }
+        .resend-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+        .resend-link a {
+            color: #6B7280; 
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease, text-decoration 0.2s ease;
+        }
+        .resend-link a:hover {
+            color: #0C2842;
+            text-decoration: underline; 
+        }
+
     </style>
 </head>
 <body class="bg-gray-100">
@@ -45,7 +60,6 @@
         <h2>Enter OTP</h2>
         <p class="instruction">An OTP has been generated. Please enter the code below to proceed.</p>
 
-        {{-- DISCLAIMER: Menampilkan OTP langsung di halaman adalah TIDAK AMAN untuk produksi --}}
         @if (session('otp_to_display'))
             <div class="otp-display-popup">
                 Your One-Time Password (OTP) is:
@@ -60,9 +74,6 @@
             </div>
         @endif
 
-        {{-- Form untuk submit OTP (action akan ke route verifikasi OTP nanti) --}}
-        {{-- Di dalam resources/views/auth/otp-input-form.blade.php --}}
-        {{-- Di dalam resources/views/auth/otp-input-form.blade.php --}}
         <form method="POST" action="{{ route('password.otp.verify') }}">
             @csrf
             <input type="hidden" name="email" value="{{ $email ?? old('email') }}">
@@ -77,7 +88,8 @@
                 Verify OTP
             </button>
         </form>
-         <p class="back-link" style="margin-top:1rem;">
+         
+        <p class="resend-link">
             <a href="{{ route('password.request') }}">Resend OTP / Change Email</a>
         </p>
     </div>

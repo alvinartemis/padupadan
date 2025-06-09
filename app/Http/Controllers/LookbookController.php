@@ -4,12 +4,22 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Models\KoleksiPakaian;
+
+
 class LookbookController extends Controller
 {
     public function create()
     {
+    //     if (!auth()->check()) {
+    //     return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu');
+    // }
+        // $items = KoleksiPakaian::where('idPengguna', auth()->id())->get();
+        // ambil data user yg login
         return view('createlookbook');
+
     }
+
 
     public function store(Request $request)
     {
@@ -27,4 +37,6 @@ class LookbookController extends Controller
 
         return redirect()->route('lookbook.create')->with('success', 'Lookbook berhasil disimpan!');
     }
+
+
 }

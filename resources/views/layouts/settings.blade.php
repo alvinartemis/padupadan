@@ -584,7 +584,7 @@ template
 <body>
     <div class="sidebar">
         <div class="logo">
-            <img src="{{ asset('logo_padupadan.jpg') }}" alt="Logo Padu Padan">
+            <img src="{{ asset('img/logoy.png') }}" alt="Logo Padu Padan">
         </div>
         <div style="display: flex; align-items: center; gap: 50px; color: black; font-size: 20px; font-weight: 700; line-height: 33.6px; margin-bottom: 30px;">
             <a href="{{ route('profile') }}" style="background: none; border: none; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; line-height: 1;">

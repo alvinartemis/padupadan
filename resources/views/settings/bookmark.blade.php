@@ -1,4 +1,4 @@
-@extends('settings')
+@extends('layouts.settings')
 
 @section('title', 'Bookmark')
 

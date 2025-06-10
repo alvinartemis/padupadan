@@ -9,20 +9,25 @@ class Lookbook extends Model
 {
     use HasFactory;
 
-    protected $table = 'lookbooks'; // Sesuaikan dengan nama tabel lookbook Anda
-    protected $primaryKey = 'idLookbook'; // Sesuaikan primary key lookbook Anda
-    public $timestamps = true; // Sesuaikan jika tidak pakai timestamps
+    protected $table = 'lookbook';
+    protected $primaryKey = 'idLookbook';
+    public $timestamps = true; // <-- PERBAIKAN: Ini harus TRUE jika Anda menambahkan created_at/updated_at di tabel
 
     protected $fillable = [
-        'stylist_id', // Foreign key ke stylist
-        'title',
-        'image_path', // Kolom untuk menyimpan path gambar lookbook
-        // Tambahkan kolom lain yang relevan seperti description, dll.
+        'idStylist',
+        'nama',
+        'description',
+        'kataKunci',
+        'imgLookbook',
     ];
 
-    // Relasi balik ke Stylist (jika diperlukan)
     public function stylist()
     {
-        return $this->belongsTo(Stylist::class, 'stylist_id', 'idStylist');
+        // Asumsi primary key di tabel 'stylist' adalah 'idStylist'
+        // dan Anda punya model 'Stylist'
+        return $this->belongsTo(Stylist::class, 'idStylist', 'idStylist'); // <-- PASTIKAN INI
+
+        // Atau jika model Stylist Anda tidak ada, dan Anda hanya merujuk ke ID dari tabel 'stylist'
+        // tanpa model terpisah, Anda mungkin tidak perlu relasi ini di Lookbook.
     }
 }

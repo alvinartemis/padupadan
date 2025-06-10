@@ -1,4 +1,4 @@
-@extends('settings') {{-- Pastikan ini mengacu pada nama file layout utama Anda, misal: 'layouts.settings' atau 'setting' saja jika langsung di root views --}}
+@extends('layouts.settings') {{-- Pastikan ini mengacu pada nama file layout utama Anda, misal: 'layouts.settings' atau 'setting' saja jika langsung di root views --}}
 
 @section('title', $item['name'] ?? 'Fashion Item Detail') {{-- Menggunakan nama item sebagai judul --}}
 

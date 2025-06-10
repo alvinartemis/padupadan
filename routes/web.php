@@ -106,5 +106,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent');
 });
 
-Route::get('/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');
 
+// Rute untuk Stylist (menggunakan LookbookController)
+// Ini adalah halaman daftar lookbook stylist (akan menampilkan lookbookstylist.blade.php)
+Route::get('/stylist/lookbook', [LookbookController::class, 'index'])->name('lookbook.index');
+
+// Rute untuk menampilkan form pembuatan lookbook (akan menampilkan createlookbook.blade.php)
+Route::get('/stylist/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');
+Route::post('/stylist/lookbook', [LookbookController::class, 'store'])->name('lookbook.store');
+
+// Rute untuk Pengguna Biasa (akan menampilkan readlookbook.blade.php)
+Route::get('/lookbook', [LookbookController::class, 'userIndex'])->name('user.lookbook.index');

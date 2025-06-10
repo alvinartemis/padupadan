@@ -1,4 +1,4 @@
-@extends('layouts.chat') {{-- Adjust this based on your actual layout file --}}
+@extends('layouts.app') {{-- Adjust this based on your actual layout file --}}
 
 @section('title', 'Stylist Chat')
 

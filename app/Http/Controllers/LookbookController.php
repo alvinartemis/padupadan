@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Lookbook;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Lookbook; // Pastikan ini ada
+use Illuminate\Support\Facades\Storage; // Jika digunakan
+use Illuminate\Support\Facades\Auth; // Pastikan ini ada
+use App\Models\ItemFashion; // <<< INI YANG HARUS PASTI ADA DAN BENAR!
+use App\Models\Stylist;
 
 class LookbookController extends Controller
 {
@@ -77,5 +80,24 @@ class LookbookController extends Controller
         ]);
 
         return redirect()->route('lookbook.index')->with('success', 'Lookbook berhasil disimpan!');
+    }
+
+     public function show($id)
+    {
+        $lookbook = Lookbook::with('stylist')->find($id); // Memuat relasi stylist
+
+        if (!$lookbook) {
+            abort(404); // Tampilkan halaman 404 jika lookbook tidak ditemukan
+        }
+
+        $isBookmarked = false; // Definisikan default value sebagai false
+        if (Auth::check()) {
+            $userId = Auth::id();
+            $isBookmarked = ItemFashion::where('user_id', $userId)
+                                        ->where('lookbook_id', $lookbook->idLookbook)
+                                        ->exists();
+        }
+
+        return view('lookbook.detaillookbook', compact('lookbook', 'isBookmarked'));
     }
 }

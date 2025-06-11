@@ -75,6 +75,11 @@
             cursor: pointer;
             border: 1px solid #eee; /* Default border */
             position: relative; /* Untuk garis pink */
+
+            /* --- PENTING UNTUK LINK: --- */
+            display: block; /* Agar seluruh area <a> bisa diklik */
+            text-decoration: none; /* Menghilangkan underline default pada link */
+            color: inherit; /* Memastikan warna teks tidak berubah */
         }
 
         .outfit-card:hover {
@@ -122,6 +127,12 @@
             font-size: 1em;
         }
 
+        .outfit-card .outfit-info .stylist-name { /* Tambahkan style ini */
+            font-size: 0.9em;
+            color: #777;
+            margin-top: 2px;
+        }
+
         /* Penyesuaian responsif */
         @media (max-width: 768px) {
             .lookbook-grid {
@@ -143,19 +154,20 @@
         }
     </style>
 
-        <div class="lookbook-header">
-            <h1>Lookbook</h1>
-            <div class="lookbook-search-main">
-                <input type="text" placeholder="search">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-            </div>
+    <div class="lookbook-header">
+        <h1>Lookbook</h1>
+        <div class="lookbook-search-main">
+            <input type="text" placeholder="search">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
         </div>
+    </div>
 
-        <div class="lookbook-grid">
-            @forelse($lookbooks as $lookbook)
-            <div class="outfit-card">
+    <div class="lookbook-grid">
+        @forelse($lookbooks as $lookbook)
+            {{-- INI ADALAH PERUBAHAN KUNCI: Membungkus seluruh div.outfit-card dengan tag <a> --}}
+            <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" class="outfit-card">
                 @if($lookbook->imgLookbook)
                     <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}">
                 @else
@@ -163,10 +175,16 @@
                 @endif
                 <div class="outfit-info">
                     <div class="designer-name">{{ $lookbook->nama }}</div>
+                    {{-- Tambahkan info stylist jika ada relasi di model Lookbook --}}
+                    @if($lookbook->stylist)
+                        <div class="stylist-name">by {{ $lookbook->stylist->nama }}</div>
+                    @else
+                        <div class="stylist-name">by Unknown Stylist</div>
+                    @endif
                 </div>
-            </div>
-            @empty
-                <p>Belum ada lookbook yang tersedia.</p>
-            @endforelse
-        </div>
+            </a>
+        @empty
+            <p style="text-align: center; grid-column: 1 / -1;">Belum ada lookbook yang tersedia.</p>
+        @endforelse
+    </div>
 @endsection

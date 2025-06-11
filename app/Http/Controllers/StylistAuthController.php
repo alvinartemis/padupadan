@@ -31,7 +31,7 @@ class StylistAuthController extends Controller
             // Login stylist secara manual
             Auth::guard('stylist')->login($stylist);
             $request->session()->regenerate();
-            return redirect()->intended(route('stylist.homestylist'));
+            return redirect()->intended(route('dashboard'));
         }
 
         return redirect()->back()
@@ -45,7 +45,7 @@ class StylistAuthController extends Controller
     public function dashboard()
     {
         $stylist = Auth::guard('stylist')->user();
-        $lookbooks = []; //sesuaikan kalau ada data lookbook
+        $lookbooks = [];
         return view('homestylist', compact('stylist', 'lookbooks'));
     }
 

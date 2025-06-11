@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesan;
-use App\Models\Stylist; // Pastikan ini di-import jika Anda menggunakan model Stylist untuk Auth
+use App\Models\Stylist;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage; // Tambahkan ini untuk upload file
+use Illuminate\Support\Facades\Storage;
 
 class ChatStylistController extends Controller
 {
@@ -16,17 +16,14 @@ class ChatStylistController extends Controller
     {
         $stylist = Auth::guard('stylist')->user();
         if (!$stylist) {
-            // Handle case where stylist is not authenticated (e.g., redirect to login)
-            return redirect()->route('stylist.login'); // Replace with your actual stylist login route
+            return redirect()->route('stylist.login');
         }
 
         $recentChats = [];
 
-        // Get unique users who have exchanged messages with this stylist
-        // We look for messages where current stylist is involved, either as idStylist or idPengguna
         $usersInvolved = Pesan::where('idStylist', $stylist->idStylist)
-                               ->orWhere('idPengguna', $stylist->idStylist) // stylist could be 'pengguna' if they started the chat
-                               ->pluck('idPengguna', 'idStylist') // Get both columns as keys
+                               ->orWhere('idPengguna', $stylist->idStylist)
+                               ->pluck('idPengguna', 'idStylist')
                                ->toArray();
 
         $allInvolvedUserIds = [];
@@ -35,14 +32,9 @@ class ChatStylistController extends Controller
                 $allInvolvedUserIds[] = $userIdPengguna;
             }
             if ($userIdStylist != $stylist->idStylist) {
-                 // Check if the other ID is actually a user ID and not the stylist's ID
-                 // This assumes Stylist IDs and User IDs are distinct, or you have a way to differentiate.
-                 // For simplicity, let's assume if it's not the stylist's ID, it's a user ID.
-                 // A more robust solution might involve querying User model explicitly.
                 $allInvolvedUserIds[] = $userIdStylist;
             }
         }
-        // Remove duplicates and ensure only actual user IDs are present, not the stylist's own ID
         $allInvolvedUserIds = array_unique(array_filter($allInvolvedUserIds, function($id) use ($stylist){
             return $id !== $stylist->idStylist;
         }));
@@ -142,7 +134,7 @@ class ChatStylistController extends Controller
             'statusBacaStylist' => 1, // Mark as read for the stylist (sender)
         ]);
 
-        return redirect()->route('stylist.chat.show', $user->idPengguna); // Pastikan pakai idPengguna di redirect
+        return redirect()->route('chat.showchatuser', $user->idPengguna); // Pastikan pakai idPengguna di redirect
     }
 
     public function getMessages(User $user)

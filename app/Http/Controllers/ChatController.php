@@ -22,7 +22,7 @@ class ChatController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $recentChats = []; // Inisialisasi sebagai array kosong
+        $recentChats = [];
 
         $stylistsWithChats = Pesan::where('idPengguna', $user->idPengguna)
             ->select('idStylist')
@@ -48,21 +48,21 @@ class ChatController extends Controller
                 ->where('statusBacaPengguna', 0)
                 ->count();
 
-            $recentChats[] = [ // Langsung tambahkan ke $recentChats
+            $recentChats[] = [
                 'stylist' => $stylist,
                 'last_message' => $lastMessage,
                 'unread_count' => $unreadCount,
             ];
         }
 
-        $recentChats = collect($recentChats); // Sekarang buat collection dari $recentChats yang sudah terisi
+        $recentChats = collect($recentChats);
         $recentChats = $recentChats->sortByDesc(function ($chat) {
             return optional($chat['last_message'])->waktukirim;
         });
 
         $stylists = Stylist::all();
 
-        return view('chat.index', compact('recentChats', 'stylists'));
+        return view('chat.indexstylist', compact('recentChats', 'stylists'));
     }
 
     /**

@@ -9,8 +9,10 @@ use App\Http\Controllers\BookmarkController;
 use App\Http\Controllers\EditProfileController;
 use App\Http\Controllers\DigitalWardrobeController;
 use App\Http\Controllers\ForgotPasswordController;
-use App\Http\Controllers\SearchController; // Tambahkan ini
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\LookbookController;
+use App\Http\Controllers\StylistProfileController;
+use App\Http\Controllers\ChatStylistController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,9 +26,7 @@ Route::post('/comments', [CommentController::class, 'store'])->name('api.comment
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/upload', function () {
-        return view('upload');
-    })->name('upload');
+    Route::get('/upload', function () {return view('upload');})->name('upload');
     Route::post('/upload-video', [App\Http\Controllers\UploadVideoController::class, 'uploadAndRedirect'])->name('upload.video');
     Route::get('/upload/detail/{id}', [App\Http\Controllers\UploadVideoController::class, 'showVideoDetail'])->name('upload.detail');
     Route::post('/upload/post-final/{id}', [App\Http\Controllers\UploadVideoController::class, 'finalPost'])->name('upload.final.post');
@@ -101,19 +101,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/chat/stylist/{stylist}/messages', [App\Http\Controllers\ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/chat/message/{pesan}/read', [App\Http\Controllers\ChatController::class, 'markAsRead'])->name('chat.read');
 
-
     Route::get('/search', [SearchController::class, 'index'])->name('search.index');
     Route::get('/api/search/recent', [SearchController::class, 'getRecentSearches'])->name('api.search.recent');
 });
 
+Route::middleware(['auth:stylist'])->group(function () {
+    // Stylist chat routes
+    Route::get('/stylist/chat', [ChatStylistController::class, 'index'])->name('chat.indexstylist');
+    Route::get('/stylist/chat/{user}', [ChatStylistController::class, 'showChatWithUser'])->name('chat.showChatUser');
+    Route::post('/stylist/chat/{user}/send', [ChatStylistController::class, 'sendMessage'])->name('chat.sendMessageStylist');
+    Route::get('/stylist/chat/{user}/messages', [ChatStylistController::class, 'getMessages'])->name('chat.getMessagesStylist');
+    Route::post('/stylist/chat/messages/{pesan}/read', [ChatStylistController::class, 'markAsRead'])->name('chat.markAsReadStylist');
+    Route::get('/stylist/lookbook', [LookbookController::class, 'index'])->name('lookbook.index');
+    Route::get('/stylist/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');
+    Route::post('/stylist/lookbook', [LookbookController::class, 'store'])->name('lookbook.store');
+});
 
-// Rute untuk Stylist (menggunakan LookbookController)
-// Ini adalah halaman daftar lookbook stylist (akan menampilkan lookbookstylist.blade.php)
-Route::get('/stylist/lookbook', [LookbookController::class, 'index'])->name('lookbook.index');
 
-// Rute untuk menampilkan form pembuatan lookbook (akan menampilkan createlookbook.blade.php)
-Route::get('/stylist/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');
-Route::post('/stylist/lookbook', [LookbookController::class, 'store'])->name('lookbook.store');
-
-// Rute untuk Pengguna Biasa (akan menampilkan readlookbook.blade.php)
 Route::get('/lookbook', [LookbookController::class, 'userIndex'])->name('user.lookbook.index');

@@ -12,6 +12,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\LookbookController;
 use App\Http\Controllers\StylistProfileController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ChatStylistController;
 
 Route::get('/', function () {

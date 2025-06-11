@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pesan;
-use App\Models\Stylist;
-use App\Models\User;
+use App\Models\Stylist; // Already there
+use App\Models\User;   // Already there
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -21,29 +21,20 @@ class ChatStylistController extends Controller
 
         $recentChats = [];
 
-        $usersInvolved = Pesan::where('idStylist', $stylist->idStylist)
-                               ->orWhere('idPengguna', $stylist->idStylist)
-                               ->pluck('idPengguna', 'idStylist')
-                               ->toArray();
+        // This query finds all unique users who have exchanged messages with the current stylist
+        $usersInvolved = Pesan::where('idStylist', $stylist->idStylist) // Messages where stylist is recipient
+                            ->pluck('idPengguna')
+                            ->merge(
+                                Pesan::where('idPengguna', $stylist->idStylist) // Messages where stylist is sender
+                                    ->pluck('idStylist')
+                            )
+                            ->unique()
+                            ->toArray();
 
-        $allInvolvedUserIds = [];
-        foreach ($usersInvolved as $userIdPengguna => $userIdStylist) {
-            if ($userIdPengguna != $stylist->idStylist) {
-                $allInvolvedUserIds[] = $userIdPengguna;
-            }
-            if ($userIdStylist != $stylist->idStylist) {
-                $allInvolvedUserIds[] = $userIdStylist;
-            }
-        }
-        $allInvolvedUserIds = array_unique(array_filter($allInvolvedUserIds, function($id) use ($stylist){
-            return $id !== $stylist->idStylist;
-        }));
-
-
-        foreach ($allInvolvedUserIds as $userId) {
-            $user = User::find($userId); // Use find instead of findOrFail to handle potential missing users gracefully
+        foreach ($usersInvolved as $userId) {
+            $user = User::find($userId);
             if (!$user) {
-                continue; // Skip if user not found (e.g., user deleted)
+                continue;
             }
 
             // Get last message between this stylist and this user
@@ -53,13 +44,13 @@ class ChatStylistController extends Controller
                       ->where('idStylist', $stylist->idStylist);
             })->orWhere(function ($query) use ($stylist, $user) {
                 // Messages FROM stylist TO user
-                $query->where('idPengguna', $stylist->idStylist) // Stylist is the sender (idPengguna in this case)
-                      ->where('idStylist', $user->idPengguna);    // User is the recipient (idStylist in this case)
+                $query->where('idPengguna', $stylist->idStylist)
+                      ->where('idStylist', $user->idPengguna);
             })
                 ->orderBy('waktukirim', 'desc')
                 ->first();
 
-            // Count unread messages *sent by this user to the current stylist*
+            // Count unread messages sent BY this user TO the current stylist
             $unreadCount = Pesan::where('idPengguna', $user->idPengguna) // Message sent BY user
                 ->where('idStylist', $stylist->idStylist) // Message sent TO current stylist
                 ->where('statusBacaStylist', 0) // Unread by the stylist
@@ -76,7 +67,8 @@ class ChatStylistController extends Controller
             return optional($chat['last_message'])->waktukirim;
         });
 
-        return view('chat.indexstylist', compact('recentChats')); // Path sesuai yang kita sepakati
+        // Use the recommended view path: resources/views/stylist/chat/index.blade.php
+        return view('stylist.chat.index', compact('recentChats'));
     }
 
     public function showChatWithUser(User $user)
@@ -98,20 +90,21 @@ class ChatStylistController extends Controller
             ->orderBy('waktukirim', 'asc')
             ->get();
 
-        // Mark messages from this user to the stylist as read
+        // Mark messages from this user to the stylist as read when stylist opens the chat
         Pesan::where('idPengguna', $user->idPengguna)
             ->where('idStylist', $stylist->idStylist)
             ->where('statusBacaStylist', 0)
             ->update(['statusBacaStylist' => 1]);
 
-        return view('chat.showstylist', compact('user', 'messages')); // Path sesuai yang kita sepakati
+        // Use the recommended view path: resources/views/stylist/chat/show.blade.php
+        return view('stylist.chat.show', compact('user', 'messages'));
     }
 
     public function sendMessage(Request $request, User $user)
     {
         $request->validate([
             'isiPesan' => 'required|string|max:1000',
-            'lampiranPesan' => 'nullable|file|mimes:png,jpg,jpeg,heic|max:2048', // Added max file size
+            'lampiranPesan' => 'nullable|file|mimes:png,jpg,jpeg,heic|max:2048',
         ]);
 
         $stylist = Auth::guard('stylist')->user();
@@ -125,16 +118,17 @@ class ChatStylistController extends Controller
         }
 
         Pesan::create([
-            'idPengguna' => $user->idPengguna, // The user is the recipient in the record
-            'idStylist' => $stylist->idStylist, // The stylist is the sender in the record
+            'idPengguna' => $stylist->idStylist, // FIX: Stylist is the sender (idPengguna)
+            'idStylist' => $user->idPengguna,    // FIX: User is the recipient (idStylist)
             'isiPesan' => $request->input('isiPesan'),
             'lampiranPesan' => $lampiranPath,
             'waktukirim' => Carbon::now(),
-            'statusBacaPengguna' => 0, // Mark as unread for the user
-            'statusBacaStylist' => 1, // Mark as read for the stylist (sender)
+            'statusBacaPengguna' => 0, // Mark as unread for the user (recipient)
+            'statusBacaStylist' => 1,  // Mark as read for the stylist (sender)
         ]);
 
-        return redirect()->route('chat.showchatuser', $user->idPengguna); // Pastikan pakai idPengguna di redirect
+        // Use the correct route name: stylist.chat.show
+        return redirect()->route('stylist.chat.show', $user->idPengguna);
     }
 
     public function getMessages(User $user)
@@ -162,7 +156,8 @@ class ChatStylistController extends Controller
             ->where('statusBacaStylist', 0)
             ->update(['statusBacaStylist' => 1]);
 
-        return view('chat.listmessagestylist', compact('messages', 'user'))->render(); // Gunakan render() untuk AJAX
+        // Use the recommended view path: resources/views/stylist/chat/listmessage.blade.php
+        return view('stylist.chat.listmessage', compact('messages', 'user'))->render();
     }
 
     public function markAsRead(Pesan $pesan)
@@ -172,8 +167,9 @@ class ChatStylistController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        // Only mark if the message is sent TO the current stylist AND currently unread by stylist
-        if ($pesan->idStylist == $stylist->idStylist && $pesan->statusBacaStylist == 0) {
+        // Mark as read ONLY if the message was sent by the user to THIS stylist,
+        // AND the stylist hasn't read it yet.
+        if ($pesan->idPengguna == $pesan->idPengguna && $pesan->idStylist == $stylist->idStylist && $pesan->statusBacaStylist == 0) {
             $pesan->update(['statusBacaStylist' => 1]);
             return response()->json(['success' => true]);
         }

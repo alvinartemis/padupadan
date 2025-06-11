@@ -6,10 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\VideoFashion;
-// HAPUS IMPORT INI jika Anda tidak menggunakan FFMpeg lagi
-// use FFMpeg\FFMpeg;
-// use FFMpeg\Coordinate\TimeCode;
-use Illuminate\Support\Str; // Pastikan ini tetap ada untuk Str::random
+use Illuminate\Support\Str;
 
 class UploadVideoController extends Controller
 {
@@ -31,29 +28,22 @@ class UploadVideoController extends Controller
         $mimeType = $file->getMimeType();
 
         // 2. Simpan FILE FISIKNYA ke Storage Server
-        // File akan tersimpan di storage/app/public/videos/nama_unik.ext
         $path = $file->store('videos', 'public');
 
-        // Logic ekstraksi thumbnail dengan FFMpeg DIHAPUS dari sini
-        // $thumbnailPath = null;
-        // if (Str::startsWith($mimeType, 'video/')) { ... }
-        // elseif (Str::startsWith($mimeType, 'image/')) { ... }
-        // else { $thumbnailPath = 'images/default-thumbnail.png'; }
-
-        // 3. Simpan semua data file di SESI (tanpa thumbnailPath)
+        // 3. Simpan semua data file di SESI
         $request->session()->put('temp_uploaded_file_data', [
             'fileName' => $originalFileName,
             'fileSize' => $fileSize,
             'fileFormat' => $fileFormat,
             'mimeType' => $mimeType,
             'filePath' => $path, // Ini adalah path relatif di storage
-            // 'thumbnailPath' tidak disimpan di sesi
         ]);
 
-        // Tidak ada interaksi database di sini.
         return response()->json([
             'success' => true,
-            'redirect_url' => route('upload.detail', ['id' => 0]) // Menggunakan ID placeholder 0
+            // Halaman detail tidak lagi memerlukan ID yang berarti,
+            // karena data diambil dari sesi. ID 0 sudah cukup.
+            'redirect_url' => route('upload.detail', ['id' => 0])
         ]);
     }
 
@@ -61,7 +51,7 @@ class UploadVideoController extends Controller
      * Menampilkan halaman detail video (setelah upload sementara, sebelum final post).
      * Data yang ditampilkan diambil dari sesi.
      */
-    public function showVideoDetail($id)
+    public function showVideoDetail($id) // $id di sini akan selalu 0
     {
         // Ambil data file sementara dari sesi
         $tempUploadData = session('temp_uploaded_file_data');
@@ -71,6 +61,7 @@ class UploadVideoController extends Controller
         }
 
         // Buat objek VideoFashion dummy untuk mengisi view.
+        // idVideoFashion di sini hanya placeholder, tidak ada di DB sampai finalPost.
         $videoFashion = (object)[
             'idVideoFashion' => $id, // ID dari URL (yang merupakan placeholder 0)
             'idPengguna' => Auth::id(), // ID pengguna yang sedang login
@@ -80,7 +71,6 @@ class UploadVideoController extends Controller
             'ukuranFile' => $tempUploadData['fileSize'],
             'pathFile' => $tempUploadData['filePath'], // Perlu ini untuk pratinjau di halaman detail
             'mimeType' => $tempUploadData['mimeType'], // Perlu ini
-            // 'thumbnailPath' tidak diambil dari sesi
         ];
 
         return view('detailvideoupload', compact('videoFashion', 'tempUploadData'));
@@ -106,8 +96,8 @@ class UploadVideoController extends Controller
         $request->validate([
             'description' => 'nullable|string|max:500',
             'hashtags' => 'nullable|string|max:255',
-            'tagPeople' => 'nullable|string|max:255', // Ini tidak akan disimpan ke DB
-            'outfitLink' => 'nullable|url|max:255',     // Ini tidak akan disimpan ke DB
+            'tagPeople' => 'nullable|string|max:255',
+            'outfitLink' => 'nullable|url|max:255',
         ]);
 
         try {
@@ -123,25 +113,23 @@ class UploadVideoController extends Controller
             $videoFashion->ukuranFile = $tempUploadData['fileSize'];
             $videoFashion->pathFile = $tempUploadData['filePath'];     // Menyimpan pathFile ke DB
             $videoFashion->mimeType = $tempUploadData['mimeType'];     // Menyimpan mimeType ke DB
-            // 'thumbnailPath' tidak disimpan ke DB
 
             $videoFashion->save(); // Simpan data ke database
 
             // 5. Hapus data file sementara dari sesi setelah berhasil disimpan ke DB
             $request->session()->forget('temp_uploaded_file_data');
 
-            // 6. Redirect ke halaman detail video yang baru disimpan
+            // 6. Kunci perubahan: Redirect ke halaman home setelah berhasil post
             return response()->json([
                 'success' => true,
-                'message' => 'Video dan detail berhasil di-post!',
-                'redirect_url' => route('upload.detail', ['id' => $videoFashion->idVideoFashion])
+                'message' => 'Video dan detail berhasil di-post! Anda akan dialihkan ke beranda.',
+                'redirect_url' => route('home') // <---- INI PERUBAHAN UTAMANYA
             ]);
 
         } catch (\Exception $e) {
             \Log::error("Final post to DB failed for user " . Auth::id() . ": " . $e->getMessage() . " on line " . $e->getLine() . " in " . $e->getFile());
 
             // Opsional: Hapus file fisik dari storage jika penyimpanan DB gagal
-            // Logika penghapusan thumbnailPath DIHAPUS dari sini
             if (isset($tempUploadData['filePath']) && Storage::disk('public')->exists($tempUploadData['filePath'])) {
                 Storage::disk('public')->delete($tempUploadData['filePath']);
                 \Log::warning("Physical file " . $tempUploadData['filePath'] . " was deleted due to DB save failure.");
@@ -162,13 +150,12 @@ class UploadVideoController extends Controller
     {
         $tempUploadData = $request->session()->get('temp_uploaded_file_data');
 
-        // Logika penghapusan thumbnailPath DIHAPUS dari sini
         if ($tempUploadData && isset($tempUploadData['filePath']) && Storage::disk('public')->exists($tempUploadData['filePath'])) {
             Storage::disk('public')->delete($tempUploadData['filePath']);
             \Log::info("Discarded temporary file: " . $tempUploadData['filePath']);
         }
         $request->session()->forget('temp_uploaded_file_data');
 
-        return response()->json(['success' => true, 'message' => 'Upload dibatalkan.']);
+        return response()->json(['success' => true, 'message' => 'Upload dibatalkan.', 'redirect_url' => route('upload')]);
     }
 }

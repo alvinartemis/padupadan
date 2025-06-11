@@ -13,6 +13,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\LookbookController;
 use App\Http\Controllers\StylistProfileController;
 use App\Http\Controllers\ChatStylistController;
+use App\Http\Controllers\UploadVideoController; // Pastikan ini di-import
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,10 +28,21 @@ Route::post('/comments', [CommentController::class, 'store'])->name('api.comment
 
 Route::middleware('auth')->group(function () {
     Route::get('/upload', function () {return view('upload');})->name('upload');
-    Route::post('/upload-video', [App\Http\Controllers\UploadVideoController::class, 'uploadAndRedirect'])->name('upload.video');
-    Route::get('/upload/detail/{id}', [App\Http\Controllers\UploadVideoController::class, 'showVideoDetail'])->name('upload.detail');
-    Route::post('/upload/post-final/{id}', [App\Http\Controllers\UploadVideoController::class, 'finalPost'])->name('upload.final.post');
-    Route::post('/upload/discard', [App\Http\Controllers\UploadVideoController::class, 'discardUpload'])->name('upload.discard');
+
+    // Route ini akan mengarahkan ke halaman detail dengan ID placeholder 0
+    Route::post('/upload-video', [UploadVideoController::class, 'uploadAndRedirect'])->name('upload.video');
+
+    // Route untuk menampilkan halaman detail. ID 0 akan digunakan sebagai placeholder.
+    // Data diambil dari sesi, bukan dari ID database.
+    Route::get('/upload/detail/{id}', [UploadVideoController::class, 'showVideoDetail'])->name('upload.detail');
+
+    // Route untuk final post. ID 0 akan digunakan sebagai placeholder.
+    // Data disimpan ke DB, lalu redirect ke home.
+    Route::post('/upload/post-final/{id}', [UploadVideoController::class, 'finalPost'])->name('upload.final.post');
+
+    // Tambahkan route untuk discard jika Anda ingin menanganinya via AJAX juga
+    Route::post('/upload/discard', [UploadVideoController::class, 'discardUpload'])->name('upload.discard');
+
 
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 });

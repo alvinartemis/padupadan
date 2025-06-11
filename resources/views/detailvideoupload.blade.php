@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Details - Padu Padan</title>
-    <meta name="csrf-token" content="{{ csrf_token() }}"> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="csrf-token" content="{{ csrf_token() }}"> {{-- Pastikan meta csrf-token ada dan benar --}}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ... (CSS Anda tetap sama) ... */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f2f5;
@@ -402,7 +402,7 @@
             </div>
         </div>
 
-        <form id="postDetailsForm" action="{{ route('upload.final.post', ['id' => $videoFashion->idVideoFashion ?? 0]) }}" method="POST">
+        <form id="postDetailsForm"> {{-- action dan method="POST" dihapus --}}
             @csrf
             <div class="content-grid">
                 <div class="details-section">
@@ -430,18 +430,18 @@
 
             <div class="action-buttons">
                 <button type="button" class="discard-button" id="discardButton">Discard</button>
-                <button type="submit" class="post-button" id="postButton">Post</button>
+                <button type="button" class="post-button" id="postButton">Post</button> {{-- type diubah menjadi button --}}
             </div>
         </form>
     </div>
 
     <script>
-        // Fungsi formatBytes sekarang ada di PHP Helper, jadi tidak perlu di sini lagi
         document.addEventListener('DOMContentLoaded', () => {
             const descriptionTextarea = document.getElementById('description');
             const descriptionCharCount = document.getElementById('descriptionCharCount');
-            const postDetailsForm = document.getElementById('postDetailsForm'); // Dapatkan form baru
-            const postButton = document.getElementById('postButton'); // Dapatkan tombol Post
+            const postDetailsForm = document.getElementById('postDetailsForm');
+            const postButton = document.getElementById('postButton');
+            const discardButton = document.getElementById('discardButton');
 
             // Character count untuk description
             if (descriptionTextarea && descriptionCharCount) {
@@ -455,33 +455,107 @@
                 descriptionCharCount.textContent = `${descriptionTextarea.value.length}/${descriptionTextarea.maxLength}`;
             }
 
-            // --- Event Listener untuk Tombol Post (Jika tidak ingin pakai submit form biasa) ---
-            // Jika Anda ingin mengontrol pengiriman via AJAX, Anda bisa melakukan ini:
-            // postButton.addEventListener('click', (e) => {
-            //     e.preventDefault(); // Mencegah submit form biasa
-            //     // Lakukan AJAX fetch request di sini
-            //     // Anda akan membutuhkan FormData() dari postDetailsForm
-            //     // dan mengirimkannya ke route 'upload.final.post'
-            //     // Pastikan juga CSRF token terkirim
-            //     console.log("Post button clicked! Initiating AJAX save.");
-            //     // ... Logika AJAX di sini ...
-            // });
+            // Event Listener untuk tombol Post (Sekarang menggunakan AJAX fetch)
+            postButton.addEventListener('click', async (e) => {
+                e.preventDefault(); // Mencegah submit form biasa
 
-            // Event Listener untuk tombol Discard (Opsional)
-            const discardButton = document.getElementById('discardButton');
+                console.log("Post button clicked! Initiating AJAX save.");
+
+                const formData = new FormData(postDetailsForm);
+                // Pastikan videoId ini sesuai dengan yang diharapkan di backend jika Anda memiliki logic update berdasarkan ID temp
+                const videoId = {{ $videoFashion->idVideoFashion ?? '0' }};
+                if (videoId && videoId !== 0) {
+                    formData.append('idVideoFashion', videoId); // Jika Anda perlu mengirim ID dummy ke backend
+                }
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+                try {
+                    const response = await fetch('{{ route('upload.final.post', ['id' => $videoFashion->idVideoFashion ?? 0]) }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+
+                    console.log("Fetch response received:", response);
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error("Server responded with error:", errorData);
+                        let errorMessage = errorData.message || `Terjadi kesalahan server: ${response.status} ${response.statusText}`;
+
+                        if (response.status === 419) {
+                            errorMessage = 'Sesi Anda telah berakhir. Mohon refresh halaman dan coba lagi.';
+                            window.location.reload();
+                        } else if (response.status === 403) {
+                            errorMessage = 'Akses ditolak atau CSRF token tidak valid. Mohon refresh halaman.';
+                            window.location.reload();
+                        }
+                        alert(errorMessage); // Tetap tampilkan alert untuk error
+                        return;
+                    }
+
+                    const data = await response.json();
+
+                    console.log("Fetch data received:", data);
+
+                    if (data.success) {
+                        // HAPUS BARIS INI: alert(data.message);
+                        console.log("Redirecting to:", data.redirect_url);
+                        window.location.href = data.redirect_url; // Langsung redirect ke halaman beranda
+                    } else {
+                        alert('Gagal mengunggah file: ' + (data.message || 'Unknown error.')); // Tetap tampilkan alert untuk error
+                    }
+                } catch (error) {
+                    console.error('Error saat mengunggah file:', error);
+                    alert('Terjadi kesalahan saat mengunggah file. Silakan coba lagi. Detil error di konsol.'); // Tetap tampilkan alert untuk error
+                }
+            });
+
+            // Event Listener untuk tombol Discard
             if (discardButton) {
                 discardButton.addEventListener('click', () => {
-                    // Logika untuk tombol Discard
-                    // Misalnya: konfirmasi, hapus file dari storage jika itu temporary, redirect ke halaman upload
-                    if (confirm('Are you sure you want to discard this upload? The file will be removed from temporary storage.')) {
-                        // Anda perlu route dan controller method untuk menghapus file sementara
-                        // Misalnya: fetch('/upload/discard-temp', { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content } })
-                        // .then(() => window.location.href = '{{ route('upload') }}');
-                        window.location.href = '{{ route('upload') }}'; // Sementara, redirect saja
+                    // Anda bisa menambahkan AJAX request untuk route discard jika Anda ingin menanganinya dengan backend
+                    // Jika tidak, redirect langsung ke halaman upload awal (atau halaman home)
+                    if (confirm('Apakah Anda yakin ingin membatalkan upload ini? File akan dihapus dari penyimpanan sementara.')) {
+                        // Jika Anda memiliki route /upload/discard untuk menghapus file sementara
+                        fetch('{{ route('upload.discard') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                                'Content-Type': 'application/json' // Jika tidak ada body, ini bisa dihilangkan
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log("Discard successful, redirecting to:", data.redirect_url);
+                                window.location.href = data.redirect_url; // Redirect ke halaman upload setelah discard
+                            } else {
+                                alert('Gagal membatalkan upload: ' + (data.message || 'Unknown error.'));
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error discarding file:', error);
+                            alert('Terjadi kesalahan saat membatalkan upload.');
+                        });
                     }
                 });
             }
         });
+
+        // Helper function for file size formatting (Optional, Anda bisa taruh di helper PHP atau biarkan seperti ini)
+        // Jika formatBytes sudah ada di PHP Helper, Anda tidak perlu ini di JS
+        // function formatBytes(bytes, decimals = 2) {
+        //     if (bytes === 0) return '0 Bytes';
+        //     const k = 1024;
+        //     const dm = decimals < 0 ? 0 : decimals;
+        //     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        //     const i = Math.floor(Math.log(bytes) / Math.log(k));
+        //     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        // }
     </script>
 </body>
 </html>

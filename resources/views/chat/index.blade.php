@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.chat')
 
 @section('content')
     <div style="background-color: #f4f4f4; padding: 20px; border-radius: 8px;">

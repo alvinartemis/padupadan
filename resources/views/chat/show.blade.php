@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.chat')
 
 @section('title', 'Chat dengan ' . $stylist->nama)
 

@@ -40,32 +40,6 @@
             width: auto;
         }
 
-        .sidebar .search-box { /* Hapus search box ini jika tidak diperlukan di sidebar stylist */
-            display: flex;
-            align-items: center;
-            background-color: #e0e0e0;
-            border-radius: 20px;
-            padding: 8px 15px;
-            margin-bottom: 30px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .sidebar .search-box svg {
-            width: 18px;
-            height: 18px;
-            color: #888;
-        }
-
-        .sidebar .search-box input {
-            border: none;
-            background: transparent;
-            outline: none;
-            flex-grow: 1;
-            font-size: 14px;
-            margin-left: 10px;
-        }
-
         .sidebar nav ul {
             list-style: none;
             padding: 0;
@@ -109,13 +83,12 @@
         .content-area {
             flex-grow: 1;
             padding: 20px;
-            margin-left: 250px; /* Offset for fixed sidebar */
+            margin-left: 250px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
         }
 
-        /* Responsive adjustments for sidebar */
         @media (max-width: 768px) {
             .sidebar {
                 width: 80px;
@@ -128,7 +101,7 @@
             .sidebar .logo img {
                 height: 30px;
             }
-            .sidebar .search-box, /* Sembunyikan search box di mobile */
+            .sidebar .search-box,
             .sidebar nav ul li a span {
                 display: none;
             }
@@ -151,16 +124,8 @@
         <div class="logo">
             <img src="{{ asset('img/logoy.png') }}" alt="Logo Padu Padan">
         </div>
-        {{-- Hapus search box di sidebar stylist jika tidak diperlukan --}}
-        {{-- <div class="search-box">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
-            </svg>
-            <input type="text" placeholder="Search">
-        </div> --}}
         <nav>
             <ul>
-                {{-- Hanya link untuk Stylist --}}
                 <li>
                     <a href="{{ route('profile') }}" class="{{ request()->routeIs('profile') ? 'active' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
@@ -190,7 +155,7 @@
     </div>
 
     <div class="content-area">
-        @yield('content') {{-- Ini adalah tempat konten spesifik halaman akan diinjeksikan --}}
+        @yield('content')
     </div>
     @stack('scripts')
 </body>

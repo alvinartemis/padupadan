@@ -1,4 +1,4 @@
-@extends('layouts.chat') {{-- Pastikan ini mengacu pada layout yang benar --}}
+@extends('layouts.stylist') {{-- Pastikan ini mengacu pada layout yang benar --}}
 
 @section('content')
     <div style="background-color: #f4f4f4; padding: 20px; border-radius: 8px;">

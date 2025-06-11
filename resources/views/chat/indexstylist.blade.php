@@ -9,15 +9,16 @@
                 @foreach ($recentChats as $chat)
                     {{-- Tambahkan div dengan background putih di sini --}}
                     <div style="background-color: white; border-radius: 8px; margin-bottom: 10px; padding: 10px;">
-                        {{-- Perbaiki rute chat.show untuk menggunakan ID Stylist --}}
-                        <a href="{{ route('chat.show', ['stylist' => $chat['stylist']->idStylist]) }}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
+                        {{-- Perbaiki rute chat.show untuk menggunakan ID Pengguna dari $chat['user'] --}}
+                        {{-- NOTE: Assuming 'chat.showChatUser' is the route for stylist to chat with a user --}}
+                        <a href="{{ route('chat.showChatUser', ['user' => $chat['user']->idPengguna]) }}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
                             <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin-right: 15px;">
-                                {{-- Gunakan $chat['stylist']->profilepicture --}}
-                                <img src="{{ asset('stylist/' . $chat['stylist']->profilepicture) }}" alt="{{ $chat['stylist']->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {{-- Gunakan $chat['user']->profilepicture, assuming 'stylist' folder prefix is correct for user profiles as well --}}
+                                <img src="{{ asset('user/' . $chat['user']->profilepicture) }}" alt="{{ $chat['user']->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                             <div style="flex-grow: 1;">
-                                {{-- Gunakan $chat['stylist']->nama --}}
-                                <div style="font-weight: 600;">{{ $chat['stylist']->nama }}</div>
+                                {{-- Gunakan $chat['user']->nama --}}
+                                <div style="font-weight: 600;">{{ $chat['user']->nama }}</div>
                                 {{-- Gunakan optional() untuk pesan terakhir dan waktukirim --}}
                                 <div style="font-size: 0.9rem; color: #777;">{{ Str::limit(optional($chat['last_message'])->isiPesan ?? '', 50) }}</div>
                             </div>
@@ -35,8 +36,8 @@
             <p style="color: #777;">No Conversation Yet</p>
         @endif
 
-        <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Our Stylist</h2>
-        {{-- Pastikan $stylists dilewatkan dari controller --}}
-        @include('chat.liststylist', ['stylists' => $stylists])
+        <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Users Available to Chat</h2>
+        {{-- Changed the included partial name and variable name --}}
+        @include('chat.listusers', ['usersToChat' => $usersToChat])
     </div>
 @endsection

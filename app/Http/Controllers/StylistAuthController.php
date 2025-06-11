@@ -31,7 +31,7 @@ class StylistAuthController extends Controller
             // Login stylist secara manual
             Auth::guard('stylist')->login($stylist);
             $request->session()->regenerate();
-            return redirect()->intended(route('dashboard'));
+            return redirect()->intended(route('stylist.homestylist'));
         }
 
         return redirect()->back()

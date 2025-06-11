@@ -62,7 +62,7 @@ class ChatController extends Controller
 
         $stylists = Stylist::all();
 
-        return view('chat.indexstylist', compact('recentChats', 'stylists'));
+        return view('chat.index', compact('recentChats', 'stylists'));
     }
 
     /**

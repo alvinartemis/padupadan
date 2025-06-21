@@ -88,35 +88,6 @@
             display: flex;
             flex-direction: column;
         }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 80px;
-                padding: 15px 10px;
-            }
-            .sidebar .logo {
-                justify-content: center;
-                margin-bottom: 20px;
-            }
-            .sidebar .logo img {
-                height: 30px;
-            }
-            .sidebar .search-box,
-            .sidebar nav ul li a span {
-                display: none;
-            }
-            .sidebar nav ul li a {
-                justify-content: center;
-                padding: 10px;
-            }
-            .sidebar nav ul li a svg {
-                margin-right: 0;
-            }
-            .content-area {
-                margin-left: 80px;
-                padding: 15px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -155,8 +126,9 @@
     </div>
 
     <div class="content-area">
-        @yield('content')
+        <div class="content">
+            @yield('content')
+        </div>
     </div>
-    @stack('scripts')
 </body>
 </html>

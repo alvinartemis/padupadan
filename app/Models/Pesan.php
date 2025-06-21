@@ -21,6 +21,7 @@ class Pesan extends Model
         'waktukirim',
         'statusBacaPengguna',
         'statusBacaStylist',
+        'sender_type',
     ];
 
     protected $casts = [

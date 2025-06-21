@@ -5,9 +5,9 @@
         <h2 style="color: #333; margin-bottom: 20px;">Messages</h2>
 
         @if ($recentChats->isNotEmpty())
-            <div style="margin-bottom: 20px;">
+            {{-- TAMBAHKAN ID INI: --}}
+            <div id="recent-chats-container" style="margin-bottom: 20px;">
                 @foreach ($recentChats as $chat)
-                    {{-- Tambahkan div dengan background putih di sini --}}
                     <div style="background-color: white; border-radius: 8px; margin-bottom: 10px; padding: 10px;">
                         <a href="{{ route('chat.show', $chat['stylist']) }}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
                             <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin-right: 15px;">
@@ -25,7 +25,6 @@
                             </div>
                         </a>
                     </div>
-                    {{-- Tutup div background putih --}}
                 @endforeach
             </div>
         @else
@@ -35,4 +34,49 @@
         <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Our Stylist</h2>
         @include('chat.liststylist', ['stylists' => $stylists])
     </div>
+    @push('scripts')
+    <script>
+        function refreshRecentChats() {
+            // Tambahkan cache-busting timestamp ke URL untuk memastikan data terbaru
+            const url = "{{ route('chat.index') }}" + "?_t=" + new Date().getTime();
+
+            fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newRecentChatsContainer = doc.getElementById('recent-chats-container'); // Ambil kontainer yang baru dari response
+
+                    if (newRecentChatsContainer) { // Pastikan kontainer ditemukan
+                        const currentRecentChatsContainer = document.getElementById('recent-chats-container');
+                        if (currentRecentChatsContainer) { // Pastikan kontainer saat ini ada
+                            // Perbarui innerHTML dari kontainer yang ada
+                            currentRecentChatsContainer.innerHTML = newRecentChatsContainer.innerHTML;
+                        }
+                    }
+                })
+                .catch(error => console.error('Error refreshing recent chats:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Panggil refresh saat halaman dimuat pertama kali
+            refreshRecentChats();
+        });
+
+        // Gunakan pageshow untuk refresh yang lebih andal saat navigasi mundur/maju
+        // Ini sangat berguna jika browser menggunakan back-forward cache (bfcache)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) { // Jika halaman dimuat dari bfcache
+                refreshRecentChats();
+            }
+        });
+
+        // Fallback untuk event visibilitychange (ketika tab browser menjadi aktif/fokus kembali)
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                refreshRecentChats();
+            }
+        });
+    </script>
+    @endpush
 @endsection

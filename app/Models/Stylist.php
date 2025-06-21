@@ -46,12 +46,19 @@ class Stylist extends Authenticatable
         return $this->hasMany(Pesan::class, 'idStylist', 'idStylist');
     }
 
+    public function sentMessages()
+    {
+        return $this->hasMany(Pesan::class, 'idStylist', 'idStylist');
+    }
+
+    public function receivedMessagesFromUser()
+    {
+        return $this->hasMany(Pesan::class, 'idPengguna', 'idStylist');
+    }
+
     public function lookbooks()
     {
-        // Ganti 'stylist_id' dengan nama kolom foreign key di tabel 'lookbooks'
-        // yang merujuk ke 'idStylist' di tabel 'stylist' Anda.
-        // Ganti 'lookbooks_table_name' jika nama tabel lookbook Anda berbeda
-        return $this->hasMany(Lookbook::class, 'idStylist', 'idStylist'); // Asumsi 'idStylist' di tabel lookbook adalah FK
+        return $this->hasMany(Lookbook::class, 'idStylist', 'idStylist');
     }
 
 }

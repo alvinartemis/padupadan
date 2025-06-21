@@ -4,25 +4,24 @@
 
 @section('content')
     <div style="background-color: #f9f9f9; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); max-width: 700px; margin: 30px auto; padding: 30px; display: flex; flex-direction: column; height: 600px;">
-        <div style="display: flex; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #eee; margin-bottom: 20px;">
-            <button onclick="window.history.back()" style="background: none; border: none; color: #999; font-size: 1.2rem; cursor: pointer; margin-right: 15px;">
-                &larr;
+        {{-- This div now acts as a flex container to align items --}}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #eee; margin-bottom: 20px;">
+            <a href="{{ route('chat.profilestylist', $stylist) }}" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; margin-right: 15px;">
+                    <img src="{{ asset('stylist/' . $stylist->profilepicture) }}" alt="{{ $stylist->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div>
+                    <h4 style="margin: 0; font-weight: 600; color: #333;">{{ $stylist->nama }}</h4>
+                    <p style="margin: 5px 0 0 0; color: #777; font-size: 0.9rem;">{{ '@' . $stylist->username }}</p>
+                </div>
+            </a>
+            <button onclick="window.location.href='{{ route('chat.index') }}'" style="background: none; border: none; color: #999; font-size: 1.5rem; cursor: pointer;">
+                &times;
             </button>
-            <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; margin-right: 15px;">
-                <img src="{{ asset('stylist/' . $stylist->profilepicture) }}" alt="{{ $stylist->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-            <div>
-                <h4 style="margin: 0; font-weight: 600; color: #333;">{{ $stylist->nama }}</h4>
-                <p style="margin: 5px 0 0 0; color: #777; font-size: 0.9rem;">{{ '@' . $stylist->username }}</p>
-            </div>
         </div>
-
-        {{-- Container untuk daftar pesan yang akan mengisi sisa ruang --}}
         <div style="flex-grow: 1; overflow-y: auto; padding-bottom: 20px;" id="message-container">
             @include('chat.listmessage', ['messages' => $messages])
         </div>
-
-        {{-- Form untuk mengirim pesan yang dipindahkan ke bawah --}}
         <form action="{{ route('chat.send', $stylist) }}" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; padding-top: 20px; border-top: 1px solid #eee;">
             @csrf
             <button type="button" onclick="$('#lampiranPesan').click()" style="background: none; border: none; color: #777; font-size: 1.2rem; margin-right: 10px; cursor: pointer; opacity: 0.8; transition: opacity 0.2s ease;">
@@ -75,13 +74,10 @@
     </div>
 
     <script>
-        // Fungsi untuk secara otomatis scroll ke bagian bawah container pesan
         function scrollToBottom() {
             var messageContainer = document.getElementById('message-container');
             messageContainer.scrollTop = messageContainer.scrollHeight;
         }
-
-        // Scroll ke bawah saat halaman selesai dimuat
         window.onload = scrollToBottom;
 
         document.getElementById('lampiranPesan').addEventListener('change', function() {
@@ -94,15 +90,13 @@
                 pratinjau.style.display = 'block';
             }
 
-            if (file && file.type.match('image.*')) { // Pastikan ini adalah file gambar
+            if (file && file.type.match('image.*')) {
                 reader.readAsDataURL(file);
             } else {
                 pratinjau.src = "#";
                 pratinjau.style.display = 'none';
             }
         });
-
-        // Anda mungkin perlu memanggil scrollToBottom() lagi setelah pesan baru ditambahkan melalui AJAX (jika Anda mengimplementasikan fitur real-time)
 
         function showErrorPopup() {
             document.getElementById('errorPopup').style.display = 'flex';

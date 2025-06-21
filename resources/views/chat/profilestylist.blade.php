@@ -5,7 +5,7 @@
 @section('content')
     <div style="background-color: #ffffff; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); max-width: 700px; margin: 30px auto; padding: 30px;">
         <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 25px;">
-            <button onclick="window.location.href='{{ route('chat.index') }}'" style="background: none; border: none; color: #999; font-size: 1.5rem; cursor: pointer;">
+            <button onclick="window.history.back()"style="background: none; border: none; color: #999; font-size: 1.5rem; cursor: pointer;">
                 &times;
             </button>
         </div>

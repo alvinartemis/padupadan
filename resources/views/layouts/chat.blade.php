@@ -28,7 +28,7 @@
             left: 0;
             top: 0;
             z-index: 10;
-            align-items: flex-start; /* Membuat item rata kiri */
+            align-items: flex-start;
         }
 
         .sidebar .logo {
@@ -70,7 +70,7 @@
             list-style: none;
             padding: 0;
             margin: 0;
-            width: 100%; /* Memastikan nav ul mengisi lebar sidebar */
+            width: 100%;
         }
 
         .sidebar nav ul li {
@@ -86,14 +86,14 @@
             padding: 10px 15px;
             border-radius: 8px;
             transition: background-color 0.2s ease;
-            width: 100%; /* Memastikan link mengisi lebar nav item */
-            box-sizing: border-box; /* Memastikan padding tidak menambah lebar */
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .sidebar nav ul li a:hover,
         .sidebar nav ul li a.active {
             color: #173F63;
-            /background-color: #e0f7fa; / Warna hover/active disesuaikan agar terlihat */
+            /background-color: #e0f7fa;
         }
 
         .sidebar nav ul li a svg {

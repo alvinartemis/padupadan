@@ -14,7 +14,7 @@ use App\Http\Controllers\LookbookController;
 use App\Http\Controllers\StylistProfileController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ChatStylistController;
-use App\Http\Controllers\UploadVideoController; // Pastikan ini di-import
+use App\Http\Controllers\UploadVideoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,22 +29,10 @@ Route::post('/comments', [CommentController::class, 'store'])->name('api.comment
 
 Route::middleware('auth')->group(function () {
     Route::get('/upload', function () {return view('upload');})->name('upload');
-
-    // Route ini akan mengarahkan ke halaman detail dengan ID placeholder 0
     Route::post('/upload-video', [UploadVideoController::class, 'uploadAndRedirect'])->name('upload.video');
-
-    // Route untuk menampilkan halaman detail. ID 0 akan digunakan sebagai placeholder.
-    // Data diambil dari sesi, bukan dari ID database.
     Route::get('/upload/detail/{id}', [UploadVideoController::class, 'showVideoDetail'])->name('upload.detail');
-
-    // Route untuk final post. ID 0 akan digunakan sebagai placeholder.
-    // Data disimpan ke DB, lalu redirect ke home.
     Route::post('/upload/post-final/{id}', [UploadVideoController::class, 'finalPost'])->name('upload.final.post');
-
-    // Tambahkan route untuk discard jika Anda ingin menanganinya via AJAX juga
     Route::post('/upload/discard', [UploadVideoController::class, 'discardUpload'])->name('upload.discard');
-
-
     Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
 });
 
@@ -119,12 +107,13 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::middleware(['auth:stylist'])->group(function () {
-    // Stylist chat routes
     Route::get('/stylist/chat', [ChatStylistController::class, 'index'])->name('chat.indexstylist');
-    Route::get('/stylist/chat/{user}', [ChatStylistController::class, 'showChatWithUser'])->name('chat.showChatUser');
+    Route::get('/stylist/chat/{user}', [ChatStylistController::class, 'showChatWithUser'])->name('chat.showstylist');
     Route::post('/stylist/chat/{user}/send', [ChatStylistController::class, 'sendMessage'])->name('chat.sendMessageStylist');
     Route::get('/stylist/chat/{user}/messages', [ChatStylistController::class, 'getMessages'])->name('chat.getMessagesStylist');
     Route::post('/stylist/chat/messages/{pesan}/read', [ChatStylistController::class, 'markAsRead'])->name('chat.markAsReadStylist');
+    Route::get('/stylist/chat/{user}/profile', [ChatStylistController::class, 'showProfileUser'])->name('chat.profileuser');
+
     Route::get('/stylist/lookbook', [LookbookController::class, 'index'])->name('lookbook.index');
     Route::get('/stylist/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');
     Route::post('/stylist/lookbook', [LookbookController::class, 'store'])->name('lookbook.store');

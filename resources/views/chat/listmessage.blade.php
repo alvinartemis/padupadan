@@ -2,8 +2,8 @@
     @foreach ($messages as $message)
         <div style="margin-bottom: 15px; display: flex; flex-direction: column;
             align-items: {{ $message->sender_type == 'user' ? 'flex-end' : 'flex-start' }};">
-            <div style="background-color: {{ $message->sender_type == 'user' ? '#F4BC43' : '#e0e0e0' }};
-                color: {{ $message->sender_type == 'user' ? 'white' : '#333' }};
+            <div style="background-color: {{ $message->sender_type == 'user' ? '#F4BC43' : '#0C2A42' }};
+                color: {{ $message->sender_type == 'user' ? 'white' : '#FFFFFF' }};
                 padding: 10px 15px; border-radius: 10px; max-width: 80%; word-wrap: break-word;">
 
                 @if ($message->lampiranPesan)
@@ -21,9 +21,9 @@
                     <p style="margin-top: 5px;">{{ $message->isiPesan }}</p>
                 @endif
             </div>
-            <div style="font-size: 0.7rem; color: #999; margin-top: 3px;">
+            <div style="font-size: 0.7rem; color: #0C2A42; margin-top: 3px;">
                 @if ($message->waktukirim)
-                    {{ $message->waktukirim->diffForHumans() }}
+                    {{ \Carbon\Carbon::parse($message->waktukirim)->setTimezone('Asia/Jakarta')->format('H:i') }}
                 @else
                     Waktu tidak tersedia
                 @endif

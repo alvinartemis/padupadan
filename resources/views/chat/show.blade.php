@@ -4,7 +4,6 @@
 
 @section('content')
     <div style="background-color: #f9f9f9; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); max-width: 700px; margin: 30px auto; padding: 30px; display: flex; flex-direction: column; height: 600px;">
-        {{-- This div now acts as a flex container to align items --}}
         <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #eee; margin-bottom: 20px;">
             <a href="{{ route('chat.profilestylist', $stylist) }}" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
                 <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; margin-right: 15px;">
@@ -40,7 +39,7 @@
         </form>
     </div>
 
-<div id="errorPopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div id="errorPopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
         <div style="background-color: #fff; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 80%; max-width: 400px;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 3em; height: 3em; fill: #F4BC43; margin-bottom: 20px;">
                 <path d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480L40 480c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24l0 112c0 13.3 10.7 24 24 24s24-10.7 24-24l0-112c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>

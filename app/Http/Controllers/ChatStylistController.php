@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ItemFashion;
+use App\Models\KoleksiPakaian;
 
 class ChatStylistController extends Controller
 {
@@ -159,5 +161,41 @@ class ChatStylistController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Pesan tidak dapat ditandai sebagai dibaca atau sudah dibaca.'], 400);
+    }
+
+    public function showUserProfile(Request $request, User $user)
+    {
+
+        $sections = ['items', 'outfits'];
+        $categories = [
+            'All', 'Top', 'Bottom', 'Outerwear', 'Dress', 'Accessories', 'Footwear'
+        ];
+
+        $selectedSection = $request->query('section', 'items');
+        $selectedCategory = $request->query('category', 'All');
+
+        $koleksiPakaian = collect();
+
+        if ($selectedSection == 'items') {
+            $query = $user->koleksiPakaian()->where('visibility', 'Public');
+
+            if ($selectedCategory != 'All') {
+                $query->where('kategori', $selectedCategory);
+            }
+            $koleksiPakaian = $query->get();
+
+        } elseif ($selectedSection == 'outfits') {
+            $query = $user->outfits()->where('visibility', 'Public');
+            $koleksiPakaian = $query->get();
+        }
+
+        return view('profileuser', compact(
+            'user',
+            'sections',
+            'categories',
+            'selectedSection',
+            'selectedCategory',
+            'koleksiPakaian'
+        ));
     }
 }

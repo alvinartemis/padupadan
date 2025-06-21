@@ -13,12 +13,6 @@ use Carbon\Carbon;
 
 class ChatController extends Controller
 {
-    /**
-     * Menampilkan halaman index chat, berisi daftar chat terakhir dan daftar stylist.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
-
     public function index()
     {
         $user = Auth::user();
@@ -33,12 +27,13 @@ class ChatController extends Controller
 
         foreach ($stylistsWithChats as $stylistId) {
             $stylist = Stylist::findOrFail($stylistId);
+
             $lastMessage = Pesan::where(function ($query) use ($user, $stylist) {
                 $query->where('idPengguna', $user->idPengguna)
-                    ->where('idStylist', $stylist->idStylist);
+                      ->where('idStylist', $stylist->idStylist);
             })->orWhere(function ($query) use ($user, $stylist) {
                 $query->where('idPengguna', $stylist->idStylist)
-                    ->where('idStylist', $user->idPengguna);
+                      ->where('idStylist', $user->idPengguna);
             })
                 ->orderBy('waktukirim', 'desc')
                 ->first();
@@ -65,58 +60,40 @@ class ChatController extends Controller
         return view('chat.index', compact('recentChats', 'stylists'));
     }
 
-    /**
-     * Menampilkan daftar semua stylist.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
     public function getStylists()
     {
         $stylists = Stylist::all();
         return view('chat.liststylist', compact('stylists'));
     }
 
-    /**
-     * Menampilkan halaman profil stylist.
-     *
-     * @param  \App\Models\Stylist  $stylist
-     * @return \Illuminate\Contracts\View\View
-     */
     public function showChatWithStylist(Stylist $stylist)
     {
         $user = Auth::user();
 
         $messages = Pesan::where(function ($query) use ($user, $stylist) {
             $query->where('idPengguna', $user->idPengguna)
-                ->where('idStylist', $stylist->idStylist);
+                  ->where('idStylist', $stylist->idStylist);
         })->orWhere(function ($query) use ($user, $stylist) {
             $query->where('idPengguna', $stylist->idStylist)
-                ->where('idStylist', $user->idPengguna);
+                  ->where('idStylist', $user->idPengguna);
         })
             ->orderBy('waktukirim', 'asc')
             ->get();
 
-        return view('chat.show', compact('stylist', 'messages'));
+        $updatedRows = Pesan::where('idPengguna', $stylist->idStylist)
+            ->where('idStylist', $user->idPengguna)
+            ->where('statusBacaPengguna', 0)
+            ->update(['statusBacaPengguna' => 1]);
+
+        $loggedInUserId = $user->idPengguna;
+        return view('chat.show', compact('stylist', 'messages', 'loggedInUserId'));
     }
 
-    /**
-     * Menampilkan halaman profil stylist.
-     *
-     * @param  \App\Models\Stylist  $stylist
-     * @return \Illuminate\Contracts\View\View
-     */
     public function showProfileStylist(Stylist $stylist)
     {
         return view('chat.profilestylist', compact('stylist'));
     }
 
-    /**
-     * Mengirim pesan dari pengguna ke stylist.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Stylist  $stylist
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function sendMessage(Request $request, Stylist $stylist)
     {
         $request->validate([
@@ -137,50 +114,39 @@ class ChatController extends Controller
             'waktukirim' => Carbon::now(),
             'statusBacaPengguna' => 1,
             'statusBacaStylist' => 0,
+            'sender_type' => 'user',
         ]);
 
         return redirect()->route('chat.show', $stylist);
     }
 
-    /**
-     * Mendapatkan daftar pesan antara pengguna dan stylist.
-     *
-     * @param  \App\Models\Stylist  $stylist
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function getMessages(Stylist $stylist)
     {
         $user = Auth::user();
-
         $messages = Pesan::where(function ($query) use ($user, $stylist) {
             $query->where('idPengguna', $user->idPengguna)
-                ->where('idStylist', $stylist->idStylist);
+                  ->where('idStylist', $stylist->idStylist);
         })->orWhere(function ($query) use ($user, $stylist) {
             $query->where('idPengguna', $stylist->idStylist)
-                ->where('idStylist', $user->idPengguna);
+                  ->where('idStylist', $user->idPengguna);
         })
             ->orderBy('waktukirim', 'asc')
             ->get();
-
-        return view('chat.listmessage', compact('messages'));
+        $loggedInUserId = $user->idPengguna;
+        return view('chat.listmessage', compact('messages','loggedInUserId'))->render();
     }
 
-    /**
-     * Menandai pesan sebagai sudah dibaca oleh pengguna.
-     *
-     * @param  \App\Models\Pesan  $pesan
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function markAsRead(Pesan $pesan)
     {
-        if ($pesan->idStylist == Auth::id() && $pesan->statusBacaStylist == 0) {
-            $pesan->update(['statusBacaStylist' => 1]);
-            return response()->json(['success' => true]);
-        } elseif ($pesan->idPengguna == Auth::id() && $pesan->statusBacaPengguna == 0) {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        if ($pesan->idStylist == $user->idPengguna && $pesan->statusBacaPengguna == 0) {
             $pesan->update(['statusBacaPengguna' => 1]);
             return response()->json(['success' => true]);
         }
 
-        return response()->json(['success' => false, 'message' => 'Pesan tidak dapat ditandai sebagai dibaca.'], 400);
+        return response()->json(['success' => false, 'message' => 'Pesan tidak dapat ditandai sebagai dibaca atau sudah dibaca.'], 400);
     }
 }

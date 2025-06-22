@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Stylist;
+use App\Models\Lookbook;
 
 class StylistAuthController extends Controller
 {
@@ -44,8 +45,13 @@ class StylistAuthController extends Controller
      */
     public function dashboard()
     {
+        if (!Auth::guard('stylist')->check()) {
+            return redirect()->route('stylist.login');
+        }
+
         $stylist = Auth::guard('stylist')->user();
-        $lookbooks = [];
+        $lookbooks = Lookbook::where('idStylist', $stylist->idStylist)->get();
+
         return view('homestylist', compact('stylist', 'lookbooks'));
     }
 

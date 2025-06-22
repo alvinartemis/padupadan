@@ -1,163 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Padu Padan')</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@extends('layouts.stylist')
+@section('title', 'Stylist Profile - Padu Padan')
+@section('content')
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #f4f4f4;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 10;
-            align-items: flex-start;
-        }
-
-        .sidebar .logo {
-            margin-bottom: 30px;
-        }
-
-        .sidebar .logo img {
-            height: 40px;
-            width: auto;
-        }
-
-        .sidebar nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-
-        .sidebar nav ul li {
-            margin-bottom: 15px;
-        }
-
-        .sidebar nav ul li a {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #A3A3A3;
-            font-weight: 500;
-            padding: 10px 15px;
-            border-radius: 8px;
-            transition: background-color 0.2s ease;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .sidebar nav ul li a:hover,
-        .sidebar nav ul li a.active {
-            color: #173F63;
-        }
-
-        .sidebar nav ul li a svg {
-            margin-right: 15px;
-            width: 20px;
-            height: 20px;
-            color: #A3A3A3;
-        }
-
-        .sidebar nav ul li a.active svg {
-            color: #173F63;
-        }
-
-        /* --- Main Content Area --- */
         .content-area {
-            flex-grow: 1;
-            padding: 20px;
-            margin-left: 250px; /* Offset for the fixed sidebar */
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Center the content box */
-            justify-content: center; /* Center the content box vertically */
+            align-items: center;
+            justify-content: flex-start;
+            padding: 40px 20px;
+            margin-left: 250px;
+            box-sizing: border-box;
+            width: calc(100% - 250px);
+            box-shadow: none;
+            border-radius: 0;
+            padding-top: 40px;
+            padding-bottom: 40px;
         }
 
         .content {
-            background-color: #fff;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            max-width: 700px; /* Set max-width for the content box */
-            width: 100%; /* Ensure it takes full width up to max-width */
-            padding: 30px; /* Consistent padding */
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column; /* Stack sections vertically */
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            max-width: none !important;
+            width: 100% !important;
+            display: block !important;
         }
 
-        /* --- Profile Header Section --- */
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 30px;
-        }
-        /* New styles for 1:2 layout */
+
         .profile-container {
             display: flex;
             width: 100%;
+            max-width: 960px;
             margin-bottom: 30px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 30px;
-            gap: 30px; /* Space between the two columns */
+            border-bottom: none;
+            gap: 40px;
+            align-items: flex-start;
+            box-sizing: border-box;
         }
 
         .profile-left {
-            flex: 1; /* Takes 1 part of the available space */
+            flex: 0 0 auto;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             text-align: center;
         }
 
         .profile-right {
-            flex: 2; /* Takes 2 parts of the available space */
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
-            /* Adjustments for alignment */
-            justify-content: flex-start; /* Align content to the top */
-            align-items: flex-start; /* Align content to the left */
+            justify-content: flex-start;
+            align-items: flex-start;
         }
 
         .profile-picture {
-            width: 180px; /* Increased size */
-            height: 180px; /* Increased size */
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 20px; /* Space below image */
+            margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .profile-text-info {
-            /* flex-grow: 1; */ /* Removed as it's now within profile-right */
-            text-align: left; /* Align text to the left */
-            margin-bottom: 20px; /* Add some space below this section */
-            width: 100%; /* Ensure it takes full width for alignment */
+            text-align: left;
+            margin-bottom: 30px;
+            width: 100%;
         }
 
         .profile-name {
             margin-top: 0;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #333;
             font-weight: 600;
             font-size: 1.8rem;
@@ -165,7 +81,7 @@
 
         .profile-username {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: #777;
             font-size: 1rem;
         }
@@ -175,37 +91,42 @@
             margin-bottom: 0;
             color: #555;
             font-size: 1.2rem;
+            line-height: 1.4;
         }
 
-        /* --- Profile Info Grid Section --- */
         .profile-info-grid {
             display: flex;
-            justify-content: flex-start; /* Align items to the left */
-            flex-wrap: wrap; /* Keep wrap for responsiveness if needed */
+            flex-wrap: wrap;
             margin-bottom: 40px;
-            padding-bottom: 20px;
+            padding-bottom: 25px;
             border-bottom: 1px solid #eee;
-            width: 100%; /* Ensure it takes full width for alignment */
+            width: 100%;
+            gap: 50px;
+            row-gap: 20px;
         }
 
         .profile-info-item {
             display: flex;
-            align-items: center;
-            margin: 10px 15px 10px 0; /* Adjust margin-left for alignment */
-            gap: 8px;
+            align-items: flex-start;
+            margin: 0;
+            gap: 12px;
+            white-space: nowrap;
         }
-
         .profile-info-item img {
             width: 24px;
             height: 24px;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
-
+        .profile-info-item div {
+            display: flex;
+            flex-direction: column;
+        }
         .profile-info-item div p:first-child {
             margin: 0;
             font-size: 0.85rem;
             color: #777;
         }
-
         .profile-info-item div p:last-child {
             margin: 2px 0 0 0;
             font-weight: 600;
@@ -213,32 +134,19 @@
             font-size: 0.9rem;
         }
 
-        /* --- Lookbook Section --- */
         .lookbook-section {
             padding: 0;
-            border-right: none;
-            width: 100%; /* Ensure it takes full width within the content area */
+            width: 100%;
         }
 
         .lookbook-section h3 {
-            font-size: 1.3rem;
-            color: #333;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        .lookbook-section h3 img {
-            width: 24px;
-            height: 24px;
-            margin-right: 8px;
+            margin-bottom: 25px;
+            font-size: 1.4rem;
         }
 
         .lookbook-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
         }
 
@@ -246,69 +154,79 @@
             text-align: center;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             background-color: #fff;
             padding-bottom: 0;
+            transition: transform 0.2s ease-in-out;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
         }
-
-        .lookbook-card a {
-            text-decoration: none;
-            color: inherit;
+        .lookbook-card:hover {
+            transform: translateY(-5px);
         }
 
         .lookbook-card img {
             width: 100%;
-            height: auto;
+            height: max-content;
             object-fit: cover;
             display: block;
-            border-bottom: none;
             margin-bottom: 0;
         }
 
         .lookbook-card h4 {
-            margin-top: 8px;
-            margin-bottom: 0;
-            font-size: 0.9rem;
-            color: #555;
-            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #333;
+            padding: 0 10px;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* --- Logout Button --- */
         .logout-container {
             display: flex;
             justify-content: center;
             margin-top: 30px;
+            width: 100%;
         }
         .logout-button {
-            background-color: #FF4B5C;
-            color: white;
+            background-color: #FFFFFF;
+            color: #081B2C;
             padding: 10px 20px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: background-color 0.3s ease;
+            width: auto;
+            min-width: 120px;
+            justify-content: center;
         }
         .logout-button:hover {
             background-color: #E03F4F;
         }
 
-        /* --- Modal Styles --- */
         .modal-overlay {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+            background-color: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
-            z-index: 1000; /* On top of everything */
+            z-index: 1000;
         }
 
         .modal-content {
@@ -346,123 +264,90 @@
         }
 
         .modal-button.yes {
-            background-color: #FFD700; /* Yellow background */
-            color: #333; /* Dark text */
+            background-color: #F4F4F4;
+            color: #0C2A42;
         }
 
         .modal-button.yes:hover {
-            background-color: #E6C200; /* Darker yellow on hover */
+            background-color: #F4BC43;
+            color: #F4F4F4;
         }
 
         .modal-button.no {
-            background-color: #e0e0e0;
-            color: #333;
+            background-color: #F4F4F4;
+            color: #0C2A42;
         }
 
         .modal-button.no:hover {
-            background-color: #d0d0d0;
+            background-color: #F4BC43;
+            color: #F4F4F4;
         }
     </style>
-</head>
-<body>
-    <div class="sidebar">
-        <div class="logo">
-            <img src="{{ asset('img/logoy.png') }}" alt="Logo Padu Padan">
-        </div>
-        <nav>
-            <ul>
-                <li>
-                    <a href="{{ url('/homestylist') }}" class="active">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464l349.5 0c-8.9-63.3-63.3-112-129-112l-91.4 0c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3z"/></svg>
-                        Profile
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                        </svg>
-                        Lookbook
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('chat.indexstylist')}}">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M123.6 391.3c12.9-9.4 29.6-11.8 44.6-6.4c26.5 9.6 56.2 15.1 87.8 15.1c124.7 0 208-80.5 208-160s-83.3-160-208-160S48 160.5 48 240c0 32 12.4 62.8 35.7 89.2c8.6 9.7 12.8 22.5 11.8 35.5c-1.4 18.1-5.7 34.7-11.3 49.4c17-7.9 31.1-16.7 39.4-22.7zM21.2 431.9c1.8-2.7 3.5-5.4 5.1-8.1c10-16.6 19.5-38.4 21.4-62.9C17.7 326.8 0 285.1 0 240C0 125.1 114.6 32 256 32s256 93.1 256 208s-114.6 208-256 208c-37.1 0-72.3-6.4-104.1-17.9c-11.9 8.7-31.3 20.6-54.3 30.6c-15.1 6.6-32.3 12.6-50.1 16.1c-.8 .2-1.6 .3-2.4 .5c-4.4 .8-8.7 1.5-13.2 1.9c-.2 0-.5 .1-.7 .1c-5.1 .5-10.2 .8-15.3 .8c-6.5 0-12.3-3.9-14.8-9.9c-2.5-6-1.1-12.8 3.4-17.4c4.1-4.2 7.8-8.7 11.3-13.5c1.7-2.3 3.3-4.6 4.8-6.9l.3-.5z"/></svg>
-                        Chat
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-
-    <div class="content-area">
-        @if($stylist)
-            <div class="profile-container">
-                <div class="profile-left">
-                    <img src="{{ asset('stylist/' . $stylist->profilepicture) }}" alt="{{ $stylist->nama }}" class="profile-picture">
-                    <div class="logout-container">
-                        {{-- Change the form submission to a button that triggers the modal --}}
-                        <button type="button" class="logout-button" id="logoutTrigger">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H5a3 3 0 01-3-3v-5m14-12V7a3 3 0 00-3-3H5a3 3 0 00-3 3v5" />
-                            </svg>
-                            Logout
-                        </button>
+    @if($stylist)
+        <div class="profile-container">
+            <div class="profile-left">
+                <img src="{{ asset('stylist/' . $stylist->profilepicture) }}" alt="{{ $stylist->nama }}" class="profile-picture">
+                <div class="logout-container">
+                    <button type="button" class="logout-button" id="logoutTrigger">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+            <div class="profile-right">
+                <div class="profile-text-info">
+                    <h2 class="profile-name">{{ $stylist->nama }}</h2>
+                    <p class="profile-username">@ {{ $stylist->username }}</p>
+                    <p class="profile-role">{{ $stylist->job }}</p>
+                </div>
+                <div class="profile-info-grid">
+                    <div class="profile-info-item">
+                        <img src="{{ asset('img/spe.png') }}" alt="Speciality Icon">
+                        <div>
+                            <p>Speciality</p>
+                            <p>{{ $stylist->speciality }}</p>
+                        </div>
+                    </div>
+                    <div class="profile-info-item">
+                        <img src="{{ asset('img/loc.png') }}" alt="Location Icon">
+                        <div>
+                            <p>Location</p>
+                            <p>{{ $stylist->location }}</p>
+                        </div>
+                    </div>
+                    <div class="profile-info-item">
+                        <img src="{{ asset('img/gen.png') }}" alt="Gender Icon">
+                        <div>
+                            <p>Gender</p>
+                            <p>{{ $stylist->gender }}</p>
+                        </div>
                     </div>
                 </div>
-                <div class="profile-right">
-                    <div class="profile-text-info">
-                        <h2 class="profile-name">{{ $stylist->nama }}</h2>
-                        <p class="profile-username">@ {{ $stylist->username }}</p>
-                        <p class="profile-role">{{ $stylist->job }}</p>
-                    </div>
-                    <div class="profile-info-grid">
-                        <div class="profile-info-item">
-                            <img src="{{ asset('img/spe.png') }}" alt="Speciality Icon">
-                            <div>
-                                <p>Speciality</p>
-                                <p>{{ $stylist->speciality }}</p>
+                <div class="lookbook-section">
+                    <h3>
+                        <img src="{{ asset('img/lb.png') }}" alt="Lookbook Icon">
+                        Lookbook
+                    </h3>
+                    <div class="lookbook-grid">
+                        @forelse($lookbooks as $lookbook)
+                            <div class="lookbook-card">
+                                {{-- PASTIKAN INI BENAR: $lookbook->imgLookbook dan $lookbook->nama --}}
+                                <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}">
+                                    <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}">
+                                    <h4>{{ $lookbook->nama }}</h4>
+                                </a>
                             </div>
-                        </div>
-                        <div class="profile-info-item">
-                            <img src="{{ asset('img/loc.png') }}" alt="Location Icon">
-                            <div>
-                                <p>Location</p>
-                                <p>{{ $stylist->location }}</p>
-                            </div>
-                        </div>
-                        <div class="profile-info-item">
-                            <img src="{{ asset('img/gen.png') }}" alt="Gender Icon">
-                            <div>
-                                <p>Gender</p>
-                                <p>{{ $stylist->gender }}</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lookbook-section">
-                        <h3>
-                            <img src="{{ asset('img/lb.png') }}" alt="Lookbook Icon">
-                            Lookbook
-                        </h3>
-                        <div class="lookbook-grid">
-                            @forelse($lookbooks as $lookbook)
-                                <div class="lookbook-card">
-                                    <a href="{{ url('/lookbook/' . $lookbook->idLookbook) }}">
-                                        <img src="{{ asset('storage/' . $lookbook->image_path) }}" alt="{{ $lookbook->title }}">
-                                        <h4>{{ $lookbook->title }}</h4>
-                                    </a>
-                                </div>
-                            @empty
-                                <p>No lookbook items found for this stylist.</p>
-                            @endforelse
-                        </div>
+                        @empty
+                            {{-- Jika ini yang muncul, berarti $lookbooks memang kosong --}}
+                            <p>No lookbook items found for this stylist.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
-        @else
-            <p>Stylist data not found.</p>
-        @endif
-    </div>
+        </div>
+    @else
+        <p>Stylist data not found.</p>
+    @endif
 
     <div class="modal-overlay" id="logoutModal">
         <div class="modal-content">
@@ -474,8 +359,9 @@
         </div>
     </div>
 
-    @stack('scripts')
+@endsection
 
+@push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const logoutTrigger = document.getElementById('logoutTrigger');
@@ -483,42 +369,44 @@
             const confirmLogoutButton = document.getElementById('confirmLogout');
             const cancelLogoutButton = document.getElementById('cancelLogout');
 
-            logoutTrigger.addEventListener('click', function() {
-                logoutModal.style.display = 'flex'; // Show the modal overlay
-            });
+            if (logoutTrigger) {
+                logoutTrigger.addEventListener('click', function() {
+                    logoutModal.style.display = 'flex';
+                });
+            }
 
-            cancelLogoutButton.addEventListener('click', function() {
-                logoutModal.style.display = 'none'; // Hide the modal overlay
-            });
-
-            confirmLogoutButton.addEventListener('click', function() {
-                // If "Yes" is clicked, submit the logout form
-                const logoutForm = document.createElement('form');
-                logoutForm.action = "{{ route('stylist.logout') }}";
-                logoutForm.method = "POST";
-                logoutForm.style.display = "none"; // Hide the form
-
-                // Add CSRF token for Laravel
-                const csrfToken = document.querySelector('meta[name="csrf-token"]') || { content: '' }; // Fallback
-                const csrfInput = document.createElement('input');
-                csrfInput.type = 'hidden';
-                csrfInput.name = '_token';
-                csrfInput.value = csrfToken.content; // Assuming you have a meta tag for CSRF token
-                logoutForm.appendChild(csrfInput);
-
-
-                // Append the form to the body and submit it
-                document.body.appendChild(logoutForm);
-                logoutForm.submit();
-            });
-
-            // Optional: Close modal if user clicks outside the modal content
-            logoutModal.addEventListener('click', function(event) {
-                if (event.target === logoutModal) {
+            if (cancelLogoutButton) {
+                cancelLogoutButton.addEventListener('click', function() {
                     logoutModal.style.display = 'none';
-                }
-            });
+                });
+            }
+
+            if (confirmLogoutButton) {
+                confirmLogoutButton.addEventListener('click', function() {
+                    const logoutForm = document.createElement('form');
+                    logoutForm.action = "{{ route('stylist.logout') }}";
+                    logoutForm.method = "POST";
+                    logoutForm.style.display = "none";
+
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]') || { content: '' };
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = csrfToken.content;
+                    logoutForm.appendChild(csrfInput);
+
+                    document.body.appendChild(logoutForm);
+                    logoutForm.submit();
+                });
+            }
+
+            if (logoutModal) {
+                logoutModal.addEventListener('click', function(event) {
+                    if (event.target === logoutModal) {
+                        logoutModal.style.display = 'none';
+                    }
+                });
+            }
         });
     </script>
-</body>
-</html>
+@endpush

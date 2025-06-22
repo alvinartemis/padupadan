@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
-use App\Models\ItemFashion;
 use App\Models\KoleksiPakaian;
+use App\Models\ItemFashion;
 
 class ChatStylistController extends Controller
 {
@@ -94,11 +94,27 @@ class ChatStylistController extends Controller
         return view('chat.showstylist', compact('user', 'messages', 'loggedInStylistId'));
     }
 
-    public function showProfileUser(User $user)
+    public function showProfileUser(Request $request, User $user)
     {
-        return view('chat.profileuser', compact('user'));
-    }
+        $koleksiOutfits = $user->koleksiPakaian()
+                               ->where('visibility', 'Public')
+                               ->get();
+        $sections = ['items', 'outfits'];
+        $categories = [
+            'All', 'Top', 'Bottom', 'Outerwear', 'Dress', 'Accessories', 'Footwear'
+        ];
+        $selectedSection = 'outfits';
+        $selectedCategory = 'All';
 
+        return view('chat.profileuser', compact(
+            'user',
+            'sections',
+            'categories',
+            'selectedSection',
+            'selectedCategory',
+            'koleksiOutfits'
+        ));
+    }
 
     public function sendMessage(Request $request, User $user)
     {
@@ -161,41 +177,5 @@ class ChatStylistController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Pesan tidak dapat ditandai sebagai dibaca atau sudah dibaca.'], 400);
-    }
-
-    public function showUserProfile(Request $request, User $user)
-    {
-
-        $sections = ['items', 'outfits'];
-        $categories = [
-            'All', 'Top', 'Bottom', 'Outerwear', 'Dress', 'Accessories', 'Footwear'
-        ];
-
-        $selectedSection = $request->query('section', 'items');
-        $selectedCategory = $request->query('category', 'All');
-
-        $koleksiPakaian = collect();
-
-        if ($selectedSection == 'items') {
-            $query = $user->koleksiPakaian()->where('visibility', 'Public');
-
-            if ($selectedCategory != 'All') {
-                $query->where('kategori', $selectedCategory);
-            }
-            $koleksiPakaian = $query->get();
-
-        } elseif ($selectedSection == 'outfits') {
-            $query = $user->outfits()->where('visibility', 'Public');
-            $koleksiPakaian = $query->get();
-        }
-
-        return view('profileuser', compact(
-            'user',
-            'sections',
-            'categories',
-            'selectedSection',
-            'selectedCategory',
-            'koleksiPakaian'
-        ));
     }
 }

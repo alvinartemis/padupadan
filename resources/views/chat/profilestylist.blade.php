@@ -53,25 +53,22 @@
                 <img src="{{ asset('img/lb.png') }}" alt="Lookbook Icon" style="width: 24px; height: 24px; margin-right: 8px;">
                 Lookbook
             </h3>
-            {{--tolong tambahin buat ke link sama hasil up lookbooknya ya--}}
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                <div style="text-align: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);">
-                    <img src="https://placehold.co/150x150/e0f7fa/007bff?text=Outfit+1" alt="Outfit 1" style="width: 100%; height: auto; display: block;">
-                    <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.9rem; color: #555;">Playful Fits</p>
+            @if($lookbooks->count() > 0)
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    @foreach($lookbooks as $lookbook)
+                        <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" style="text-decoration: none; color: inherit;">
+                            <div style="text-align: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); background-color: #f9f9f9;">
+                                <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}" style="width: 100%; height: 150px; object-fit: cover; display: block;">
+                                <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.9rem; color: #555;">{{ $lookbook->nama }}</p>
+                            </div>
+                        </a>
+                    @endforeach
                 </div>
-                <div style="text-align: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);">
-                    <img src="https://placehold.co/150x150/e0f7fa/007bff?text=Outfit+2" alt="Outfit 2" style="width: 100%; height: auto; display: block;">
-                    <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.9rem; color: #555;">College fits</p>
+            @else
+                <div style="text-align: center; padding: 20px; color: #777; font-style: italic;">
+                    <p>Stylist ini belum mengunggah lookbook.</p>
                 </div>
-                <div style="text-align: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);">
-                    <img src="https://placehold.co/150x150/e0f7fa/007bff?text=Outfit+3" alt="Outfit 3" style="width: 100%; height: auto; display: block;">
-                    <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.9rem; color: #555;">Summer outfits</p>
-                </div>
-                <div style="text-align: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);">
-                    <img src="https://placehold.co/150x150/e0f7fa/007bff?text=Outfit+4" alt="Outfit 4" style="width: 100%; height: auto; display: block;">
-                    <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.9rem; color: #555;">Basic Fits</p>
-                </div>
-            </div>
+            @endif
         </div>
     </div>
 @endsection

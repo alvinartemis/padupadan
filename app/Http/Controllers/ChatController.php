@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use App\Models\Lookbook;
 
 class ChatController extends Controller
 {
@@ -91,7 +92,11 @@ class ChatController extends Controller
 
     public function showProfileStylist(Stylist $stylist)
     {
-        return view('chat.profilestylist', compact('stylist'));
+        $lookbooks = Lookbook::where('idStylist', $stylist->idStylist)
+                             ->orderBy('created_at', 'desc')
+                             ->get();
+
+        return view('chat.profilestylist', compact('stylist', 'lookbooks'));
     }
 
     public function sendMessage(Request $request, Stylist $stylist)

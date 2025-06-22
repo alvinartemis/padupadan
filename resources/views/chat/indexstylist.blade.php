@@ -1,4 +1,4 @@
-@extends('layouts.stylist') {{-- Pastikan ini mengarah ke layout yang benar untuk stylist --}}
+@extends('layouts.stylist')
 
 @section('content')
     <div style="background-color: #f4f4f4; padding: 20px; border-radius: 8px;">
@@ -8,12 +8,12 @@
             <div style="margin-bottom: 20px;">
                 @foreach ($recentChats as $chat)
                     <div style="background-color: white; border-radius: 8px; margin-bottom: 10px; padding: 10px;">
-                        {{-- Link ke halaman chat spesifik dengan user --}}
-                        {{-- Memanggil rute 'chat.showstylist' dan melewatkan ID user --}}
-                        <a href="{{ route('chat.showstylist', ['user' => $chat['user']->idPengguna]) }}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
+                        <a href="{{ route('chat.profileuser', ['user' => $chat['user']->idPengguna]) }}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
                             <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin-right: 15px;">
                                 <img src="{{ asset('user/' . $chat['user']->profilepicture) }}" alt="{{ $chat['user']->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
+                        </a>
+                        <a href="{{ route('chat.showstylist', ['user' => $chat['user']->idPengguna]) }}" style="display: flex; align-items: center; text-decoration: none; color: #333;">
                             <div style="flex-grow: 1;">
                                 <div style="font-weight: 600;">{{ $chat['user']->nama }}</div>
                                 <div style="font-size: 0.9rem; color: #777;">{{ Str::limit(optional($chat['last_message'])->isiPesan ?? '', 50) }}</div>
@@ -33,7 +33,6 @@
         @endif
 
         <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Users Available to Chat</h2>
-        {{-- Memasukkan view listusers dan melewatkan variabel $usersToChat --}}
         @include('chat.listusers', ['usersToChat' => $usersToChat])
     </div>
 @endsection

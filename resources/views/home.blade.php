@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        /* ... (CSS yang sudah ada, sama persis seperti home.blade.php sebelumnya) ... */
+        /* ... (CSS Anda, tidak ada perubahan di sini) ... */
         html, body {
             margin: 0;
             padding: 0;
@@ -709,7 +709,7 @@
                 <button class="close-button" id="closeComments">&times;</button>
             </div>
             <div class="comments-list">
-            </div>
+                </div>
             <div class="comment-input-area">
                 <input type="text" id="commentInput" placeholder="Add comment...">
                 <button class="send-button" id="sendCommentButton">
@@ -823,7 +823,7 @@
                 commentsList.innerHTML = ''; // Bersihkan komentar yang ada
 
                 if (comments.length === 0) {
-                    commentsList.innerHTML = '<p style="text-align: center; color: #888;">Belum ada komentar.</p>';
+                    commentsList.innerHTML = '<p id="noCommentsMessage" style="text-align: center; color: #888;">Belum ada komentar.</p>';
                     console.log("DEBUG: Array komentar kosong, menampilkan pesan 'Belum ada komentar'.");
                     console.log("DEBUG: --- loadComments selesai (array kosong) ---");
                     return;
@@ -835,9 +835,8 @@
                     commentItem.classList.add('comment-item');
 
                     const displayAuthor = comment.author || 'Anonim';
-                    // >>> PERBAIKAN URL AVATAR UNTUK FALLBACK LOKAL <<<
-                    const displayAvatar = comment.avatar || '{{ asset('images/default_avatar.jpg') }}'; // Ganti dengan asset lokal Anda
-                    // >>> AKHIR PERBAIKAN <<<
+                    // Menggunakan asset lokal untuk default avatar
+                    const displayAvatar = comment.avatar || '{{ asset('images/default_avatar.jpg') }}';
 
                     commentItem.innerHTML = `
                         <img src="${displayAvatar}" alt="${displayAuthor}" class="avatar">
@@ -868,7 +867,7 @@
                     likeCountSpan.textContent = '0';
                     commentCountSpan.textContent = '0';
                     commentsHeaderCount.textContent = 'Comments (0)';
-                    commentsList.innerHTML = '<p style="text-align: center; color: #888;">Tidak ada komentar.</p>';
+                    commentsList.innerHTML = '<p id="noCommentsMessage" style="text-align: center; color: #888;">Tidak ada komentar.</p>';
                     return;
                 }
 
@@ -908,11 +907,11 @@
                         loadVideo(currentVideoIndex);
                     } else {
                         console.warn("Tidak ada video yang ditemukan dari database atau API mengembalikan array kosong.");
-                        loadVideo(0);
+                        loadVideo(0); // Panggil loadVideo dengan index 0 untuk menampilkan pesan "Tidak Ada Video"
                     }
                 } catch (error) {
                     console.error("Error fetching videos:", error);
-                    loadVideo(0);
+                    loadVideo(0); // Panggil loadVideo dengan index 0 untuk menampilkan pesan "Tidak Ada Video"
                 }
             }
 
@@ -983,39 +982,42 @@
                             video_id: videoId,
                             comment: commentText,
                             // Anda mungkin perlu mengirim idPengguna dari sesi atau autentikasi Laravel
-                            // For demonstration, let's assume current user is ID 1 for now
-                            // user_id: {{ auth()->id() ?? '1' }} // Placeholder if user is logged in
-                            // Anda juga bisa mengirim data user_id jika ada di JS
+                            // Untuk demo, asumsikan user saat ini adalah 'Anda'
+                            // user_id: {{ Auth::check() ? Auth::id() : 'null' }} // Gunakan Auth::id() jika ada
                         })
                     });
                     const data = await response.json();
 
                     if (response.ok && data.success) {
-                        // Create a new comment item
+                        // Hapus pesan "Belum ada komentar." jika ada
+                        const noCommentsMessage = document.getElementById('noCommentsMessage');
+                        if (noCommentsMessage) {
+                            noCommentsMessage.remove();
+                        }
+
+                        // Buat elemen komentar baru
                         const newCommentItem = document.createElement('div');
                         newCommentItem.classList.add('comment-item');
-                        // >>> PERBAIKAN URL AVATAR UNTUK KOMENTAR BARU <<<
                         newCommentItem.innerHTML = `
-                            <img src="{{ asset('images/default_avatar.jpg') }}" alt="Anda" class="avatar">
+                            <img src="{{ Auth::check() && Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default_avatar.jpg') }}" alt="Anda" class="avatar">
                             <div class="comment-text-wrapper">
                                 <div class="comment-meta-info">
-                                    <div class="comment-author">Anda</div>
+                                    <div class="comment-author">{{ Auth::check() ? Auth::user()->name : 'Anda' }}</div>
                                     <div class="comment-time">Baru Saja</div>
                                 </div>
                                 <div class="comment-message">${commentText}</div>
                             </div>
                         `;
-                        // >>> AKHIR PERBAIKAN <<<
-                        commentsList.prepend(newCommentItem); // Add to the top of the list
+                        commentsList.prepend(newCommentItem); // Tambahkan ke atas daftar
 
-                        // Update comments count in UI and local data
+                        // Perbarui jumlah komentar di UI dan data lokal
                         videos[currentVideoIndex].comments_count = parseInt(videos[currentVideoIndex].comments_count) || 0;
                         videos[currentVideoIndex].comments_count++;
                         commentsHeaderCount.textContent = `Comments (${videos[currentVideoIndex].comments_count})`;
                         commentCountSpan.textContent = videos[currentVideoIndex].comments_count;
 
-                        commentInput.value = '';
-                        commentsList.scrollTop = 0;
+                        commentInput.value = ''; // Kosongkan input
+                        commentsList.scrollTop = 0; // Gulir ke atas daftar komentar
                     } else {
                         alert('Gagal mengirim komentar: ' + (data.message || 'Unknown error'));
                         console.error('Comment submission error:', data);

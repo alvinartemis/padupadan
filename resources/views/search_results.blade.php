@@ -98,6 +98,7 @@
             flex-grow: 1;
             padding: 30px;
             box-sizing: border-box;
+            margin-left: 250px;
         }
         .search-results-grid {
             display: grid;

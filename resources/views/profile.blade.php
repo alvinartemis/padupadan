@@ -43,20 +43,25 @@
             width: 100%;
             max-width: 900px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+            flex-direction: row; /* UBAH: Susun elemen secara horizontal */
+            align-items: center; /* Perataan vertikal di tengah */
+            justify-content: flex-start; /* Elemen mulai dari kiri */
+            text-align: left; /* Teks di dalamnya rata kiri */
             margin-bottom: 30px;
+            gap: 30px;
         }
 
         .profile-avatar img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #fff;
+            width: 120px; /* Pastikan div pembungkusnya persegi */
+            height: 120px; /* Pastikan div pembungkusnya persegi */
+            border-radius: 50%; /* Terapkan border-radius pada div pembungkus */
+            overflow: hidden; /* Penting: menyembunyikan bagian gambar di luar lingkaran */
+            border: 4px solid #fff; /* Border putih */
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            display: flex; /* Tambahkan display:flex agar img bisa di-center atau mengisi penuh */
+            justify-content: center; /* Opsional: untuk memastikan img di tengah div */
+            align-items: center;
         }
 
         .profile-info h1 {

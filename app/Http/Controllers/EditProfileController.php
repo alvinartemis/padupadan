@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage; // Penting: Import fasad Storage
 use Illuminate\Validation\Rule;
 
@@ -83,9 +84,7 @@ class EditProfileController extends Controller
 
         // Jika password diisi di form, tambahkan ke payload update
         if (!empty($validatedData['password'])) {
-            // Asumsi model User/Pengguna Anda sudah memiliki $casts['password'] = 'hashed',
-            // sehingga hashing terjadi otomatis saat nilai baru diset dan disimpan.
-            $updatePayload['password'] = $validatedData['password'];
+            $updatePayload['password'] = Hash::make($validatedData['password']);
         }
 
         // Logika untuk upload foto profil

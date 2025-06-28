@@ -65,7 +65,6 @@ class User extends Authenticatable // Implementasikan MustVerifyEmail jika perlu
         'skintone',
         'style',
         'preferences',
-        'bio',
     ];
 
     /**

@@ -47,11 +47,17 @@ Route::middleware('auth:stylist')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/set-preference', [App\Http\Controllers\SetPreferenceController::class, 'index'])->name('set_preference.index');
-    Route::post('/set-preference', [App\Http\Controllers\SetPreferenceController::class, 'saveAll'])->name('set_preference.save_all');
-    Route::get('/quiz/countdown', [App\Http\Controllers\SetPreferenceController::class, 'showCountdown'])->name('set_preference.countdown');
-    Route::get('/set-preference/result', [App\Http\Controllers\SetPreferenceController::class, 'showResult'])->name('set_preference.result');
-    Route::post('/set-preference/complete', [App\Http\Controllers\SetPreferenceController::class, 'complete'])->name('set_preference.complete');
+    // Initial entry point for the quiz, redirects to the first step
+    Route::get('/set-preference', [SetPreferenceController::class, 'index'])->name('set_preference.start');
+
+    // Route for each quiz step (gender, bodytype, skintone, style)
+    Route::get('/set-preference/{step}', [SetPreferenceController::class, 'index'])->name('set_preference.index');
+    Route::post('/set-preference/{step}', [SetPreferenceController::class, 'saveStep'])->name('set_preference.save_step');
+
+    // Quiz Countdown and Result routes
+    Route::get('/quiz/countdown', [SetPreferenceController::class, 'showCountdown'])->name('set_preference.countdown');
+    Route::get('/set-preference/result', [SetPreferenceController::class, 'showResult'])->name('set_preference.result');
+    Route::post('/set-preference/complete', [SetPreferenceController::class, 'complete'])->name('set_preference.complete');
 });
 
 Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'])->name('profile.edit');

@@ -41,6 +41,8 @@
     </div>
 
     <div class="progress-container">
+        {{-- The progress-bar class needs to reflect current step's width or state --}}
+        {{-- You'll need CSS rules for .progress-bar.gender, .progress-bar.bodytype etc. --}}
         <div class="progress-bar {{ $step }}"></div>
     </div>
 
@@ -58,13 +60,20 @@
                         'female' => asset('img/female.png'),
                     ];
 
-                    $bodytypeIcons = [
+                    // Male body type images
+                    $maleBodytypeIcons = [
+                        'triangle'          => asset('img/triangle.png'), // Male Triangle
+                        'round'             => asset('img/round.png'),      // Male Round (instead of Oval, if round.png is that)
+                        'inverted_triangle' => asset('img/intri.png'), // Male Inverted Triangle (FIXED KEY)
+                        'rectangular'       => asset('img/mrec.png'),     // Male Rectangular
+                    ];
+
+                    // Female body type images (original names based on your image files)
+                    $femaleBodytypeIcons = [
                         'hourglass' => asset('img/hourglass.png'),
-                        'apple' => asset('img/apple.png'),
-                        'pear' => asset('img/pear.png'),
-                        'triangle' => asset('img/triangel.png'),
-                        'round' => asset('img/round.png'),
-                        'inverted_triangle' => asset('img/intri.png'),
+                        'apple'     => asset('img/apple.png'),
+                        'pear'      => asset('img/pear.png'),
+                        'rectangular' => asset('img/frec.png'), // Female Rectangular
                     ];
 
                     $skinColors = [
@@ -90,18 +99,17 @@
                             @elseif ($step === 'skintone')
                                 <img src="{{ $skinColors[$option] ?? 'https://placehold.co/64x64/cccccc/333333?text=Skin' }}" alt="{{ $labels[$key] }}" class="option-circle-image">
                             @elseif ($step === 'style')
-                               <img src="{{ $styleImages[$option] ?? 'https://placehold.co/64x64/cccccc/333333?text=Style' }}" alt="{{ $labels[$key] }}" class="option-circle-image">
+                                <img src="{{ $styleImages[$option] ?? 'https://placehold.co/64x64/cccccc/333333?text=Style' }}" alt="{{ $labels[$key] }}" class="option-circle-image">
                             @elseif ($step === 'bodytype')
                                 @php
                                     $isMale = session('quiz.gender') === 'male';
-                                    $bodytypeKey = strtolower(str_replace(' ', '_', $option));
+                                    $bodytypeKey = strtolower(str_replace(' ', '_', $option)); // Ensure key matches controller options
 
-                                    if ($bodytypeKey === 'rectangle') {
-                                        $icon = $isMale
-                                            ? asset('img/mrec.png')  // rectangle pria
-                                            : asset('img/frec.png'); // rectangle wanita
+                                    $icon = '';
+                                    if ($isMale) {
+                                        $icon = $maleBodytypeIcons[$bodytypeKey] ?? 'https://placehold.co/64x64/cccccc/333333?text=Male+Body';
                                     } else {
-                                        $icon = $bodytypeIcons[$bodytypeKey] ?? 'https://placehold.co/64x64/cccccc/333333?text=Body';
+                                        $icon = $femaleBodytypeIcons[$bodytypeKey] ?? 'https://placehold.co/64x64/cccccc/333333?text=Female+Body';
                                     }
                                 @endphp
                                 <img src="{{ $icon }}" alt="{{ $labels[$key] }}" class="option-circle-image">

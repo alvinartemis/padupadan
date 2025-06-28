@@ -3,22 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Pastikan Auth di-import
-// use Illuminate\Support\Facades\Hash; // Tidak wajib di sini jika model sudah pakai 'hashed' cast
-use Illuminate\Validation\Rule;     // Untuk aturan validasi yang lebih kompleks
-// use App\Models\User; // Tidak perlu import User jika menggunakan Auth::user() yang sudah merupakan instance model User
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage; // Penting: Import fasad Storage
+use Illuminate\Validation\Rule;
 
 class EditProfileController extends Controller
 {
+    /**
+     * Menampilkan halaman edit profil pengguna.
+     *
+     * @return \Illuminate\View\View
+     */
     public function editprofile()
     {
-        $user = Auth::user(); // Menggunakan fasad Auth
+        // Menggunakan fasad Auth untuk mendapatkan instance pengguna yang sedang login
+        $user = Auth::user();
         // Pastikan view ini ada di: resources/views/settings/editprofile.blade.php
         return view('settings.editprofile', compact('user'));
     }
 
+    /**
+     * Memperbarui informasi profil pengguna, termasuk foto profil.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update(Request $request)
     {
+        // Mendapatkan instance pengguna yang sedang login
         $user = Auth::user();
 
         // Definisikan opsi yang valid untuk validasi Rule::in()
@@ -28,6 +40,7 @@ class EditProfileController extends Controller
         $skinToneOptions = ['cool', 'warm', 'neutral', 'olive'];
         $fashionStyleOptions = ['casual', 'formal', 'unique', 'stylish', 'chic'];
 
+        // Validasi data yang masuk dari form
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'username' => [
@@ -35,6 +48,7 @@ class EditProfileController extends Controller
                 'string',
                 'max:255',
                 // Pastikan 'idPengguna' adalah nama primary key di tabel 'pengguna'
+                // Sesuaikan 'pengguna' dengan nama tabel aktual Anda jika berbeda (misal: 'users')
                 Rule::unique('pengguna', 'username')->ignore($user->idPengguna, 'idPengguna')
             ],
             'email' => [
@@ -44,48 +58,68 @@ class EditProfileController extends Controller
                 'max:255',
                 Rule::unique('pengguna', 'email')->ignore($user->idPengguna, 'idPengguna')
             ],
-            'password' => 'nullable|string|min:6|confirmed', // 'confirmed' akan memeriksa field 'password_confirmation'
+            // 'confirmed' akan memeriksa field 'password_confirmation'
+            'password' => 'nullable|string|min:6|confirmed',
             'gender' => ['nullable', 'string', Rule::in($genderOptions)],
             'body_type' => ['nullable', 'string', Rule::in($bodyTypeOptions)],
-            'skin_tone' => ['nullable', 'string', Rule::in($skinToneOptions)], // Nama input form adalah 'skin_tone'
-            'fashion_style' => ['nullable', 'string', Rule::in($fashionStyleOptions)], // Nama input form adalah 'fashion_style'
-            // Tambahkan validasi untuk 'profilepicture' jika Anda menambahkannya di form
-            // 'profilepicture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'skin_tone' => ['nullable', 'string', Rule::in($skinToneOptions)],
+            'fashion_style' => ['nullable', 'string', Rule::in($fashionStyleOptions)],
+            // Aturan validasi untuk file gambar profil
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Max 2MB, tambahkan svg
         ]);
 
-        // Data yang akan diupdate ke database (kunci sesuai nama kolom DB)
+        // Inisialisasi payload data yang akan diupdate ke database
+        // Kunci array ini HARUS sesuai dengan nama kolom di database Anda
         $updatePayload = [
-            'nama' => $validatedData['name'], // form 'name' -> db 'nama'
+            'nama' => $validatedData['name'],          // form 'name' -> db 'nama'
             'username' => $validatedData['username'],
             'email' => $validatedData['email'],
             // Gunakan nilai lama jika input kosong dan nullable, atau biarkan $validatedData yang mengatur (jika null, akan jadi null)
             'gender' => $validatedData['gender'] ?? $user->gender,
-            'bodytype' => $validatedData['body_type'] ?? $user->bodytype,         // form 'body_type' -> db 'bodytype'
-            'skintone' => $validatedData['skin_tone'] ?? $user->skintone,         // form 'skin_tone' -> db 'skintone'
-            'style' => $validatedData['fashion_style'] ?? $user->style,     // form 'fashion_style' -> db 'style'
+            'bodytype' => $validatedData['body_type'] ?? $user->bodytype,     // form 'body_type' -> db 'bodytype'
+            'skintone' => $validatedData['skin_tone'] ?? $user->skintone,     // form 'skin_tone' -> db 'skintone'
+            'style' => $validatedData['fashion_style'] ?? $user->style,      // form 'fashion_style' -> db 'style'
         ];
 
+        // Jika password diisi di form, tambahkan ke payload update
         if (!empty($validatedData['password'])) {
-            // Model User.php Anda sebaiknya sudah memiliki $casts['password'] = 'hashed',
+            // Asumsi model User/Pengguna Anda sudah memiliki $casts['password'] = 'hashed',
             // sehingga hashing terjadi otomatis saat nilai baru diset dan disimpan.
             $updatePayload['password'] = $validatedData['password'];
         }
 
-        // Logika untuk upload profilepicture bisa ditambahkan di sini
-        // if ($request->hasFile('nama_input_gambar_profil_anda')) { // ganti 'nama_input_gambar_profil_anda'
-        //     // Hapus gambar lama jika ada dan bukan gambar default
-        //     // if ($user->profilepicture && $user->profilepicture !== 'path/default.jpg') {
-        //     //     Storage::disk('public')->delete($user->profilepicture);
-        //     // }
-        //     // Simpan gambar baru
-        //     // $path = $request->file('nama_input_gambar_profil_anda')->store('profile_pictures', 'public');
-        //     // $updatePayload['profilepicture'] = $path; // 'profilepicture' adalah nama kolom di DB
-        // }
+        // Logika untuk upload foto profil
+        if ($request->hasFile('profile_picture')) {
+            $file = $request->file('profile_picture');
+            // Membuat nama unik untuk file agar tidak terjadi tumpang tindih
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            // Path penyimpanan: storage/app/public/profile_pictures/
+            // Metode storeAs() akan menyimpan file dan mengembalikan path relatif
+            $path = $file->storeAs('profile_pictures', $fileName, 'public');
 
+            // Hapus gambar lama jika ada dan bukan gambar default
+            // Anda perlu menentukan path/nama file gambar default jika ada.
+            // Contoh: Jika gambar default tersimpan di 'public/images/default_profile.png',
+            // dan di DB hanya disimpan 'images/default_profile.png'.
+            // Atau jika defaultnya null atau string kosong.
+            $defaultProfilePicturePath = 'default_profile.png'; // Ganti dengan path default yang Anda gunakan
+
+            // Periksa apakah user memiliki foto profil lama dan bukan path default
+            // Serta pastikan file tersebut memang ada sebelum mencoba menghapusnya
+            if ($user->profilepicture && $user->profilepicture !== $defaultProfilePicturePath && Storage::disk('public')->exists($user->profilepicture)) {
+                Storage::disk('public')->delete($user->profilepicture);
+            }
+
+            // Simpan path gambar baru ke kolom 'profilepicture' di database
+            // Ini akan menggantikan path gambar lama
+            $updatePayload['profilepicture'] = $path;
+        }
+
+        // Lakukan update pada instance pengguna yang sedang login
         $user->update($updatePayload);
 
         // Redirect kembali ke halaman edit profil dengan pesan sukses
+        // Pastikan rute 'profile' sudah terdefinisi di web.php
         return redirect()->route('profile')->with('success', 'Profile updated successfully!');
-
     }
 }

@@ -6,33 +6,17 @@
     <style>
         /* CSS yang spesifik untuk konten halaman ini */
         /* Hapus CSS yang menduplikasi style sidebar dan body yang ada di layouts/app.blade.php */
-        /* Misalnya, Anda tidak perlu lagi:
-           body { font-family: 'Poppins', ...; background-color: #f0f2f5; display: flex; min-height: 100vh; }
-           .sidebar { ... }
-           .sidebar .logo { ... }
-           .sidebar .search-box { ... }
-           .sidebar nav ul { ... }
-           .sidebar nav ul li { ... }
-           .sidebar nav ul li a { ... }
-           .sidebar nav ul li a:hover, .sidebar nav ul li a.active { ... }
-           .sidebar nav ul li a svg { ... }
-           .sidebar nav ul li a.active svg { ... }
-           .content-area { ... }
-           .content { ... }
-        */
 
-        /* Main Content Area - ini harusnya sudah ada di layout utama jika Anda menggunakan main-content-wrapper */
-        /* Jika belum, Anda bisa tambahkan ini di layouts/app.blade.php atau di sini sebagai content-block */
-        .main-content-profile-page { /* Nama kelas baru agar tidak konflik dengan .main-content umum */
+        .main-content-profile-page {
             flex-grow: 1;
             padding: 40px;
-            background-color: #f0f2f5; /* Background ini mungkin sudah di body overall, tapi bisa override untuk konten utama */
+            background-color: #f0f2f5;
             overflow-y: auto;
             min-height: 100vh;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Memusatkan konten di tengah */
+            align-items: center;
         }
 
         .profile-header {
@@ -43,26 +27,26 @@
             width: 100%;
             max-width: 900px;
             display: flex;
-            flex-direction: row; /* UBAH: Susun elemen secara horizontal */
-            align-items: center; /* Perataan vertikal di tengah */
-            justify-content: flex-start; /* Elemen mulai dari kiri */
-            text-align: left; /* Teks di dalamnya rata kiri */
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: left;
             margin-bottom: 30px;
             gap: 30px;
         }
 
+        /* PERBAIKAN: Gaya untuk img di dalam profile-avatar */
         .profile-avatar img {
-            width: 120px; /* Pastikan div pembungkusnya persegi */
-            height: 120px; /* Pastikan div pembungkusnya persegi */
-            border-radius: 50%; /* Terapkan border-radius pada div pembungkus */
-            overflow: hidden; /* Penting: menyembunyikan bagian gambar di luar lingkaran */
-            border: 4px solid #fff; /* Border putih */
+            width: 120px;
+            height: 120px;
+            border-radius: 50%; /* Membuat gambar menjadi lingkaran */
+            object-fit: cover; /* Memastikan gambar mengisi area tanpa terdistorsi */
+            border: 4px solid #fff;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            display: flex; /* Tambahkan display:flex agar img bisa di-center atau mengisi penuh */
-            justify-content: center; /* Opsional: untuk memastikan img di tengah div */
-            align-items: center;
+            /* margin-bottom: 20px; <-- Ini dihapus karena sudah ada gap di parent flex container */
+            display: block; /* Agar gambar tidak memiliki space aneh di bawah */
         }
+
 
         .profile-info h1 {
             font-size: 2em;
@@ -138,11 +122,14 @@
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
                 gap: 10px;
             }
-            .main-content-profile-page { /* Adjust padding for mobile */
+            .main-content-profile-page {
                 padding: 20px;
             }
             .profile-header {
                 padding: 20px;
+                flex-direction: column; /* Ubah kembali ke kolom untuk mobile */
+                text-align: center; /* Pusat teks untuk mobile */
+                gap: 20px; /* Sesuaikan gap untuk mobile */
             }
             .profile-avatar img {
                 width: 100px;
@@ -151,9 +138,8 @@
             .profile-info h1 {
                 font-size: 1.8em;
             }
-            /* .profile-stats { gap: 20px; } */ /* Removed as stats are deleted */
             .profile-content-grid {
-                grid-template-columns: 1fr; /* Satu kolom di mobile */
+                grid-template-columns: 1fr;
             }
         }
 
@@ -173,7 +159,7 @@
         .post-card img,
         .post-card video {
             width: 100%;
-            height: 250px; /* Tinggi tetap untuk post */
+            height: 250px;
             object-fit: cover;
             display: block;
         }
@@ -196,16 +182,22 @@
         .post-card .post-footer .likes-count svg {
             width: 16px;
             height: 16px;
-            color: #e53e3e; /* Warna hati */
-            /* Pastikan tidak ada fill="..." hardcode di dalam SVG jika ingin warna ini berlaku */
-            fill: currentColor; /* Agar warnanya mengikuti CSS color */
+            color: #e53e3e;
+            fill: currentColor;
         }
     </style>
 
-    <div class="main-content-profile-page"> {{-- Wrapper untuk konten profil --}}
+    <div class="main-content-profile-page">
         <div class="profile-header">
             <div class="profile-avatar">
-                <img src="{{ $profileData['avatar_url'] }}" alt="User Avatar">
+                {{-- Menampilkan foto profil yang diunggah atau gambar default --}}
+                @if(isset($profileData['profilepicture']) && $profileData['profilepicture'])
+                    <img src="{{ Storage::url($profileData['profilepicture']) }}" alt="User Avatar">
+                @else
+                    {{-- Ganti dengan path ke gambar default Anda jika ada --}}
+                    {{-- Contoh: asset('images/default_avatar.png') --}}
+                    <img src="{{ asset('images/default_profile.png') }}" alt="Default Avatar">
+                @endif
             </div>
             <div class="profile-info">
                 <h1>{{ $profileData['nama'] }}</h1>
@@ -233,8 +225,7 @@
                 <div class="post-footer">
                     <div class="likes-count">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                {{-- PERBAIKAN: Hapus fill-rule="evenodd" dan clip-rule="evenodd" jika itu bagian dari Font Awesome SVG --}}
-                                <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                            <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
                         </svg>
                         <span>{{ number_format(rand(10, 5000), 0, ',', '.') }}</span>
                     </div>

@@ -4,179 +4,249 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use App\Models\User; // Make sure to import your User model
 
 class SetPreferenceController extends Controller
 {
-    protected $steps = ['gender', 'bodytype', 'skintone', 'style'];
+    // Define the order of quiz steps
+    private $quizSteps = ['gender', 'bodytype', 'skintone', 'style'];
 
-    public function index()
+    /**
+     * Show the quiz step.
+     *
+     * @param Request $request
+     * @param string|null $step
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function index(Request $request, $step = null)
     {
-        $genderOptions = ['male', 'female'];
-        $genderLabels = ['Male', 'Female'];
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in to set your preferences.');
+        }
 
-        $bodytypeOptions = []; // Akan diisi oleh JavaScript berdasarkan gender
-        $bodytypeLabels = [];
+        // If no step is provided, redirect to the first step
+        if (is_null($step)) {
+            return redirect()->route('set_preference.index', ['step' => $this->quizSteps[0]]);
+        }
 
-        $skintoneOptions = ['cool', 'warm', 'neutral', 'olive'];
-        $skintoneLabels = ['Cool', 'Warm', 'Neutral', 'Olive'];
+        // Validate the step
+        if (!in_array($step, $this->quizSteps)) {
+            abort(404); // Or redirect to an error page
+        }
 
-        $styleOptions = ['casual', 'formal', 'unique', 'stylish'];
-        $styleLabels = ['Casual', 'Formal', 'Unique', 'Stylish'];
-        $steps = $this->steps;
+        $user = Auth::user();
 
-        return view('set-preference-single', compact(
-            'genderOptions',
-            'genderLabels',
-            'bodytypeOptions',
-            'bodytypeLabels',
-            'skintoneOptions',
-            'skintoneLabels',
-            'styleOptions',
-            'styleLabels',
-            'steps'
-        ));
-    }
-
-    public function saveAll(Request $request)
-    {
-        $validations = [
-            'gender' => 'required|in:male,female',
-            'bodytype' => 'required',
-            'skintone' => 'required|in:warm,olive,neutral,cool',
-            'style' => 'required|in:casual,formal,unique,stylish',
+        // Load the current quiz state from the database for the user, if available
+        $currentQuizData = [
+            'gender' => $user->gender,
+            'bodytype' => $user->bodytype,
+            'skintone' => $user->skintone,
+            'style' => $user->style,
+            'preferences' => $user->preferences, // Load existing preference string
         ];
+        session()->put('quiz', $currentQuizData); // Update session with current DB values
 
-        $gender = $request->input('gender');
-        $validBodytypes = $this->getBodytypeOptions($gender);
-        $validations['bodytype'] = 'required|in:' . implode(',', $validBodytypes);
-
-        $request->validate($validations);
-
-        session(['quiz.gender' => $request->input('gender')]);
-        session(['quiz.bodytype' => $request->input('bodytype')]);
-        session(['quiz.skintone' => $request->input('skintone')]);
-        session(['quiz.style' => $request->input('style')]);
-
-        Log::info("Set session quiz:", session('quiz'));
-
-        // Redirect ke halaman hasil setelah menyimpan semua preferensi
-        return redirect()->route('set_preference.result');
-    }
-
-    public function showResult()
-    {
-        $user = Auth::user();
-        $quizData = session('quiz');
-
-        $resultTitle = '';
-        $resultDescription = '';
-        $resultImage = null;
-
-        if ($user && $user->result_title) {
-            $resultTitle = $user->result_title;
-            $resultDescription = $user->result_description ?? '';
-            $resultImage = $user->result_image ?? null;
-        } else if ($quizData && isset($quizData['style'])) {
-            switch ($quizData['style']) {
-                case 'casual':
-                    $resultTitle = 'The Easygoing Explorer';
-                    $resultDescription = 'Effortless comfort is your style signature! ...';
-                    $resultImage = asset('img/exp.png');
-                    break;
-                case 'formal':
-                    $resultTitle = 'The Authority';
-                    $resultDescription = 'The aura of a boss radiates from every fiber of your being! ...';
-                    $resultImage = asset('img/ta.png');
-                    break;
-                case 'unique':
-                    $resultTitle = 'The Trendsetter';
-                    $resultDescription = 'Dare to be different! You are a fashion virtuoso, ...';
-                    $resultImage = asset('img/ts.png');
-                    break;
-                case 'stylish':
-                    $resultTitle = 'The Fashion Icon';
-                    $resultDescription = 'Look who is here! A genuine style icon graces us with ...';
-                    $resultImage = asset('img/fi.png');
-                    break;
+        // Check if previous steps are completed (still good for flow control)
+        $currentStepIndex = array_search($step, $this->quizSteps);
+        for ($i = 0; $i < $currentStepIndex; $i++) {
+            if (empty($user->{$this->quizSteps[$i]})) { // Check directly from user model
+                return redirect()->route('set_preference.index', ['step' => $this->quizSteps[$i]])
+                                 ->with('error', 'Please complete the previous step first.');
             }
         }
-        return view('result', [
-            'resultTitle' => $resultTitle,
-            'resultDescription' => $resultDescription,
-            'resultImage' => $resultImage,
+
+        $options = [];
+        $labels = [];
+
+        switch ($step) {
+            case 'gender':
+                $options = ['male', 'female'];
+                $labels = ['Male', 'Female'];
+                break;
+            case 'bodytype':
+                $gender = $user->gender; // Get gender from user model (already saved)
+                if (!$gender) {
+                    return redirect()->route('set_preference.index', ['step' => 'gender'])
+                                     ->with('error', 'Please select your gender first.');
+                }
+
+                if ($gender === 'male') {
+                    // Pastikan key ini sesuai dengan di step.blade.php
+                    $options = ['triangle', 'round', 'inverted_triangle', 'rectangular'];
+                    $labels = ['Triangle', 'Round', 'Inverted Triangle', 'Rectangular'];
+                } elseif ($gender === 'female') {
+                    $options = ['hourglass', 'apple', 'pear', 'rectangular'];
+                    $labels = ['Hourglass', 'Apple', 'Pear', 'Rectangular'];
+                }
+                break;
+            case 'skintone':
+                $options = ['cool', 'warm', 'neutral', 'olive'];
+                $labels = ['Cool', 'Warm', 'Neutral', 'Olive'];
+                break;
+            case 'style':
+                $options = ['casual', 'formal', 'stylish', 'unique'];
+                $labels = ['Kasual', 'Formal', 'Stylish', 'Unique'];
+                break;
+        }
+
+        return view('step', compact('step', 'options', 'labels'));
+    }
+
+    /**
+     * Save the current quiz step's answer directly to the user model.
+     *
+     * @param Request $request
+     * @param string $step
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function saveStep(Request $request, $step)
+    {
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in to save your preferences.');
+        }
+
+        // Validate the step and selected option
+        $request->validate([
+            $step => 'required|string',
         ]);
-    }
 
-    public function completePreference(Request $request)
-    {
         $user = Auth::user();
-        $quizData = session('quiz');
-        Log::info('Quiz session data di completePreference:', $quizData ?: []);
 
-        if ($user && $quizData && isset($quizData['gender'], $quizData['bodytype'], $quizData['skintone'], $quizData['style'])) {
-            $resultTitle = '';
-            $resultDescription = '';
-            $resultImage = null;
+        // Save the preference directly to the user model
+        $user->{$step} = $request->input($step);
 
-            switch ($quizData['style']) {
-                case 'casual':
-                    $resultTitle = 'The Easygoing Explorer';
-                    $resultDescription = 'Effortless comfort is your style signature! ...';
-                    $resultImage = asset('img/exp.png');
-                    break;
-                case 'formal':
-                    $resultTitle = 'The Authority';
-                    $resultDescription = 'The aura of a boss radiates from every fiber of your being! ...';
-                    $resultImage = asset('img/ta.png');
-                    break;
-                case 'unique':
-                    $resultTitle = 'The Trendsetter';
-                    $resultDescription = 'Dare to be different! You are a fashion virtuoso, ...';
-                    $resultImage = asset('img/ts.png');
-                    break;
-                case 'stylish':
-                    $resultTitle = 'The Fashion Icon';
-                    $resultDescription = 'Look who is here! A genuine style icon graces us with ...';
-                    break;
-                default:
-                    $resultTitle = 'Your Style Profile';
-                    break;
-            }
+        // If it's the 'style' step, update the 'preferences' column with the result title
+        if ($step === 'style') {
+            // FIX: Gunakan pemetaan judul yang sesuai dengan permintaan Anda
+            $preferenceMapping = [
+                'casual' => 'The Easygoing Explorer', // Changed
+                'formal' => 'The Authority',
+                'stylish' => 'The Fashion Icon', // Changed
+                'unique' => 'The Trendsetter', // Changed
+            ];
+            // Store the result title directly in the 'preferences' column
+            $user->preferences = $preferenceMapping[$request->input($step)] ?? 'Unknown Style';
+        }
 
-            $user->update([
-                'gender' => $quizData['gender'],
-                'bodytype' => $quizData['bodytype'],
-                'skintone' => $quizData['skintone'],
-                'style' => $quizData['style'],
-                'result_title' => $resultTitle,
-                'result_description' => $resultDescription,
-                'result_image' => $resultImage,
-            ]);
+        $user->save(); // Save changes to the database
 
-            session()->forget('quiz');
+        // Store the saved value in session to maintain "checked" state if user navigates back
+        session()->put('quiz.' . $step, $request->input($step));
 
-            Log::info('Data preferensi dan hasil disimpan ke database untuk user ID: ' . $user->id);
+        $currentStepIndex = array_search($step, $this->quizSteps);
+        $nextStepIndex = $currentStepIndex + 1;
 
-            return redirect('/home');
+        // If there's a next step, redirect to it
+        if (isset($this->quizSteps[$nextStepIndex])) {
+            return redirect()->route('set_preference.index', ['step' => $this->quizSteps[$nextStepIndex]]);
         } else {
-            Log::warning('Gagal menyimpan data preferensi: User tidak terautentikasi atau data sesi tidak lengkap.');
-            return redirect()->route('set_preference.index');
+            // All steps completed, redirect to countdown
+            return redirect()->route('set_preference.countdown');
         }
     }
 
+    /**
+     * Show the countdown page.
+     *
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function showCountdown()
     {
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in to view the countdown.');
+        }
+
+        // Ensure all quiz data (from DB) is present before showing countdown
+        $user = Auth::user();
+        // Memastikan semua kolom wajib diisi sebelum ke countdown
+        foreach ($this->quizSteps as $step) {
+            if (empty($user->{$step})) {
+                return redirect()->route('set_preference.index', ['step' => $this->quizSteps[0]])
+                                 ->with('error', 'Please complete the quiz first.');
+            }
+        }
         return view('countdown');
     }
 
-    protected function getBodytypeOptions($gender)
+    /**
+     * Show the result page.
+     *
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function showResult()
     {
-        if ($gender === 'female') {
-            return ['hourglass', 'apple', 'pear', 'rectangle'];
-        } elseif ($gender === 'male') {
-            return ['triangle', 'round', 'rectangle', 'inverted Triangle'];
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in to view your style result.');
         }
-        return [];
+
+        $user = Auth::user();
+
+        // Get style and preference from the user model (already saved)
+        $style = $user->style ?? 'unknown';
+        $preferenceTitle = $user->preferences ?? 'Discover Your Style!'; // Get the saved preference string from DB
+
+        // FIX: Gunakan pemetaan deskripsi dan gambar yang sesuai dengan permintaan Anda
+        $resultDetailsMapping = [
+            'casual' => [
+                'description' => 'You are the **Easygoing Explorer!** Your style is all about comfort meets chic. You effortlessly blend relaxed pieces with trendy elements, making every day a fashion statement without trying too hard.',
+                'image' => asset('img/result_casual.png'),
+            ],
+            'formal' => [
+                'description' => 'You are **The Authority!** You exude confidence and professionalism. Your wardrobe is characterized by structured silhouettes, classic tailoring, and a polished appearance that commands respect.',
+                'image' => asset('img/result_formal.png'),
+            ],
+            'stylish' => [
+                'description' => 'You are **The Fashion Icon!** You have an innate ability to put together looks that are effortlessly elegant and always on point. You understand current trends and adapt them to your sophisticated taste.',
+                'image' => asset('img/result_stylish.png'),
+            ],
+            'unique' => [
+                'description' => 'You are **The Trendsetter!** Your style is a vibrant reflection of your personality. You aren\'t afraid to experiment with unconventional combinations, making a statement that is truly one-of-a-kind.',
+                'image' => asset('img/result_unique.png'),
+            ],
+            'unknown' => [ // Fallback for unknown style
+                'description' => 'It seems we couldn\'t pinpoint a specific style yet. Explore more to find your perfect fashion identity!',
+                'image' => null,
+            ]
+        ];
+
+        $result = $resultDetailsMapping[$style] ?? $resultDetailsMapping['unknown'];
+
+        // Add an explicit check for the 'style' and 'preferences' columns in the user model
+        // If 'style' is empty or 'preferences' is empty, it means the quiz wasn't fully completed.
+        if (empty($user->style) || empty($user->preferences)) {
+             return redirect()->route('set_preference.index', ['step' => 'style']) // Redirect user back to the style step
+                              ->with('error', 'Your style preference was not fully set. Please complete the quiz.');
+        }
+
+        return view('result', [
+            'resultTitle' => $preferenceTitle, // Ambil dari kolom preferences (misal "The Authority")
+            'resultDescription' => $result['description'],
+            'resultImage' => $result['image'],
+        ]);
+    }
+
+    /**
+     * Complete the quiz flow.
+     * This method is now primarily for redirection after the result is displayed.
+     * The actual saving to DB happens in saveStep.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function complete(Request $request)
+    {
+        // Ensure user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in.');
+        }
+
+        // Clear quiz session data as it's no longer strictly needed for persistent storage
+        session()->forget('quiz');
+
+        return redirect()->route('home')->with('success', 'Your preferences are set!');
     }
 }

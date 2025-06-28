@@ -39,11 +39,10 @@ class ProfileController extends Controller
         $profileData = [
             'nama' => $user->nama ?? 'Nama Lengkap',
             'username' => $user->username ?? 'username_anda',
-            'bio' => $user->bio ?? 'Tulis bio Anda di sini...',
-            // Perbarui logika untuk avatar_url:
-            // Jika user memiliki profilepicture dan file tersebut ada di storage, gunakan Storage::url()
-            // Jika tidak, gunakan path ke gambar default Anda
-            'profilepicture' => $user->profilepicture, // Kirim path mentah ke Blade
+            'bodytype' => $user->bodytype ?? 'N/A',
+            'skintone' => $user->skintone ?? 'N/A',
+            'style' => $user->style ?? 'N/A',
+            'profilepicture' => $user->profilepicture,
         ];
 
         // Mengambil semua postingan (VideoFashion) yang dibuat oleh pengguna ini

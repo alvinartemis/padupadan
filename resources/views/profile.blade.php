@@ -35,38 +35,47 @@
             gap: 30px;
         }
 
-        /* PERBAIKAN: Gaya untuk img di dalam profile-avatar */
         .profile-avatar img {
             width: 120px;
             height: 120px;
-            border-radius: 50%; /* Membuat gambar menjadi lingkaran */
-            object-fit: cover; /* Memastikan gambar mengisi area tanpa terdistorsi */
+            border-radius: 50%;
+            object-fit: cover;
             border: 4px solid #fff;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            /* margin-bottom: 20px; <-- Ini dihapus karena sudah ada gap di parent flex container */
-            display: block; /* Agar gambar tidak memiliki space aneh di bawah */
+            display: block;
         }
 
+        .profile-info {
+            /* Flex-grow untuk profile-info agar mengambil sisa ruang */
+            flex-grow: 1;
+        }
 
         .profile-info h1 {
             font-size: 2em;
             color: #333;
-            margin: 0 0 5px 0;
+            margin: 0;
             font-weight: 700;
         }
 
         .profile-info p.username {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 15px;
+            font-size: 1.5em;
+            color: #484848;
+            margin: 0 0 5px 0 /* Kurangi margin untuk mendekatkan info tambahan */
+        }
+
+        .profile-info p.info-detail { /* Kelas baru untuk bodytype, skintone, style */
+            font-size: 0.95em;
+            color: #555;
+            line-height: 1.4;
+            margin: 0; /* Hapus margin default */
         }
 
         .profile-info p.bio {
             font-size: 0.95em;
             color: #555;
             line-height: 1.5;
-            max-width: 600px;
-            margin: 0 auto 20px auto;
+            max-width: 600px; /* Lebar maksimum untuk bio jika terpisah */
+            margin: 15px 0 20px 0; /* Beri margin atas dan bawah */
         }
 
         .profile-actions button {
@@ -127,9 +136,9 @@
             }
             .profile-header {
                 padding: 20px;
-                flex-direction: column; /* Ubah kembali ke kolom untuk mobile */
-                text-align: center; /* Pusat teks untuk mobile */
-                gap: 20px; /* Sesuaikan gap untuk mobile */
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
             }
             .profile-avatar img {
                 width: 100px;
@@ -140,6 +149,10 @@
             }
             .profile-content-grid {
                 grid-template-columns: 1fr;
+            }
+            /* Jika bio tidak perlu max-width di mobile atau perlu diatur ulang */
+            .profile-info p.bio {
+                margin: 15px auto 20px auto; /* Pusat bio di mobile */
             }
         }
 
@@ -190,19 +203,25 @@
     <div class="main-content-profile-page">
         <div class="profile-header">
             <div class="profile-avatar">
-                {{-- Menampilkan foto profil yang diunggah atau gambar default --}}
                 @if(isset($profileData['profilepicture']) && $profileData['profilepicture'])
                     <img src="{{ Storage::url($profileData['profilepicture']) }}" alt="User Avatar">
                 @else
-                    {{-- Ganti dengan path ke gambar default Anda jika ada --}}
-                    {{-- Contoh: asset('images/default_avatar.png') --}}
                     <img src="{{ asset('images/default_profile.png') }}" alt="Default Avatar">
                 @endif
             </div>
             <div class="profile-info">
                 <h1>{{ $profileData['nama'] }}</h1>
                 <p class="username">@<span>{{ $profileData['username'] }}</span></p>
-                <p class="bio">{{ $profileData['bio'] }}</p>
+                {{-- Menampilkan bodytype, skintone, dan style di sini --}}
+                @if($profileData['bodytype'] && $profileData['bodytype'] !== 'N/A')
+                    <p class="info-detail">{{ $profileData['bodytype'] }}</p>
+                @endif
+                @if($profileData['skintone'] && $profileData['skintone'] !== 'N/A')
+                    <p class="info-detail">{{ $profileData['skintone'] }}</p>
+                @endif
+                @if($profileData['style'] && $profileData['style'] !== 'N/A')
+                    <p class="info-detail">{{ $profileData['style'] }} Outfits</p>
+                @endif
                 <div class="profile-actions">
                     <a href="{{ route('profile.edit') }}" class="settings-btn">Settings</a>
                 </div>

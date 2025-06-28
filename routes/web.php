@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,7 @@ use App\Http\Controllers\StylistProfileController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ChatStylistController;
 use App\Http\Controllers\UploadVideoController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -56,7 +58,6 @@ Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'
 Route::put('/profile/update', [EditProfileController::class, 'update'])->name('profile.update');
 Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 Route::get('/settings/bookmark/item/{id}', [BookmarkController::class, 'showItem'])->name('bookmark.show_item');
-Route::post('/logout', [Controller::class, 'logout'])->name('logout');
 
 Route::get('/digital-wardrobe', [App\Http\Controllers\DigitalWardrobeController::class, 'index'])
     ->name('digital.wardrobe.index')

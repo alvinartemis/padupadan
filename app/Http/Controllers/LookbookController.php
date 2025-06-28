@@ -84,6 +84,7 @@ class LookbookController extends Controller
 
      public function show($id)
     {
+
         $lookbook = Lookbook::with('stylist')->find($id); // Memuat relasi stylist
 
         if (!$lookbook) {

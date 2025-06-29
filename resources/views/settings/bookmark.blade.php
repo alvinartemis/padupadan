@@ -3,119 +3,271 @@
 @section('title', 'Bookmark')
 
 @section('content')
+
+<style>
+    /* CSS yang sudah ada (tidak berubah signifikan kecuali penyesuaian untuk kartu item) */
+    .bookmark-header {
+        position: relative;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .bookmark-header h1 {
+        color: black;
+        font-size: 32px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        line-height: 33.60px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    #bookmark-toggle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #E1E1E1;
+        box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25) inset;
+        border-radius: 38px;
+        width: 331px;
+        height: 47px;
+        margin: 0 auto 30px auto;
+        position: relative;
+    }
+
+    .toggle-button {
+        flex-grow: 1;
+        padding: 10px 0;
+        border: none;
+        background-color: transparent;
+        color: #939393;
+        font-size: 16px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        line-height: 16px;
+        cursor: pointer;
+        transition: color 0.3s ease;
+        text-align: center;
+        z-index: 2;
+    }
+
+    .toggle-background {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        background: var(--Indigo-dye, #173F63);
+        box-shadow: 0px 0px 2.299999952316284px rgba(0, 0, 0, 0.25);
+        border-radius: 43px;
+        transition: left 0.3s ease, width 0.3s ease;
+        z-index: 1;
+    }
+
+    .toggle-button.active {
+        color: white;
+        font-weight: 700;
+        font-size: 17px;
+        line-height: 17px;
+    }
+
+    .content-section {
+        display: none;
+        padding: 20px 0;
+    }
+
+    .content-section.active {
+        display: block;
+    }
+
+    .fashion-items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Responsive grid */
+        gap: 20px;
+        padding: 0 20px;
+    }
+
+    /* Styling untuk kartu fashion item yang di-bookmark */
+    .fashion-item-card {
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Untuk mendorong tombol 'View Detail' ke bawah */
+    }
+
+    .fashion-item-card img {
+        width: 100%;
+        height: 180px; /* Tinggi gambar tetap */
+        object-fit: cover; /* Pastikan gambar mengisi area */
+        display: block;
+        border-bottom: 1px solid #eee;
+    }
+
+    .fashion-item-card .item-info-text {
+        padding: 10px;
+        text-align: left;
+    }
+
+    .fashion-item-card .item-info-text h3 {
+        font-size: 1.1em;
+        margin: 0 0 5px 0;
+        color: #333;
+        font-weight: 600;
+    }
+
+    .fashion-item-card .item-info-text p {
+        font-size: 0.9em;
+        margin: 0;
+        color: #666;
+    }
+
+    .fashion-item-card .view-detail-button {
+        display: block;
+        width: 100%;
+        padding: 10px 0;
+        background-color: #173F63; /* Warna Indigo Dye */
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        border-radius: 0 0 8px 8px; /* Hanya sudut bawah */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .fashion-item-card .view-detail-button:hover {
+        background-color: #102e48; /* Warna yang lebih gelap saat hover */
+    }
+
+    .video-placeholder {
+        text-align: center;
+        padding: 40px;
+        background-color: #f2f2f2;
+        border-radius: 10px;
+        margin: 20px auto;
+        max-width: 600px;
+        color: #555;
+    }
+
+    .video-placeholder p {
+        font-size: 18px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    @media (max-width: 400px) {
+        #bookmark-toggle {
+            width: 90%;
+        }
+        .toggle-button {
+            font-size: 14px;
+        }
+        .toggle-button.active {
+            font-size: 15px;
+        }
+    }
+</style>
+
 <div class="container mt-4">
     <div class="bookmark-header">
-        <h2 style="text-align: center; margin-bottom: 2rem;">Bookmark</h2>
+        <h1>Bookmark</h1> {{-- Menggunakan h1 sesuai design --}}
     </div>
 
     <div id="bookmark-toggle">
         <div class="toggle-background"></div> {{-- Latar belakang biru yang bergerak --}}
-        <button class="toggle-button" data-target="video-content" data-width="146px" data-left="0px">Video</button>
-        <button class="toggle-button active" data-target="fashion-item-content" data-width="185px" data-left="146px">Fashion Item</button>
-    </div>
-
-    {{-- Fashion Item Content --}}
-    <div id="fashion-item-content" class="content-section active">
-        <div class="fashion-items-grid">
-{{-- DATA DUMMY UNTUK FASHION ITEMS --}}
-            {{-- Dalam aplikasi nyata, data ini akan diambil dari database dan diteruskan dari controller --}}
-            @php
-                $fashionItems = [
-                    ['id' => 1, 'img' => asset('greenjacket.png'), 'alt' => 'Green Jacket'],
-                    ['id' => 2, 'img' => asset('skirt.png'), 'alt' => 'Brown Plaid Skirt'],
-                    ['id' => 3, 'img' => asset('cargoshorts.png'), 'alt' => 'Olive Cargo Shorts'],
-                    ['id' => 4, 'img' => asset('bluesneakers.png'), 'alt' => 'Blue Sneakers'],
-                ];
-            @endphp
-
-            @foreach($fashionItems as $item)
-                <div class="fashion-item">
-                    {{-- INI ADALAH BAGIAN KUNCI: Menambahkan tag <a> yang mengarah ke rute detail item --}}
-                    <a href="{{ route('bookmark.show_item', ['id' => $item['id']]) }}">
-                        <img src="{{ $item['img'] }}" alt="{{ $item['alt'] }}">
-                    </a>
-                </div>
-            @endforeach
-        </div>
+        <button class="toggle-button" id="videoToggle">Video</button>
+        <button class="toggle-button active" id="fashionItemToggle">Lookbook</button>
     </div>
 
     {{-- Video Content --}}
-    <div id="video-content" class="content-section">
-        <div class="video-placeholder">
-            <p>Bagian ini akan menampilkan video yang Anda bookmark.</p>
-            <p>Anda bisa menambahkan thumbnail video, pemutar video, atau tautan di sini.</p>
-            {{-- Contoh: Embed video YouTube --}}
-            {{--
-            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000;">
-                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                        src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
-                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-                </iframe>
+    <div id="videoContent" class="content-section">
+        {{-- PERBAIKAN: Gunakan 'empty()' untuk memeriksa array kosong --}}
+        @if(empty($bookmarkedVideos))
+            <div class="video-placeholder">
+                <p>You haven't bookmarked any videos yet!</p>
             </div>
+        @else
+            {{-- Loop dan tampilkan video yang di-bookmark di sini --}}
+            {{-- Contoh:
+            @foreach($bookmarkedVideos as $video)
+                <div class="video-card">
+                    <p>{{ $video->title }}</p>
+                    <video src="{{ asset('storage/' . $video->path) }}" controls></video>
+                </div>
+            @endforeach
             --}}
+            <div class="video-placeholder">
+                <p>Video bookmarking is not yet fully implemented.</p>
+            </div>
+        @endif
+    </div>
+
+    {{-- Fashion Item Content --}}
+    <div id="fashionItemContent" class="content-section active">
+        <div class="fashion-items-grid">
+            {{-- Perubahan Utama: Looping melalui $bookmarkedLookbooks dari controller --}}
+            @forelse($bookmarkedLookbooks as $lookbook)
+                <div class="fashion-item-card">
+                    {{-- Pastikan imgLookbook adalah kolom yang benar di model Lookbook Anda --}}
+                    <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama ?? 'Lookbook Image' }}">
+                    <div class="item-info-text">
+                        <h3>{{ $lookbook->nama ?? 'Nama Lookbook' }}</h3>
+                        {{-- Memastikan relasi stylist ada dan nama stylist tersedia --}}
+                        <p>by {{ $lookbook->stylist->nama ?? 'Unknown Stylist' }}</p>
+                    </div>
+                    {{-- Arahkan ke halaman detail lookbook menggunakan idLookbook --}}
+                    <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" class="view-detail-button">View Detail</a>
+                </div>
+            @empty
+                {{-- Tampilkan pesan jika tidak ada lookbook yang di-bookmark --}}
+                <div class="video-placeholder" style="grid-column: 1 / -1;">
+                    <p>You haven't bookmarked any fashion items yet!</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const toggleButtons = document.querySelectorAll('.toggle-button');
-        const contentSections = document.querySelectorAll('.content-section');
+        const videoToggle = document.getElementById('videoToggle');
+        const fashionItemToggle = document.getElementById('fashionItemToggle');
+        const videoContent = document.getElementById('videoContent');
+        const fashionItemContent = document.getElementById('fashionItemContent');
         const toggleBackground = document.querySelector('.toggle-background');
+        // const toggleContainer = document.getElementById('bookmark-toggle'); // Tidak digunakan secara langsung di sini
 
-        // Fungsi untuk mengupdate posisi dan ukuran latar belakang biru
-        function updateToggleBackground(activeButton) {
-            const buttonWidth = activeButton.offsetWidth;
-            const buttonLeft = activeButton.offsetLeft;
-
-            // Jika Anda ingin menggunakan data-width dan data-left dari tombol,
-            // pastikan nilainya diatur dengan benar di HTML untuk setiap tombol.
-            // Misalnya:
-            // const targetWidth = activeButton.dataset.width;
-            // const targetLeft = activeButton.dataset.left;
-            // toggleBackground.style.width = targetWidth;
-            // toggleBackground.style.left = targetLeft;
-
-            // Untuk saat ini, kita akan menghitungnya secara dinamis
-            toggleBackground.style.width = `${buttonWidth}px`;
-            toggleBackground.style.left = `${buttonLeft}px`;
+        function updateToggleBackground() {
+            const activeToggle = document.querySelector('.toggle-button.active');
+            if (activeToggle) {
+                toggleBackground.style.width = activeToggle.offsetWidth + 'px';
+                toggleBackground.style.left = activeToggle.offsetLeft + 'px';
+            }
         }
 
-        toggleButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove 'active' class from all buttons and reset font styles
-                toggleButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    // Reset CSS properties if they were directly set by 'active' class
-                    // btn.style.fontWeight = '600';
-                    // btn.style.fontSize = '16px';
-                    // btn.style.lineHeight = '16px';
-                    // btn.style.color = '#939393';
-                });
+        // Inisialisasi posisi background saat halaman dimuat
+        updateToggleBackground();
+        window.addEventListener('resize', updateToggleBackground); // Perbarui saat ukuran jendela berubah
 
-                // Add 'active' class to the clicked button
-                this.classList.add('active');
-                // updateToggleBackground(this); // Update background position
-
-                // Mengupdate posisi dan ukuran latar belakang biru secara dinamis
-                // Menggunakan offsetLeft dan offsetWidth dari tombol yang aktif
-                updateToggleBackground(this);
-
-
-                // Hide all content sections
-                contentSections.forEach(section => section.classList.remove('active'));
-
-                // Show the target content section
-                const targetId = this.dataset.target;
-                document.getElementById(targetId).classList.add('active');
-            });
+        videoToggle.addEventListener('click', function() {
+            videoToggle.classList.add('active');
+            fashionItemToggle.classList.remove('active');
+            videoContent.classList.add('active');
+            fashionItemContent.classList.remove('active');
+            updateToggleBackground();
         });
 
-        // Set initial active state and background position based on the default active button
-        const initialActiveButton = document.querySelector('.toggle-button.active');
-        if (initialActiveButton) {
-            updateToggleBackground(initialActiveButton);
-        }
+        fashionItemToggle.addEventListener('click', function() {
+            fashionItemToggle.classList.add('active');
+            videoToggle.classList.remove('active');
+            fashionItemContent.classList.add('active');
+            videoContent.classList.remove('active');
+            updateToggleBackground();
+        });
+
+        // Tidak perlu memicu klik saat DOMContentLoaded jika sudah ada kelas 'active' di HTML
     });
 </script>
+
 @endsection

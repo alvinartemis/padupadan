@@ -2,77 +2,96 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lookbook;
+use App\Models\Stylist; // Pastikan model Stylist di-import
 use Illuminate\Http\Request;
-use App\Models\Lookbook; // Pastikan ini ada
-use Illuminate\Support\Facades\Storage; // Jika digunakan
-use Illuminate\Support\Facades\Auth; // Pastikan ini ada
-use App\Models\ItemFashion; // <<< INI YANG HARUS PASTI ADA DAN BENAR!
-use App\Models\Stylist;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class LookbookController extends Controller
 {
-    // Tentukan ID Stylist yang akan digunakan untuk semua lookbook ini
-    private $fixedStylistId = 1; // <-- Ini harus SAMA DENGAN ID YANG ADA DI TABEL STYLIST ANDA (misal, 1)
-
-    // Method untuk Stylist (tampilkan daftar lookbook stylist)
-    public function index() // Ini sekarang adalah lookbookstylist.blade.php
+    /**
+     * Menampilkan halaman lookbook untuk STYLIST yang sedang login.
+     * Mengambil lookbook yang dibuat oleh stylist itu sendiri.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
     {
-        if (!auth()->check()) {
+        // Pastikan stylist sudah login
+        if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // Ambil lookbook yang dibuat oleh stylist dengan ID $fixedStylistId
-        // Ini berarti halaman stylist HANYA akan menampilkan lookbook dari stylist ID 1.
-        $lookbooks = Lookbook::where('idStylist', $this->fixedStylistId) // <-- Menggunakan fixed ID
-                             ->orderBy('created_at', 'desc') // Tetap pakai ini jika sudah tambahkan timestamps
+        // --- PERBAIKAN ---
+        // Logika untuk mengambil ID stylist disamakan dengan method store()
+        $loggedInUser = Auth::user();
+        $stylistProfile = Stylist::where('nama', $loggedInUser->nama)->first();
+
+        // Jika profil stylist tidak ditemukan, tampilkan halaman dengan data kosong.
+        if (!$stylistProfile) {
+            $lookbooks = collect(); // Membuat koleksi kosong
+            return view('lookbook.lookbookstylist', compact('lookbooks'));
+        }
+
+        // Gunakan ID dari profil stylist yang benar untuk mencari lookbook.
+        $lookbooks = Lookbook::where('idStylist', $stylistProfile->idStylist)
+                             ->latest()
                              ->get();
 
-        // Path view: 'lookbook.lookbookstylist' (sesuai yang Anda sebutkan)
+        // Mengirim data ke view khusus untuk stylist
         return view('lookbook.lookbookstylist', compact('lookbooks'));
     }
 
-    // Method untuk Pengguna Biasa (tampilkan semua lookbook dari semua stylist)
-    public function userIndex() // Ini adalah readlookbook.blade.php Anda
+    /**
+     * Menampilkan halaman lookbook untuk PENGGUNA BIASA.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function userIndex()
     {
-        // Ambil semua lookbook dari semua stylist, diurutkan
-        $lookbooks = Lookbook::orderBy('created_at', 'desc')->get(); // Tetap pakai ini jika sudah tambahkan timestamps
+        // Ambil semua lookbook dari semua stylist
+        $lookbooks = Lookbook::latest()->get();
 
         return view('lookbook.readlookbook', compact('lookbooks'));
     }
 
-    // Method untuk menampilkan form create lookbook (createlookbook.blade.php)
+    /**
+     * Menampilkan form untuk membuat lookbook baru.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create()
     {
-        // Pastikan pengguna login bisa mengakses form ini
-        if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk membuat lookbook.');
-        }
-        // Path view: 'lookbook.createlookbook' (sesuai yang Anda sebutkan)
         return view('lookbook.createlookbook');
     }
 
-    // Method untuk menyimpan lookbook yang diupload
+    /**
+     * Menyimpan lookbook baru yang di-submit dari form.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
-        // Pastikan pengguna login bisa menyimpan
-        if (!auth()->check()) {
-            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu untuk menyimpan lookbook.');
-        }
-
         $request->validate([
-            'nama'            => 'required|string|max:255',
-            'description'     => 'nullable|string',
-            'kataKunci'       => 'nullable|string',
-            'imgLookbook'     => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'nama'        => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'kataKunci'   => 'nullable|string',
+            'imgLookbook' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('imgLookbook')) {
-            $imagePath = $request->file('imgLookbook')->store('lookbooks', 'public');
+        $imagePath = $request->file('imgLookbook')->store('lookbooks', 'public');
+
+        $loggedInUser = Auth::user();
+        $stylistProfile = Stylist::where('nama', $loggedInUser->nama)->first();
+
+        if (!$stylistProfile) {
+            return back()->with('error', 'Profil stylist dengan nama "' . $loggedInUser->nama . '" tidak ditemukan.')->withInput();
         }
 
         Lookbook::create([
-            'idStylist'   => $this->fixedStylistId, // <-- PERBAIKAN: Gunakan fixed ID 1 yang ada di tabel stylist
+            'idStylist'   => $stylistProfile->idStylist,
             'nama'        => $request->input('nama'),
             'description' => $request->input('description'),
             'kataKunci'   => $request->input('kataKunci'),
@@ -82,22 +101,23 @@ class LookbookController extends Controller
         return redirect()->route('lookbook.index')->with('success', 'Lookbook berhasil disimpan!');
     }
 
-     public function show($id)
+    /**
+     * Menampilkan halaman detail untuk satu lookbook.
+     * Menggunakan Route Model Binding untuk keamanan dan kemudahan.
+     *
+     * @param  \App\Models\Lookbook  $lookbook
+     * @return \Illuminate\View\View
+     */
+    public function show(Lookbook $lookbook)
     {
-
-        $lookbook = Lookbook::with('stylist')->find($id); // Memuat relasi stylist
-
-        if (!$lookbook) {
-            abort(404); // Tampilkan halaman 404 jika lookbook tidak ditemukan
-        }
-
-        $isBookmarked = false; // Definisikan default value sebagai false
+        $isBookmarked = false;
         if (Auth::check()) {
-            $userId = Auth::id();
-            $isBookmarked = ItemFashion::where('user_id', $userId)
-                                        ->where('lookbook_id', $lookbook->idLookbook)
-                                        ->exists();
+            $isBookmarked = Auth::user()->wishlistItems()
+                                ->where('wishlistitem.idLookbook', $lookbook->idLookbook)
+                                ->exists();
         }
+
+        $lookbook->load('stylist');
 
         return view('lookbook.detaillookbook', compact('lookbook', 'isBookmarked'));
     }

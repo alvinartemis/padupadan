@@ -7,59 +7,56 @@ use App\Models\Stylist; // Pastikan model Stylist di-import
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str; // <<< PERUBAHAN BARU
 
 class LookbookController extends Controller
 {
+    // ... (method index, userIndex, create, store tidak berubah) ...
+
     /**
      * Menampilkan halaman lookbook untuk STYLIST yang sedang login.
-     * Mengambil lookbook yang dibuat oleh stylist itu sendiri.
-     *
-     * @return \Illuminate\View\View
      */
     public function index()
     {
-        // Pastikan stylist sudah login
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // --- PERBAIKAN ---
-        // Logika untuk mengambil ID stylist disamakan dengan method store()
         $loggedInUser = Auth::user();
         $stylistProfile = Stylist::where('nama', $loggedInUser->nama)->first();
 
-        // Jika profil stylist tidak ditemukan, tampilkan halaman dengan data kosong.
         if (!$stylistProfile) {
-            $lookbooks = collect(); // Membuat koleksi kosong
+            $lookbooks = collect();
             return view('lookbook.lookbookstylist', compact('lookbooks'));
         }
 
-        // Gunakan ID dari profil stylist yang benar untuk mencari lookbook.
         $lookbooks = Lookbook::where('idStylist', $stylistProfile->idStylist)
                              ->latest()
                              ->get();
 
-        // Mengirim data ke view khusus untuk stylist
         return view('lookbook.lookbookstylist', compact('lookbooks'));
     }
 
     /**
-     * Menampilkan halaman lookbook untuk PENGGUNA BIASA.
-     *
-     * @return \Illuminate\View\View
+     * Menampilkan halaman lookbook untuk PENGGUNA BIASA dengan fitur pencarian.
      */
-    public function userIndex()
+    public function userIndex(Request $request)
     {
-        // Ambil semua lookbook dari semua stylist
-        $lookbooks = Lookbook::latest()->get();
+        $search = $request->input('search');
+        $query = Lookbook::query()->with('stylist'); // Eager load stylist
 
-        return view('lookbook.readlookbook', compact('lookbooks'));
+        if ($search) {
+            $query->where('nama', 'like', '%' . $search . '%')
+                  ->orWhere('kataKunci', 'like', '%' . $search . '%');
+        }
+
+        $lookbooks = $query->latest()->get();
+
+        return view('lookbook.readlookbook', compact('lookbooks', 'search'));
     }
 
     /**
      * Menampilkan form untuk membuat lookbook baru.
-     *
-     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -68,9 +65,6 @@ class LookbookController extends Controller
 
     /**
      * Menyimpan lookbook baru yang di-submit dari form.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -82,7 +76,6 @@ class LookbookController extends Controller
         ]);
 
         $imagePath = $request->file('imgLookbook')->store('lookbooks', 'public');
-
         $loggedInUser = Auth::user();
         $stylistProfile = Stylist::where('nama', $loggedInUser->nama)->first();
 
@@ -103,10 +96,6 @@ class LookbookController extends Controller
 
     /**
      * Menampilkan halaman detail untuk satu lookbook.
-     * Menggunakan Route Model Binding untuk keamanan dan kemudahan.
-     *
-     * @param  \App\Models\Lookbook  $lookbook
-     * @return \Illuminate\View\View
      */
     public function show(Lookbook $lookbook)
     {
@@ -116,9 +105,44 @@ class LookbookController extends Controller
                                 ->where('wishlistitem.idLookbook', $lookbook->idLookbook)
                                 ->exists();
         }
-
         $lookbook->load('stylist');
-
         return view('lookbook.detaillookbook', compact('lookbook', 'isBookmarked'));
+    }
+
+    /**
+     * <<< METHOD BARU UNTUK SARAN PENCARIAN >>>
+     * Merespons request AJAX dari frontend untuk memberikan saran tag.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTagSuggestions(Request $request)
+    {
+        $query = $request->input('query', '');
+
+        // Jika query kosong, kembalikan array kosong
+        if (empty($query)) {
+            return response()->json([]);
+        }
+
+        // 1. Ambil semua nilai dari kolom 'kataKunci'
+        $allKeywords = Lookbook::pluck('kataKunci')->toArray();
+
+        // 2. Proses semua kata kunci menjadi satu array tag yang unik
+        $tags = collect($allKeywords)
+            ->flatMap(function ($keywordString) {
+                // Pisahkan string berdasarkan koma, dan bersihkan spasi
+                return array_map('trim', explode(',', $keywordString));
+            })
+            ->filter() // Hapus tag kosong
+            ->unique(); // Hapus tag duplikat
+
+        // 3. Filter tag yang dimulai dengan query dari pengguna
+        $suggestions = $tags->filter(function ($tag) use ($query) {
+            return Str::startsWith(strtolower($tag), strtolower($query));
+        })->values(); // Ambil nilainya saja
+
+        // 4. Kembalikan hasilnya sebagai JSON
+        return response()->json($suggestions);
     }
 }

@@ -21,7 +21,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding-right: 20px;
+            padding: 0 10px; /* Tambahkan sedikit padding */
         }
 
         .lookbook-header h1 {
@@ -31,31 +31,51 @@
             font-weight: 600;
         }
 
-        .lookbook-search-main { /* Search bar di bagian konten utama */
+        /* --- PERUBAHAN UTAMA: Form Search --- */
+        .search-form {
             display: flex;
             align-items: center;
-            background-color: #fff;
+            background-color: #f5f5f5;
             border-radius: 25px;
-            padding: 10px 20px;
+            padding: 5px; /* Kurangi padding */
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             width: 400px;
             max-width: 100%;
         }
 
-        .lookbook-search-main input {
+        .search-form input {
             border: none;
             background: transparent;
             outline: none;
             flex-grow: 1;
             font-size: 16px;
-            margin-left: 10px;
+            padding: 5px 15px; /* Sesuaikan padding input */
         }
 
-        .lookbook-search-main svg {
-            width: 20px;
-            height: 20px;
-            color: #888;
+        .search-form button {
+            background-color: #FFC107;
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
+
+        .search-form button:hover {
+            background-color: #e0a800;
+        }
+
+        .search-form button svg {
+            width: 18px;
+            height: 18px;
+        }
+        /* --- Akhir Perubahan Form Search --- */
+
 
         .lookbook-grid {
             display: grid;
@@ -76,7 +96,6 @@
             border: 1px solid #eee; /* Default border */
             position: relative; /* Untuk garis pink */
 
-            /* --- PENTING UNTUK LINK: --- */
             display: block; /* Agar seluruh area <a> bisa diklik */
             text-decoration: none; /* Menghilangkan underline default pada link */
             color: inherit; /* Memastikan warna teks tidak berubah */
@@ -87,32 +106,26 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
         }
 
-        /* Garis border pink */
         .outfit-card::before,
         .outfit-card::after {
             content: '';
             position: absolute;
             left: 0;
             width: 100%;
-            height: 3px; /* Ketebalan garis */
-            background-color: #f4bc43; /* Warna kuning, sesuaikan ke pink jika diinginkan */
+            height: 3px;
+            background-color: #f4bc43;
         }
 
-        .outfit-card::before {
-            top: 0;
-        }
-
-        .outfit-card::after {
-            bottom: 0;
-        }
+        .outfit-card::before { top: 0; }
+        .outfit-card::after { bottom: 0; }
 
         .outfit-card img {
             width: 100%;
             height: 280px;
-            object-fit: contain; /* Menggunakan contain untuk tampilan gambar penuh */
+            object-fit: contain;
             display: block;
-            padding: 10px; /* Padding untuk gambar di dalam kartu */
-            box-sizing: border-box; /* Sertakan padding dalam lebar/tinggi */
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .outfit-card .outfit-info {
@@ -127,46 +140,40 @@
             font-size: 1em;
         }
 
-        .outfit-card .outfit-info .stylist-name { /* Tambahkan style ini */
+        .outfit-card .outfit-info .stylist-name {
             font-size: 0.9em;
             color: #777;
             margin-top: 2px;
         }
 
-        /* Penyesuaian responsif */
-        @media (max-width: 768px) {
-            .lookbook-grid {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-                gap: 15px;
-            }
-            .outfit-card img {
-                height: 180px;
-            }
+        /* --- PERUBAHAN BARU: Style untuk pesan "No Results" --- */
+        .no-results {
+            grid-column: 1 / -1; /* Agar pesan mengambil seluruh lebar grid */
+            text-align: center;
+            padding: 4rem;
+            color: #777;
         }
 
-        @media (max-width: 480px) {
-            .lookbook-grid {
-                grid-template-columns: 1fr;
-            }
-            .outfit-card img {
-                height: 150px;
-            }
-        }
     </style>
 
     <div class="lookbook-header">
         <h1>Lookbook</h1>
-        <div class="lookbook-search-main">
-            <input type="text" placeholder="search">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-        </div>
+        {{-- ========================================================= --}}
+        {{-- =================== PERUBAHAN UTAMA =================== --}}
+        {{-- ========================================================= --}}
+        <form action="{{ route('user.lookbook.index') }}" method="GET" class="search-form">
+            <input type="text" name="search" placeholder="Cari jeans, summer fit..." value="{{ $search ?? '' }}">
+            <button type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </button>
+        </form>
     </div>
 
     <div class="lookbook-grid">
         @forelse($lookbooks as $lookbook)
-            {{-- INI ADALAH PERUBAHAN KUNCI: Membungkus seluruh div.outfit-card dengan tag <a> --}}
+            {{-- Bagian ini sudah benar, tidak perlu diubah --}}
             <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" class="outfit-card">
                 @if($lookbook->imgLookbook)
                     <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}">
@@ -175,7 +182,6 @@
                 @endif
                 <div class="outfit-info">
                     <div class="designer-name">{{ $lookbook->nama }}</div>
-                    {{-- Tambahkan info stylist jika ada relasi di model Lookbook --}}
                     @if($lookbook->stylist)
                         <div class="stylist-name">by {{ $lookbook->stylist->nama }}</div>
                     @else
@@ -184,7 +190,10 @@
                 </div>
             </a>
         @empty
-            <p style="text-align: center; grid-column: 1 / -1;">Belum ada lookbook yang tersedia.</p>
+            {{-- --- PERUBAHAN BARU: Pesan jika tidak ada hasil --- --}}
+            <div class="no-results">
+                <p>Tidak ada lookbook yang cocok dengan pencarian Anda.</p>
+            </div>
         @endforelse
     </div>
 @endsection

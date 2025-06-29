@@ -300,9 +300,6 @@
                 <span>#{{ $hashtag }}</span> {{-- Tambahkan '#' di depan setiap hashtag --}}
             @endforeach
         </div>
-
-        {{-- Asumsi link continue shopping ini statis atau berasal dari data lain yang tidak ada di tabel lookbook --}}
-        <a href="https://www.uniqlo.com/id/en/products/E464027-000?colorCode=COL57&sizeCode=SMA007" class="continue-shopping-button">Continue Shopping</a>
     </div>
 </div>
 

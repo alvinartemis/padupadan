@@ -129,7 +129,7 @@ Route::middleware(['auth:stylist'])->group(function () {
 
 Route::get('/lookbook', [LookbookController::class, 'userIndex'])->name('user.lookbook.index');
 Route::get('/lookbook/{lookbook}', [LookbookController::class, 'show'])->name('lookbook.show');
-//Route::get('/lookbook/{id}', [LookbookController::class, 'show'])->name('lookbook.show');
+Route::get('/lookbook/tags/suggestions', [LookbookController::class, 'getTagSuggestions'])->name('lookbook.tags.suggestions');
 
 Route::middleware('auth')->group(function () {
     Route::post('/bookmark/lookbook/{lookbook}', [BookmarkController::class, 'toggleLookbookBookmark'])->name('bookmark.lookbook.toggle');

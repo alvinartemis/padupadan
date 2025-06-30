@@ -108,6 +108,7 @@ class UploadVideoController extends Controller
             $videoFashion->idPengguna = Auth::id(); // Ambil ID pengguna yang login
             $videoFashion->deskripsi = $request->input('description') ?? $tempUploadData['fileName']; // Ambil deskripsi dari form, fallback ke nama file
             $videoFashion->tag = $request->input('hashtags'); // Simpan hashtag ke kolom 'tag'
+             $videoFashion->outfitLink = $request->input('outfitLink');
 
             $videoFashion->formatFile = $tempUploadData['fileFormat'];
             $videoFashion->ukuranFile = $tempUploadData['fileSize'];

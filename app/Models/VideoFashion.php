@@ -22,6 +22,7 @@ class VideoFashion extends Model
         'ukuranFile',
         'pathFile',
         'mimeType',
+        'outfitLink',
     ];
 
     public function user()

@@ -718,7 +718,7 @@
 
                 <div class="interaction-sidebar">
                     <div class="user-avatar-single">
-                        <img src="https://i.imgur.com/S2i43eS.jpg" alt="User Avatar">
+                        <img id="videoUploaderAvatar" src="" alt="User Avatar">
                     </div>
 
                     <div class="interaction-buttons">
@@ -736,7 +736,7 @@
                             </svg>
                             <span id="commentCount"></span>
                         </div>
-                        <div class="icon-group">
+                        <div class="icon-group" id="shoppingCartIconContainer">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
@@ -820,6 +820,7 @@
             // ... (di dalam event listener DOMContentLoaded)
 
             const bookmarkButton = document.getElementById('bookmarkButton');
+            const shoppingCartIconContainer = document.getElementById('shoppingCartIconContainer');
 
             // Fungsi untuk memperbarui status bookmark pada UI
             function updateBookmarkStatus(videoData) {
@@ -841,6 +842,17 @@
                 updateBookmarkStatus(videoData);
 
                 // ... (sisa kode loadVideo) ...
+            }
+
+            if (shoppingCartIconContainer) {
+                shoppingCartIconContainer.addEventListener('click', () => {
+                    const videoData = videos[currentVideoIndex];
+                    if (videoData && videoData.outfit_link) {
+                        window.open(videoData.outfit_link, '_blank'); // Buka tautan di tab baru
+                    } else {
+                        alert('Tautan outfit tidak tersedia untuk video ini.');
+                    }
+                });
             }
 
 
@@ -993,22 +1005,8 @@
                     console.error(`Video data at index ${index} is undefined.`);
                     return;
                 }
-                // const videoData = videos[index];
-                // if (!videoData) {
-                //     console.warn(`Video data at index ${index} is undefined or null.`);
-                //     // Tampilkan pesan placeholder jika tidak ada data video
-                //     mainVideo.src = '';
-                //     videoUsername.textContent = 'Tidak Ada Video';
-                //     videoDescription.textContent = 'Mohon periksa database atau respon API.';
-                //     likeCountSpan.textContent = '0';
-                //     commentCountSpan.textContent = '0';
-                //     commentsHeaderCount.textContent = 'Comments (0)';
-                //     commentsList.innerHTML = '<p id="noCommentsMessage" style="text-align: center; color: #888;">Tidak ada komentar.</p>';
-                //     return;
-                // }
 
                 mainVideo.dataset.videoId = videoData.id;
-
                 mainVideo.src = videoData.src;
                 mainVideo.load();
                 mainVideo.play().catch(e => console.error("Playback failed:", e));
@@ -1020,10 +1018,15 @@
                 commentCountSpan.textContent = currentCommentsCount;
                 commentsHeaderCount.textContent = `Comments (${currentCommentsCount})`;
 
-                // Reset status like (ini akan di-handle oleh data dari server nantinya)
+                // Set the uploader's avatar
+                const videoUploaderAvatar = document.getElementById('videoUploaderAvatar');
+                if (videoUploaderAvatar) {
+                    videoUploaderAvatar.src = videoData.profile_picture;
+                }
+
+                // Reset status like (this will be handled by server data later)
                 likeButton.classList.remove('liked');
 
-                // PERUBAHAN DARI RESPON SEBELUMNYA: Panggil updateBookmarkStatus di sini
                 updateBookmarkStatus(videoData);
 
                 loadComments(videoData.comments || []);

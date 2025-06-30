@@ -16,23 +16,28 @@ class VideoController extends Controller
 
         $bookmarkedVideoIds = [];
         if (Auth::check()) {
-            // Ambil semua ID video yang sudah di-bookmark oleh user
             $bookmarkedVideoIds = Auth::user()->videoBookmarks()->pluck('idVideoFashion')->toArray();
         }
 
-        $formattedVideos = $videos->map(function ($video) use ($bookmarkedVideoIds) { // <-- Tambahkan use
-            // ... (kode map yang sudah ada)
-
+        $formattedVideos = $videos->map(function ($video) use ($bookmarkedVideoIds) {
             return [
                 'id' => $video->idVideoFashion,
                 'src' => Storage::url($video->pathFile),
                 'username' => $video->user->nama ?? 'Unknown User',
+                'profile_picture' => $video->user->profilepicture ? Storage::url($video->user->profilepicture) : asset('images/default_avatar.jpg'), // Added this line
                 'description' => $video->deskripsi,
                 'likes' => '199.7K', // Dummy
                 'comments_count' => $video->comments_count,
-                'is_bookmarked' => in_array($video->idVideoFashion, $bookmarkedVideoIds), // <-- TAMBAHKAN INI
+                'is_bookmarked' => in_array($video->idVideoFashion, $bookmarkedVideoIds),
+                'outfit_link' => $video->outfitLink,
                 'comments' => $video->comments->map(function ($comment) {
-                    // ... (kode comments map)
+                    return [
+                        'id' => $comment->idKomentar,
+                        'author' => $comment->user->nama ?? 'Anonim',
+                        'avatar' => $comment->user->profilepicture ? Storage::url($comment->user->profilepicture) : asset('images/default_avatar.jpg'),
+                        'text' => $comment->isiKomentar,
+                        'time' => $comment->tanggalKomentar,
+                    ];
                 })->sortByDesc('time')->values()->all()
             ];
         });

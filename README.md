@@ -58,7 +58,7 @@ Ikuti langkah-langkah di bawah ini untuk menjalankan proyek PaduPadan di lingkun
         bash
         cp .env.example .env
         
-      * Buka file .env dan konfigurasikan detail database Anda (DB\_DATABASE, DB\_USERNAME, DB\_PASSWORD).
+      * Buka file .env dan konfigurasikan detail database Anda (DB\_CONNECTION,DB\_DATABASE, DB\_USERNAME, DB\_PASSWORD).
       * Buat database baru di MySQL Anda dengan nama yang sama seperti yang Anda konfigurasikan di .env (misal: padupadan).
       * Generate kunci aplikasi:
         bash

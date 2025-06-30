@@ -58,7 +58,7 @@
                     @foreach($lookbooks as $lookbook)
                         <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" style="text-decoration: none; color: inherit;">
                             <div style="text-align: center; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); background-color: #f9f9f9;">
-                                <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}" style="width: 100%; height: 150px; object-fit: cover; display: block;">
+                                <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}" style="width: 100%; height: auto; max-height: 200px; object-fit: contain; display: block; padding: 5px; box-sizing: border-box;">
                                 <p style="margin-top: 8px; margin-bottom: 0; font-size: 0.9rem; color: #555;">{{ $lookbook->nama }}</p>
                             </div>
                         </a>

@@ -235,7 +235,7 @@
                 $hashtags = array_filter(array_map('trim', $rawHashtags));
             @endphp
             @foreach($hashtags as $hashtag)
-                <span>{{ $hashtag }}</span>
+                <span>#{{ $hashtag }}</span>
             @endforeach
         </div>
     </div>

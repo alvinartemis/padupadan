@@ -260,7 +260,7 @@
         <div class="user-info">
             @if($lookbook->stylist) {{-- Cek apakah objek stylist ada --}}
                 {{-- Asumsi model Stylist memiliki kolom 'profilepicture' (seperti User model) dan 'nama' --}}
-                <img src="{{ asset('storage/' . $lookbook->stylist->profilepicture) }}" alt="{{ $lookbook->stylist->nama }} Avatar">
+                <img src="{{ asset('stylist/' . $lookbook->stylist->profilepicture) }}" alt="{{ $lookbook->stylist->nama }} Avatar">
                 <span>{{ $lookbook->stylist->nama }}</span>
             @else
                 {{-- Fallback jika data stylist tidak ada atau tidak dimuat --}}

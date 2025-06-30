@@ -10,11 +10,18 @@ return new class extends Migration
     {
         Schema::create('video_bookmarks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('idPengguna')->constrained('pengguna', 'idPengguna')->onDelete('cascade');
-            $table->foreignId('idVideoFashion')->constrained('videofashion', 'idVideoFashion')->onDelete('cascade');
+            $table->integer('idPengguna');
+            $table->foreign('idPengguna')
+                  ->references('idPengguna')->on('pengguna')
+                  ->onDelete('cascade');
+            $table->integer('idVideoFashion');
+            $table->foreign('idVideoFashion')
+                  ->references('idVideoFashion')->on('videofashion')
+                  ->onDelete('cascade');
+
             $table->timestamps();
 
-            $table->unique(['idPengguna', 'idVideoFashion']); // Mencegah duplikat
+            $table->unique(['idPengguna', 'idVideoFashion']);
         });
     }
 

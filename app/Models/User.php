@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-use App\Models\Lookbook; // Penting: Import model Lookbook
-
-// Import model-model terkait lainnya jika digunakan di relasi lain
+use App\Models\Lookbook;
 use App\Models\VideoFashion;
 use App\Models\Stylist;
 use App\Models\KoleksiPakaian;
@@ -22,41 +19,11 @@ use App\Models\VideoBookmark;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected /* Nama tabel pengguna */ $table = 'pengguna'; // Pastikan nama tabel users Anda adalah 'pengguna'
-
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected /* Kunci utama model */ $primaryKey = 'idPengguna'; // Pastikan primary key Anda adalah 'idPengguna'
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public /* Penambahan ID otomatis */ $incrementing = true;
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public /* Stempel waktu model */ $timestamps = false; // Jika tabel Anda memiliki created_at dan updated_at, ubah ini menjadi true
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected /* Atribut yang dapat diisi secara massal */ $fillable = [
+    protected $table = 'pengguna';
+    protected $primaryKey = 'idPengguna';
+    public $incrementing = true;
+    public $timestamps = false;
+    protected$fillable = [
         'nama',
         'username',
         'email',
@@ -67,50 +34,22 @@ class User extends Authenticatable
         'skintone',
         'style',
         'preferences',
-        'bio',
     ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected /* Atribut tersembunyi */ $hidden = [
+    protected $hidden = [
         'password',
         'remember_token',
     ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array<string, string>
-     */
-    protected /* Atribut yang di-cast */ $casts = [
+    protected $casts = [
         'email_verified_at' => 'datetime',
-        'preferences' => 'array',
         'password' => 'hashed',
     ];
-
-    /**
-     * Get the login username to be used by the controller.
-     *
-     * @return string
-     */
-    public /* Ambil nama pengguna */ function username()
+    public function username()
     {
         return 'username';
     }
 
-    /**
-     * Get the lookbooks that are bookmarked by the user.
-     * Definisi relasi Many-to-Many dengan model Lookbook melalui tabel pivot.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
     public function wishlistItems()
     {
-        // PERBAIKAN: Menghapus ->withTimestamps() karena tabel pivot 'wishlistitem'
-        // Anda tidak memiliki kolom 'created_at' dan 'updated_at'.
         return $this->belongsToMany(
             \App\Models\Lookbook::class,
             'wishlistitem',
@@ -121,30 +60,28 @@ class User extends Authenticatable
         )->withPivot('tanggal_ditambahkan');
     }
 
-    // --- Relasi yang sudah ada di model User Anda (tetap dipertahankan) ---
-
-    public /* Relasi video fashion */ function videoFashions()
+    public function videoFashions()
     {
         return $this->hasMany(VideoFashion::class, 'idPengguna', 'idPengguna');
     }
 
-    public /* Relasi obrolan dengan stylist */ function chatsWithStylists()
+    public function chatsWithStylists()
     {
         return $this->belongsToMany(Stylist::class, 'pesan', 'idPengguna', 'idStylist')
                     ->withTimestamps();
     }
 
-    public /* Relasi koleksi pakaian */ function koleksiPakaian()
+    public function koleksiPakaian()
     {
         return $this->hasMany(KoleksiPakaian::class, 'idPengguna', 'idPengguna');
     }
 
-    public /* Relasi pakaian */ function outfits()
+    public function outfits()
     {
         return $this->hasMany(Outfit::class, 'id_pengguna', 'idPengguna');
     }
 
-    public /* Relasi pesan terkirim */ function pesanKirim()
+    public function pesanKirim()
     {
         return $this->hasMany(Pesan::class, 'idPengguna', 'idPengguna');
     }

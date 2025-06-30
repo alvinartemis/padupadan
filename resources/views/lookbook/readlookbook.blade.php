@@ -162,7 +162,7 @@
         {{-- =================== PERUBAHAN UTAMA =================== --}}
         {{-- ========================================================= --}}
         <form action="{{ route('user.lookbook.index') }}" method="GET" class="search-form">
-            <input type="text" name="search" placeholder="Cari jeans, summer fit..." value="{{ $search ?? '' }}">
+            <input type="text" name="search" placeholder="search" value="{{ $search ?? '' }}">
             <button type="submit">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -190,9 +190,8 @@
                 </div>
             </a>
         @empty
-            {{-- --- PERUBAHAN BARU: Pesan jika tidak ada hasil --- --}}
             <div class="no-results">
-                <p>Tidak ada lookbook yang cocok dengan pencarian Anda.</p>
+                <p>Apologies, we don't have any lookbooks matching your search right now, but we'll be adding more very soon!</p>
             </div>
         @endforelse
     </div>

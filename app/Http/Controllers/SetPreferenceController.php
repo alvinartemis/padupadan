@@ -1,10 +1,13 @@
 <?php
 
+
 namespace App\Http\Controllers;
+
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+
 
 class SetPreferenceController extends Controller
 {
@@ -21,7 +24,9 @@ class SetPreferenceController extends Controller
             abort(404);
         }
 
+
         $user = Auth::user();
+
 
         $currentQuizData = [
             'gender' => $user->gender,
@@ -33,6 +38,7 @@ class SetPreferenceController extends Controller
         session()->put('quiz', $currentQuizData);
         $currentStepIndex = array_search($step, $this->quizSteps);
 
+
         if ($step !== 'intro') {
             for ($i = 1; $i < $currentStepIndex; $i++) {
                 if (empty($user->{$this->quizSteps[$i]})) {
@@ -42,12 +48,15 @@ class SetPreferenceController extends Controller
             }
         }
 
+
         $options = [];
         $labels = [];
+
 
         if ($step === 'intro') {
             return view('step', compact('step'));
         }
+
 
         switch ($step) {
             case 'gender':
@@ -60,6 +69,7 @@ class SetPreferenceController extends Controller
                     return redirect()->route('set_preference.index', ['step' => 'gender'])
                                      ->with('error', 'Please select your gender first.');
                 }
+
 
                 if ($gender === 'male') {
                     $options = ['triangle', 'round', 'inverted_triangle', 'rectangular'];
@@ -79,8 +89,10 @@ class SetPreferenceController extends Controller
                 break;
         }
 
+
         return view('step', compact('step', 'options', 'labels'));
     }
+
 
     public function saveStep(Request $request, $step)
     {
@@ -94,6 +106,7 @@ class SetPreferenceController extends Controller
             $step => 'required|string',
         ]);
 
+
         $user = Auth::user();
         $user->{$step} = $request->input($step);
         if ($step === 'style') {
@@ -105,6 +118,7 @@ class SetPreferenceController extends Controller
             ];
             $user->preferences = $preferenceMapping[$request->input($step)] ?? 'Unknown Style';
         }
+
 
         $user->save();
         session()->put('quiz.' . $step, $request->input($step));
@@ -132,31 +146,33 @@ class SetPreferenceController extends Controller
         return view('countdown');
     }
 
+
     public function showResult()
     {
         if (!Auth::check()) {
             return redirect()->route('login')->with('error', 'Please log in to view your style result.');
         }
 
+
         $user = Auth::user();
         $style = $user->style ?? 'unknown';
         $preferenceTitle = $user->preferences ?? 'Discover Your Style!';
         $resultDetailsMapping = [
             'casual' => [
-                'description' => 'You are the **Easygoing Explorer!** Your style is all about comfort meets chic. You effortlessly blend relaxed pieces with trendy elements, making every day a fashion statement without trying too hard.',
-                'image' => asset('img/result_casual.png'),
+                'description' => 'You are the Easygoing Explorer! Your style is all about comfort meets chic. You effortlessly blend relaxed pieces with trendy elements, making every day a fashion statement without trying too hard.',
+                'image' => asset('img/exp.png'),
             ],
             'formal' => [
-                'description' => 'You are **The Authority!** You exude confidence and professionalism. Your wardrobe is characterized by structured silhouettes, classic tailoring, and a polished appearance that commands respect.',
-                'image' => asset('img/result_formal.png'),
+                'description' => 'You are The Authority! You exude confidence and professionalism. Your wardrobe is characterized by structured silhouettes, classic tailoring, and a polished appearance that commands respect.',
+                'image' => asset('img/ta.png'),
             ],
             'stylish' => [
-                'description' => 'You are **The Fashion Icon!** You have an innate ability to put together looks that are effortlessly elegant and always on point. You understand current trends and adapt them to your sophisticated taste.',
-                'image' => asset('img/result_stylish.png'),
+                'description' => 'You are The Fashion Icon! You have an innate ability to put together looks that are effortlessly elegant and always on point. You understand current trends and adapt them to your sophisticated taste.',
+                'image' => asset('img/fi.png'),
             ],
             'unique' => [
-                'description' => 'You are **The Trendsetter!** Your style is a vibrant reflection of your personality. You aren\'t afraid to experiment with unconventional combinations, making a statement that is truly one-of-a-kind.',
-                'image' => asset('img/result_unique.png'),
+                'description' => 'You are The Trendsetter! Your style is a vibrant reflection of your personality. You aren\'t afraid to experiment with unconventional combinations, making a statement that is truly one-of-a-kind.',
+                'image' => asset('img/ts.png'),
             ],
             'unknown' => [
                 'description' => 'It seems we couldn\'t pinpoint a specific style yet. Explore more to find your perfect fashion identity!',
@@ -164,12 +180,15 @@ class SetPreferenceController extends Controller
             ]
         ];
 
+
         $result = $resultDetailsMapping[$style] ?? $resultDetailsMapping['unknown'];
+
 
         if (empty($user->gender) || empty($user->bodytype) || empty($user->skintone) || empty($user->style) || empty($user->preferences)) {
              return redirect()->route('set_preference.index', ['step' => 'intro'])
                               ->with('error', 'Your style preference was not fully set. Please complete the quiz.');
         }
+
 
         return view('result', [
             'resultTitle' => $preferenceTitle,
@@ -178,6 +197,7 @@ class SetPreferenceController extends Controller
         ]);
     }
 
+
     public function complete(Request $request)
     {
         if (!Auth::check()) {
@@ -185,6 +205,10 @@ class SetPreferenceController extends Controller
         }
         session()->forget('quiz');
 
+
         return redirect()->route('home')->with('success', 'Your preferences are set!');
     }
 }
+
+
+

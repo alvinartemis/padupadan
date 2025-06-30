@@ -1,8 +1,10 @@
 @extends('layouts.stylist')
 
+
 @section('content')
     <div style="background-color: #f4f4f4; padding: 20px; border-radius: 8px;">
         <h2 style="color: #333; margin-bottom: 20px;">Messages</h2>
+
 
         @if ($recentChats->isNotEmpty())
             <div id="recent-chats-container" style="margin-bottom: 20px;">
@@ -10,7 +12,7 @@
                     <div style="background-color: white; border-radius: 8px; margin-bottom: 10px; padding: 10px; display: flex; align-items: flex-start; position: relative;">
                         <a href="{{ route('chat.profileuser', ['user' => $chat['user']->idPengguna]) }}" style="display: block; flex-shrink: 0; margin-right: 15px;">
                             <div style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden">
-                                <img src="{{ asset('user/' . $chat['user']->profilepicture) }}" alt="{{ $chat['user']->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="{{ asset('storage/' . $chat['user']->profilepicture) }}" alt="{{ $chat['user']->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                         </a>
                         <a href="{{ route('chat.showstylist', ['user' => $chat['user']->idPengguna]) }}" style="display: flex; flex-direction: column; flex-grow: 1; text-decoration: none; color: #333; cursor: pointer;">
@@ -31,8 +33,5 @@
         @else
             <p style="color: #777;">No Conversation Yet</p>
         @endif
-
-        <h2 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Users Available to Chat</h2>
-        @include('chat.listusers', ['usersToChat' => $usersToChat])
     </div>
 @endsection

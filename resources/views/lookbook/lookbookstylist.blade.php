@@ -133,6 +133,16 @@
             transform: translateY(-2px);
         }
 
+        /* Style for empty lookbook message */
+        .empty-lookbook-message {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+            margin-top: 50px; /* Adjust as needed */
+            width: 100%; /* Ensure it takes full width to center */
+            grid-column: 1 / -1; /* Make it span all columns in the grid */
+        }
+
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .lookbook-grid {
@@ -189,7 +199,10 @@
                     </div>
                 </a>
             @empty
-                <p>Belum ada lookbook yang Anda buat. Silakan buat satu!</p>
+                {{-- Menggunakan div dengan kelas baru untuk styling --}}
+                <div class="empty-lookbook-message">
+                    You haven't created any lookbooks yet. Go ahead and create one!
+                </div>
             @endforelse
         </div> <!-- ✅ Di sini baru tutup .lookbook-grid -->
     </div>

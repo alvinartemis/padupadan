@@ -1,13 +1,15 @@
 @extends('layouts.stylist')
 
+
 @section('title', 'Chat dengan ' . $user->nama)
+
 
 @section('content')
     <div style="background-color: #f9f9f9; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); max-width: 700px; margin: 30px auto; padding: 30px; display: flex; flex-direction: column; height: 600px;">
         <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid #eee; margin-bottom: 20px;">
             <a href="{{ route('chat.profileuser', $user) }}" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
                 <div style="width: 50px; height: 50px; border-radius: 50%; overflow: hidden; margin-right: 15px;">
-                    <img src="{{ asset('user/' . $user->profilepicture) }}" alt="{{ $user->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ asset('storage/' . $user->profilepicture) }}" alt="{{ $user->nama }}" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
                 <div>
                     <h4 style="margin: 0; font-weight: 600; color: #333;">{{ $user->nama }}</h4>
@@ -38,6 +40,7 @@
             </button>
         </form>
     </div>
+
 
     <div id="errorPopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
         <div style="background-color: #fff; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); width: 80%; max-width: 400px;">
@@ -72,6 +75,7 @@
         </div>
     </div>
 
+
     <script>
         function scrollToBottom() {
             var messageContainer = document.getElementById('message-container');
@@ -79,15 +83,18 @@
         }
         window.onload = scrollToBottom;
 
+
         document.getElementById('lampiranPesan').addEventListener('change', function() {
             var pratinjau = document.getElementById('pratinjauLampiran');
             var file = this.files[0];
             var reader = new FileReader();
 
+
             reader.onloadend = function() {
                 pratinjau.src = reader.result;
                 pratinjau.style.display = 'block';
             }
+
 
             if (file && file.type.match('image.*')) {
                 reader.readAsDataURL(file);
@@ -97,13 +104,16 @@
             }
         });
 
+
         function showErrorPopup() {
             document.getElementById('errorPopup').style.display = 'flex';
         }
 
+
         function closeErrorPopup() {
             document.getElementById('errorPopup').style.display = 'none';
         }
+
 
         @if ($errors->any())
             window.onload = showErrorPopup;

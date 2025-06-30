@@ -11,14 +11,12 @@
             font-family: 'Poppins', sans-serif;
             background-color: #f5f5f5;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
             text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
+
 
         .circle {
             position: absolute;
@@ -27,12 +25,14 @@
             z-index: 0;
         }
 
+
         .circle.left {
             width: 400px;
             height: 400px;
             bottom: -100px;
             left: -100px;
         }
+
 
         .circle.right {
             width: 400px;
@@ -41,6 +41,7 @@
             right: -100px;
         }
 
+
         .logo {
             position: absolute;
             top: 20px;
@@ -48,9 +49,11 @@
             z-index: 2;
         }
 
+
         .logo img {
             height: 60px;
         }
+
 
         .container {
             position: relative;
@@ -60,32 +63,37 @@
             margin: 0 auto;
         }
 
+
         .result-image {
-            width: 300px; /* Adjust as needed */
+            max-width: 100%;
+            width: 200px;
             height: auto;
             margin-bottom: 2rem;
-            border-radius: 8px; /* Optional: add some rounded corners */
+            border-radius: 8px;
         }
 
+
         h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
             color: #173F63;
             margin-bottom: 1.5rem;
         }
 
+
         p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             line-height: 1.6;
             color: #555;
             margin-bottom: 2.5rem;
         }
 
+
         .button {
             display: inline-block;
             padding: 15px 40px;
-            background-color: #FFA500; /* Your orange color */
-            color: white;
+            background-color: #FFFFFF;
+            color: #F4BC43;
             border: none;
             border-radius: 30px;
             font-size: 1.1rem;
@@ -96,11 +104,13 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+
         .button:hover {
-            background-color: #FF8C00; /* Darker orange on hover */
+            background-color: #F4bc43;
+            color: #ffffff;
         }
 
-        /* Responsive adjustments */
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -116,6 +126,7 @@
                 font-size: 1rem;
             }
         }
+
 
         @media (max-width: 480px) {
             h1 {
@@ -142,9 +153,11 @@
     <div class="circle left"></div>
     <div class="circle right"></div>
 
+
     <div class="logo">
         <img src="{{ asset('img/logoy.png') }}" alt="Logo">
     </div>
+
 
     <div class="container">
         @if ($resultImage)
@@ -153,8 +166,11 @@
             <img src="{{ asset('img/default_result.png') }}" alt="Default Style" class="result-image">
         @endif
         <h1>{{ $resultTitle }}</h1>
-        <p>{!! nl2br(e($resultDescription)) !!}</p> {{-- Use {!! !!} for HTML content if needed, and nl2br for line breaks --}}
+        <p>{!! nl2br(e($resultDescription)) !!}</p>
         <a href="{{ route('home') }}" class="button">I'm Ready!</a>
     </div>
 </body>
 </html>
+
+
+

@@ -98,7 +98,8 @@
         <nav>
             <ul>
                 <li>
-                    <a href="{{ route('stylist.homestylist') }}" class="{{ request()->routeIs('stylist.*') ? 'active' : '' }}">
+                    <a href="{{ route('stylist.homestylist') }}"
+                    class="{{ request()->routeIs('stylist.homestylist') || request()->routeIs('stylist.profile.*') ? 'active' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                             <path fill="currentColor" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/>
                         </svg>
@@ -106,7 +107,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('lookbook.index') }}" class="{{ request()->routeIs('lookbook.*') ? 'active' : '' }}">
+                    <a href="{{ route('lookbook.index') }}"
+                     class="{{ request()->routeIs('lookbook.*') || request()->routeIs('stylist.lookbook.show') ? 'active' : '' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                             <path fill="currentColor" d="M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5l0-377.4c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.1C6.8 60.5 0 71.7 0 83.8L0 454.1c0 11.9 12.8 20.2 24.1 16.5C55.6 460.1 105.5 448 144 448c33.9 0 79 14 105.6 23.5zm76.8 0C353 462 398.1 448 432 448c38.5 0 88.4 12.1 119.9 22.6c11.3 3.8 24.1-4.6 24.1-16.5l0-370.3c0-12.1-6.8-23.3-18.1-27.6C529.7 45.3 482.5 32 432 32c-58.4 0-103.4 20-123 35.6c-3.3 2.6-5 6.8-5 11L304 456c0 11.4 11.7 19.3 22.4 15.5z"/>
                         </svg>

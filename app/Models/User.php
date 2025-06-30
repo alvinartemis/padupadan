@@ -153,4 +153,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(VideoBookmark::class, 'idPengguna', 'idPengguna');
     }
+
+        public function __get($key)
+    {
+        if ($key === 'id') {
+            return $this->{$this->primaryKey};
+        }
+        return parent::__get($key);
+    }
 }

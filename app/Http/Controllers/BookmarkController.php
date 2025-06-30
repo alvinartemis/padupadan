@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Log;
 use App\Models\Lookbook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,16 @@ class BookmarkController extends Controller
     public function toggleLookbookBookmark(Lookbook $lookbook)
     {
         $user = Auth::user();
+
+        // Log::info('Debug User Object for Lookbook Bookmark', [
+        //     'auth_check' => Auth::check(), // Cek apakah user sedang login
+        //     'user_id' => $user->id ?? 'NULL_from_id', // Nilai properti 'id'
+        //     'user_idPengguna' => $user->idPengguna ?? 'NULL_from_idPengguna', // Nilai properti 'idPengguna'
+        //     'user_class' => get_class($user), // Kelas dari objek user
+        //     'user_is_null' => ($user === null), // Cek apakah objek user benar-benar NULL
+        //     'user_attributes' => $user ? $user->getAttributes() : 'NULL_attributes', // Semua atribut user
+        //     'lookbook_id' => $lookbook->idLookbook,
+        // ]);
 
         // Menggunakan query langsung untuk 100% menghindari ambiguitas.
         $isAlreadyBookmarked = DB::table('wishlistitem')

@@ -47,31 +47,12 @@ Route::middleware('auth:stylist')->group(function () {
 });
 
 Route::middleware('auth:')->group(function () {
-    // Initial entry point for the quiz, redirects to the first step
-    Route::get('/set-preference', [SetPreferenceController::class, 'index'])->name('set_preference.start');
-
-    Route::get('/set-preference/result', [SetPreferenceController::class, 'showResult'])->name('set_preference.result');
-
-    // Route for each quiz step (gender, bodytype, skintone, style)
-    Route::get('/set-preference/{step}', [SetPreferenceController::class, 'index'])->name('set_preference.index');
-    Route::post('/set-preference/{step}', [SetPreferenceController::class, 'saveStep'])->name('set_preference.save_step');
-
-    // Quiz Countdown and Result routes
+    Route::get('/set-preference/{step?}', [SetPreferenceController::class, 'index'])->name('set_preference.index');
+    Route::post('/set-preference/save/{step}', [SetPreferenceController::class, 'saveStep'])->name('set_preference.save_step');
     Route::get('/quiz/countdown', [SetPreferenceController::class, 'showCountdown'])->name('set_preference.countdown');
-    // Route::get('/set-preference/result', [SetPreferenceController::class, 'showResult'])->name('set_preference.result');
+    Route::get('/set-preference/result', [SetPreferenceController::class, 'showResult'])->name('set_preference.result');
     Route::post('/set-preference/complete', [SetPreferenceController::class, 'complete'])->name('set_preference.complete');
 });
-Route::get('/test-view', function () {
-    return view('result', [
-        'resultTitle' => 'Test Style',
-        'resultDescription' => 'You are testing the view. Everything works fine!',
-        'resultImage' => asset('img/default_result.png'),
-    ]);
-});
-Route::get('/debug-set-result', function () {
-    return redirect()->route('set_preference.result');
-});
-
 
 Route::get('/settings/editprofile', [EditProfileController::class, 'editprofile'])->name('profile.edit');
 Route::put('/profile/update', [EditProfileController::class, 'update'])->name('profile.update');

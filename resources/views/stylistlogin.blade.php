@@ -139,9 +139,40 @@
         input::placeholder {
           padding-left: 0.5rem;
         }
+
+        .back-button {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.2s ease-in-out;
+        z-index: 10;
+        fill: #173F63
+        }
+
+        .back-button:hover {
+            background-color: #F4BC43;
+        }
+        .back-button:hover svg {
+            fill: white;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
+    <button onclick="history.back()" class="back-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 20px; height: 20px;">
+            <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/>
+        </svg>
+    </button>
     <img src="{{ asset('img/alogo.png') }}" alt="Padu Padan Logo" class="logo">
     <div class="container">
         <h2 style="font-size: 3rem; font-weight: 700;">Hello!</h2>

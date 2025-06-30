@@ -21,22 +21,31 @@
         <div style="flex-grow: 1; overflow-y: auto; padding-bottom: 20px;" id="message-container">
             @include('chat.listmessage', ['messages' => $messages])
         </div>
-        <form action="{{ route('chat.send', $stylist) }}" method="POST" enctype="multipart/form-data" style="display: flex; align-items: center; padding-top: 20px; border-top: 1px solid #eee;">
+        {{-- START: FORM PESAN --}}
+        <form action="{{ route('chat.send', $stylist) }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; padding-top: 20px; border-top: 1px solid #eee;">
             @csrf
-            <button type="button" onclick="$('#lampiranPesan').click()" style="background: none; border: none; color: #777; font-size: 1.2rem; margin-right: 10px; cursor: pointer; opacity: 0.8; transition: opacity 0.2s ease;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 1.2em; height: 1.2em; vertical-align: middle; fill: currentColor;">
-                    <path d="M364.2 83.8c-24.4-24.4-64-24.4-88.4 0l-184 184c-42.1 42.1-42.1 110.3 0 152.4s110.3 42.1 152.4 0l152-152c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-152 152c-64 64-167.6 64-231.6 0s-64-167.6 0-231.6l184-184c46.3-46.3 121.3-46.3 167.6 0s46.3 121.3 0 167.6l-176 176c-28.6 28.6-75 28.6-103.6 0s-28.6-75 0-103.6l144-144c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-144 144c-6.7 6.7-6.7 17.7 0 24.4s17.7 6.7 24.4 0l176-176c24.4-24.4 24.4-64 0-88.4z"/>
-                </svg>
-            </button>
-            <input type="text" name="isiPesan" placeholder="Send a message" style="flex-grow: 1; border: 1px solid #ccc; border-radius: 25px; padding: 10px 15px; font-size: 0.95rem; margin-right: 10px;">
-            <input type="file" name="lampiranPesan" style="display: none;" id="lampiranPesan">
-            <img id="pratinjauLampiran" src="#" alt="Pratinjau" style="display: none; max-width: 100px; max-height: 100px; margin-top: 10px;">
-            <button type="submit" style="background-color: #F4BC43; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 1.2em; height: 1.2em; fill: currentColor;">
-                    <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480l0-83.6c0-4 1.5-7.8 4.2-10.8L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z"/>
-                </svg>
-            </button>
+            {{-- PRATINJAU GAMBAR DI SINI --}}
+            <div id="preview-area" style="display: none; margin-bottom: 10px; text-align: center;">
+                <img id="pratinjauLampiran" src="#" alt="Pratinjau Gambar" style="max-width: 150px; max-height: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                <button type="button" onclick="removeAttachment()" style="background: none; border: none; color: #d9534f; font-size: 1.2rem; margin-left: 10px; cursor: pointer;">&times;</button>
+            </div>
+            {{-- INPUT TEKS DAN TOMBOL KIRIM --}}
+            <div style="display: flex; align-items: center; width: 100%;">
+                <button type="button" onclick="$('#lampiranPesan').click()" style="background: none; border: none; color: #777; font-size: 1.2rem; margin-right: 10px; cursor: pointer; opacity: 0.8; transition: opacity 0.2s ease;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="width: 1.2em; height: 1.2em; vertical-align: middle; fill: currentColor;">
+                        <path d="M364.2 83.8c-24.4-24.4-64-24.4-88.4 0l-184 184c-42.1 42.1-42.1 110.3 0 152.4s110.3 42.1 152.4 0l152-152c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-152 152c-64 64-167.6 64-231.6 0s-64-167.6 0-231.6l184-184c46.3-46.3 121.3-46.3 167.6 0s46.3 121.3 0 167.6l-176 176c-28.6 28.6-75 28.6-103.6 0s-28.6-75 0-103.6l144-144c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-144 144c-6.7 6.7-6.7 17.7 0 24.4s17.7 6.7 24.4 0l176-176c24.4-24.4 24.4-64 0-88.4z"/>
+                    </svg>
+                </button>
+                <input type="text" name="isiPesan" placeholder="Send a message" style="flex-grow: 1; border: 1px solid #ccc; border-radius: 25px; padding: 10px 15px; font-size: 0.95rem; margin-right: 10px;">
+                <input type="file" name="lampiranPesan" style="display: none;" id="lampiranPesan" accept="image/png, image/jpeg, image/jpg, image/heic">
+                <button type="submit" style="background-color: #F4BC43; color: #fff; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width: 1.2em; height: 1.2em; fill: currentColor;">
+                        <path d="M498.1 5.6c10.1 7 15.4 19.1 13.5 31.2l-64 416c-1.5 9.7-7.4 18.2-16 23s-18.9 5.4-28 1.6L284 427.7l-68.5 74.1c-8.9 9.7-22.9 12.9-35.2 8.1S160 493.2 160 480l0-83.6c0-4 1.5-7.8 4.2-10.8L331.8 202.8c5.8-6.3 5.6-16-.4-22s-15.7-6.4-22-.7L106 360.8 17.7 316.6C7.1 311.3 .3 300.7 0 288.9s5.9-22.8 16.1-28.7l448-256c10.7-6.1 23.9-5.5 34 1.4z"/>
+                    </svg>
+                </button>
+            </div>
         </form>
+        {{-- END: FORM PESAN --}}
     </div>
 
     <div id="errorPopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
@@ -79,23 +88,34 @@
         }
         window.onload = scrollToBottom;
 
+        // JavaScript for attachment preview and removal
         document.getElementById('lampiranPesan').addEventListener('change', function() {
             var pratinjau = document.getElementById('pratinjauLampiran');
+            var previewArea = document.getElementById('preview-area'); // Ambil elemen preview-area
             var file = this.files[0];
             var reader = new FileReader();
 
-            reader.onloadend = function() {
-                pratinjau.src = reader.result;
-                pratinjau.style.display = 'block';
-            }
-
-            if (file && file.type.match('image.*')) {
+            if (file && file.type.match('image.*')) { // Tambahkan validasi tipe file di JS juga
+                reader.onloadend = function() {
+                    pratinjau.src = reader.result;
+                    previewArea.style.display = 'block'; // Tampilkan preview area
+                }
                 reader.readAsDataURL(file);
             } else {
                 pratinjau.src = "#";
-                pratinjau.style.display = 'none';
+                previewArea.style.display = 'none'; // Sembunyikan jika tidak ada file atau bukan gambar
             }
         });
+
+        function removeAttachment() {
+            var pratinjau = document.getElementById('pratinjauLampiran');
+            var previewArea = document.getElementById('preview-area');
+            var fileInput = document.getElementById('lampiranPesan');
+
+            pratinjau.src = "#"; // Clear the image source
+            previewArea.style.display = 'none'; // Hide the preview area
+            fileInput.value = ''; // Clear the selected file from the input
+        }
 
         function showErrorPopup() {
             document.getElementById('errorPopup').style.display = 'flex';

@@ -597,6 +597,46 @@
         .search-list li .clear-search-item:hover {
             color: #888;
         }
+        /* Letakkan ini di dalam tag <style> */
+
+        /* Styling untuk container lingkaran tombol bookmark */
+        .bookmark-button {
+            width: 48px;
+            height: 48px;
+            background-color: #f0f2f5; /* Warna abu-abu terang seperti tombol like */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .bookmark-button:hover {
+            background-color: #e0e2e5;
+            transform: scale(1.1);
+        }
+
+        /* Ukuran ikon SVG di dalam lingkaran */
+        .bookmark-button svg {
+            width: 28px;  /* Ukuran ikon lebih besar agar terlihat jelas */
+            height: 28px;
+            color: #333; /* Warna ikon hitam/gelap */
+            stroke: #333; /* Pastikan garisnya juga gelap */
+            transition: all 0.2s ease;
+        }
+
+        /* Style saat tombol di-bookmark (aktif) */
+        .bookmark-button.bookmarked svg {
+            fill: #FFC107; /* Warna kuning saat aktif */
+            stroke: #FFC107;
+        }
+
+        /* Sembunyikan counter karena tidak ada di desain */
+        #bookmarkCount {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -638,7 +678,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class=>
+                        <a href="{{ route('user.lookbook.index')}}" class=>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                                 <path fill="currentColor" d="M249.6 471.5c10.8 3.8 22.4-4.1 22.4-15.5l0-377.4c0-4.2-1.6-8.4-5-11C247.4 52 202.4 32 144 32C93.5 32 46.3 45.3 18.1 56.1C6.8 60.5 0 71.7 0 83.8L0 454.1c0 11.9 12.8 20.2 24.1 16.5C55.6 460.1 105.5 448 144 448c33.9 0 79 14 105.6 23.5zm76.8 0C353 462 398.1 448 432 448c38.5 0 88.4 12.1 119.9 22.6c11.3 3.8 24.1-4.6 24.1-16.5l0-370.3c0-12.1-6.8-23.3-18.1-27.6C529.7 45.3 482.5 32 432 32c-58.4 0-103.4 20-123 35.6c-3.3 2.6-5 6.8-5 11L304 456c0 11.4 11.7 19.3 22.4 15.5z"/>
                                 </svg>
@@ -703,10 +743,13 @@
                             <span></span>
                         </div>
                         <div class="icon-group">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                            </svg>
-                            <span></span>
+                            {{-- div ini akan menjadi lingkaran abu-abu --}}
+                            <div class="bookmark-button" id="bookmarkContainer">
+                                <svg id="bookmarkButton" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.593 3.322c.1.121.1.287.1.448v17.48a.75.75 0 0 1-1.28.53l-6.16-6.16a.75.75 0 0 0-1.06 0l-6.16 6.16a.75.75 0 0 1-1.28-.53V3.77a.75.75 0 0 1 .1-.448C2.353 2.514 3.24 2 4.25 2h15.5c1.01 0 1.897.514 2.243 1.322z" />
+                                </svg>
+                            </div>
+                            <span id="bookmarkCount"></span> {{-- Span ini bisa untuk counter nanti, kita sembunyikan dulu --}}
                         </div>
                     </div>
                 </div>
@@ -774,6 +817,72 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // ... (di dalam event listener DOMContentLoaded)
+
+            const bookmarkButton = document.getElementById('bookmarkButton');
+
+            // Fungsi untuk memperbarui status bookmark pada UI
+            function updateBookmarkStatus(videoData) {
+                const bookmarkContainer = document.getElementById('bookmarkContainer'); // Targetnya adalah DIV pembungkus
+                if (videoData.is_bookmarked) {
+                    bookmarkContainer.classList.add('bookmarked');
+                } else {
+                    bookmarkContainer.classList.remove('bookmarked');
+                }
+            }
+
+            // Modifikasi fungsi `loadVideo` untuk menyertakan status bookmark
+            function loadVideo(index) {
+                const videoData = videos[index];
+                // ... (kode loadVideo yang sudah ada) ...
+                mainVideo.dataset.videoId = videoData.id; // Set ID video saat ini
+
+                // Panggil fungsi untuk update status bookmark
+                updateBookmarkStatus(videoData);
+
+                // ... (sisa kode loadVideo) ...
+            }
+
+
+            // Event listener untuk tombol bookmark
+            bookmarkButton.addEventListener('click', async () => {
+                const videoId = mainVideo.dataset.videoId;
+                if (!videoId) {
+                    alert('Video ID not found!');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/bookmark/video/${videoId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                    });
+
+                    const data = await response.json();
+
+                    if (data.status === 'success') {
+                        // Toggle warna ikon
+                        if (data.bookmark_status === 'bookmarked') {
+                            bookmarkButton.style.fill = '#FFC107';
+                            bookmarkButton.style.stroke = '#FFC107';
+                        } else {
+                            bookmarkButton.style.fill = 'none';
+                            bookmarkButton.style.stroke = 'currentColor';
+                        }
+                        // Update status di data video lokal
+                        videos[currentVideoIndex].is_bookmarked = (data.bookmark_status === 'bookmarked');
+                    } else {
+                        alert(data.message || 'Failed to bookmark video.');
+                    }
+                } catch (error) {
+                    console.error('Error bookmarking video:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+
             let videos = [];
             let currentVideoIndex = 0;
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -881,21 +990,28 @@
             function loadVideo(index) {
                 const videoData = videos[index];
                 if (!videoData) {
-                    console.warn(`Video data at index ${index} is undefined or null.`);
-                    // Tampilkan pesan placeholder jika tidak ada data video
-                    mainVideo.src = '';
-                    videoUsername.textContent = 'Tidak Ada Video';
-                    videoDescription.textContent = 'Mohon periksa database atau respon API.';
-                    likeCountSpan.textContent = '0';
-                    commentCountSpan.textContent = '0';
-                    commentsHeaderCount.textContent = 'Comments (0)';
-                    commentsList.innerHTML = '<p id="noCommentsMessage" style="text-align: center; color: #888;">Tidak ada komentar.</p>';
+                    console.error(`Video data at index ${index} is undefined.`);
                     return;
                 }
+                // const videoData = videos[index];
+                // if (!videoData) {
+                //     console.warn(`Video data at index ${index} is undefined or null.`);
+                //     // Tampilkan pesan placeholder jika tidak ada data video
+                //     mainVideo.src = '';
+                //     videoUsername.textContent = 'Tidak Ada Video';
+                //     videoDescription.textContent = 'Mohon periksa database atau respon API.';
+                //     likeCountSpan.textContent = '0';
+                //     commentCountSpan.textContent = '0';
+                //     commentsHeaderCount.textContent = 'Comments (0)';
+                //     commentsList.innerHTML = '<p id="noCommentsMessage" style="text-align: center; color: #888;">Tidak ada komentar.</p>';
+                //     return;
+                // }
+
+                mainVideo.dataset.videoId = videoData.id;
 
                 mainVideo.src = videoData.src;
                 mainVideo.load();
-                mainVideo.play();
+                mainVideo.play().catch(e => console.error("Playback failed:", e));
 
                 videoUsername.textContent = videoData.username;
                 videoDescription.textContent = videoData.description;
@@ -904,11 +1020,13 @@
                 commentCountSpan.textContent = currentCommentsCount;
                 commentsHeaderCount.textContent = `Comments (${currentCommentsCount})`;
 
+                // Reset status like (ini akan di-handle oleh data dari server nantinya)
                 likeButton.classList.remove('liked');
-                likeButton.dataset.isLiked = 'false';
 
-                console.log("Di loadVideo: videoData.comments =", videoData.comments);
-                loadComments(videoData.comments || []); // Panggilan ini sekarang akan menemukan loadComments
+                // PERUBAHAN DARI RESPON SEBELUMNYA: Panggil updateBookmarkStatus di sini
+                updateBookmarkStatus(videoData);
+
+                loadComments(videoData.comments || []);
             }
 
             // Fungsi fetchVideos (Dipindahkan ke atas, karena dipanggil saat DOMContentLoaded)
@@ -916,24 +1034,31 @@
                 try {
                     const response = await fetch('{{ route('api.videos') }}');
                     if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
-                    videos = data.map(video => {
-                        return {
-                            ...video,
-                            comments_count: parseInt(video.comments_count) || 0
-                        };
-                    });
+
+                    // Simpan data video ke variabel global
+                    videos = data.map(video => ({
+                        ...video,
+                        comments_count: parseInt(video.comments_count) || 0,
+                        // Pastikan is_bookmarked ada, default ke false jika tidak ada dari API
+                        is_bookmarked: video.is_bookmarked || false
+                    }));
+
                     if (videos.length > 0) {
-                        loadVideo(currentVideoIndex);
+                        // --- PERBAIKAN UTAMA DI SINI ---
+                        // Langsung panggil loadVideo untuk video pertama (index 0)
+                        loadVideo(0);
                     } else {
-                        console.warn("Tidak ada video yang ditemukan dari database atau API mengembalikan array kosong.");
-                        loadVideo(0); // Panggil loadVideo dengan index 0 untuk menampilkan pesan "Tidak Ada Video"
+                        console.warn("No videos found from the API.");
+                        // Tampilkan state kosong jika tidak ada video
+                        videoUsername.textContent = 'No Videos Available';
+                        videoDescription.textContent = 'Upload a video to get started!';
                     }
                 } catch (error) {
                     console.error("Error fetching videos:", error);
-                    loadVideo(0); // Panggil loadVideo dengan index 0 untuk menampilkan pesan "Tidak Ada Video"
+                    videoUsername.textContent = 'Failed to load videos';
                 }
             }
 

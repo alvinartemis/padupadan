@@ -131,6 +131,9 @@ Route::get('/lookbook', [LookbookController::class, 'userIndex'])->name('user.lo
 Route::get('/lookbook/{lookbook}', [LookbookController::class, 'show'])->name('lookbook.show');
 Route::get('/lookbook/tags/suggestions', [LookbookController::class, 'getTagSuggestions'])->name('lookbook.tags.suggestions');
 
+
 Route::middleware('auth')->group(function () {
     Route::post('/bookmark/lookbook/{lookbook}', [BookmarkController::class, 'toggleLookbookBookmark'])->name('bookmark.lookbook.toggle');
+    Route::post('/bookmark/video/{video}', [BookmarkController::class, 'toggleVideoBookmark'])->name('bookmark.video.toggle'); // <-- TAMBAHKAN INI
+    Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 });

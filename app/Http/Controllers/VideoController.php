@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\VideoFashion;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // Pastikan ini di-import
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 class VideoController extends Controller
 {
     public function index()
@@ -14,38 +14,25 @@ class VideoController extends Controller
             ->with(['user', 'comments.user'])
             ->get();
 
-        $formattedVideos = $videos->map(function ($video) {
-            $likes = '199.7K'; // Masih dummy
+        $bookmarkedVideoIds = [];
+        if (Auth::check()) {
+            // Ambil semua ID video yang sudah di-bookmark oleh user
+            $bookmarkedVideoIds = Auth::user()->videoBookmarks()->pluck('idVideoFashion')->toArray();
+        }
 
-            $videoSrc = Storage::url($video->pathFile);
-
-            $uploaderName = $video->user->nama ?? ($video->user->username ?? 'Unknown User');
+        $formattedVideos = $videos->map(function ($video) use ($bookmarkedVideoIds) { // <-- Tambahkan use
+            // ... (kode map yang sudah ada)
 
             return [
                 'id' => $video->idVideoFashion,
-                'src' => $videoSrc,
-                'username' => $uploaderName,
+                'src' => Storage::url($video->pathFile),
+                'username' => $video->user->nama ?? 'Unknown User',
                 'description' => $video->deskripsi,
-                'likes' => $likes,
+                'likes' => '199.7K', // Dummy
                 'comments_count' => $video->comments_count,
+                'is_bookmarked' => in_array($video->idVideoFashion, $bookmarkedVideoIds), // <-- TAMBAHKAN INI
                 'comments' => $video->comments->map(function ($comment) {
-                    // Pastikan $comment->user tidak null sebelum mengakses propertinya
-                    $commentAuthor = $comment->user ? ($comment->user->nama ?? $comment->user->username) : 'Anonim';
-
-                    // Pastikan profilepicture ada dan bentuknya URL yang benar
-                    $commentAvatar = 'https://i.imgur.com/S2i43eS.jpg'; // Fallback default
-                    if ($comment->user && !empty($comment->user->profilepicture)) {
-                        // Asumsi profilepicture menyimpan path relatif dari storage/app/public
-                        $commentAvatar = Storage::url($comment->user->profilepicture);
-                    }
-
-                    return [
-                        'id' => $comment->idKomentar,
-                        'author' => $commentAuthor, // <<< PERBAIKAN DI SINI
-                        'avatar' => $commentAvatar, // <<< PERBAIKAN DI SINI
-                        'text' => $comment->isiKomentar, // Pastikan ini nama kolom teks komentar yang benar
-                        'time' => $comment->tanggalKomentar,
-                    ];
+                    // ... (kode comments map)
                 })->sortByDesc('time')->values()->all()
             ];
         });

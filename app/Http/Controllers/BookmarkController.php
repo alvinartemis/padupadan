@@ -6,6 +6,8 @@ use App\Models\Lookbook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\VideoFashion;
+use App\Models\VideoBookmark;
 
 class BookmarkController extends Controller
 {
@@ -17,12 +19,20 @@ class BookmarkController extends Controller
     public function bookmark()
     {
         $user = Auth::user();
-        $bookmarkedLookbooks = $user->wishlistItems()
-                                 ->select('lookbook.*')
-                                 ->orderBy('wishlistitem.tanggal_ditambahkan', 'desc')
-                                 ->get();
 
-        return view('settings.bookmark', compact('bookmarkedLookbooks'));
+        // Ambil Lookbook yang di-bookmark
+        $bookmarkedLookbooks = $user->wishlistItems()
+                                ->select('lookbook.*')
+                                ->orderBy('wishlistitem.tanggal_ditambahkan', 'desc')
+                                ->get();
+
+        // Ambil Video yang di-bookmark
+        $bookmarkedVideos = VideoBookmark::where('idPengguna', $user->idPengguna)
+                                        ->with('video.user') // Eager load relasi video dan user dari video
+                                        ->latest() // Urutkan berdasarkan timestamp pembuatan bookmark
+                                        ->get();
+
+        return view('settings.bookmark', compact('bookmarkedLookbooks', 'bookmarkedVideos'));
     }
 
     /**
@@ -54,6 +64,39 @@ class BookmarkController extends Controller
             $user->wishlistItems()->attach($lookbook->idLookbook, ['tanggal_ditambahkan' => now()]);
             $status = 'bookmarked';
             $message = 'Item berhasil ditambahkan ke wishlist!';
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'bookmark_status' => $status,
+            'message' => $message
+        ]);
+    }
+
+    /* @param  \App\Models\VideoFashion  $video
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleVideoBookmark(VideoFashion $video)
+    {
+        $user = Auth::user();
+
+        $bookmark = VideoBookmark::where('idPengguna', $user->idPengguna)
+                                 ->where('idVideoFashion', $video->idVideoFashion)
+                                 ->first();
+
+        if ($bookmark) {
+            // Jika sudah ada, hapus.
+            $bookmark->delete();
+            $status = 'unbookmarked';
+            $message = 'Video berhasil dihapus dari markah.';
+        } else {
+            // Jika belum ada, tambahkan.
+            VideoBookmark::create([
+                'idPengguna' => $user->idPengguna,
+                'idVideoFashion' => $video->idVideoFashion,
+            ]);
+            $status = 'bookmarked';
+            $message = 'Video berhasil ditambahkan ke markah!';
         }
 
         return response()->json([

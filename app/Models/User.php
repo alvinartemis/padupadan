@@ -16,6 +16,7 @@ use App\Models\Stylist;
 use App\Models\KoleksiPakaian;
 use App\Models\Outfit;
 use App\Models\Pesan;
+use App\Models\VideoBookmark;
 
 
 class User extends Authenticatable
@@ -146,5 +147,10 @@ class User extends Authenticatable
     public /* Relasi pesan terkirim */ function pesanKirim()
     {
         return $this->hasMany(Pesan::class, 'idPengguna', 'idPengguna');
+    }
+
+        public function videoBookmarks()
+    {
+        return $this->hasMany(VideoBookmark::class, 'idPengguna', 'idPengguna');
     }
 }

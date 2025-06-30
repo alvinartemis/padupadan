@@ -180,25 +180,29 @@
         <button class="toggle-button active" id="fashionItemToggle">Lookbook</button>
     </div>
 
-    {{-- Video Content --}}
     <div id="videoContent" class="content-section">
-        {{-- PERBAIKAN: Gunakan 'empty()' untuk memeriksa array kosong --}}
-        @if(empty($bookmarkedVideos))
+        @if($bookmarkedVideos->isEmpty())
             <div class="video-placeholder">
                 <p>You haven't bookmarked any videos yet!</p>
             </div>
         @else
-            {{-- Loop dan tampilkan video yang di-bookmark di sini --}}
-            {{-- Contoh:
-            @foreach($bookmarkedVideos as $video)
-                <div class="video-card">
-                    <p>{{ $video->title }}</p>
-                    <video src="{{ asset('storage/' . $video->path) }}" controls></video>
-                </div>
-            @endforeach
-            --}}
-            <div class="video-placeholder">
-                <p>Video bookmarking is not yet fully implemented.</p>
+            <div class="fashion-items-grid"> {{-- Anda bisa menggunakan grid yang sama atau buat style baru --}}
+                @foreach($bookmarkedVideos as $bookmark)
+                    @if($bookmark->video) {{-- Pastikan relasi video ada --}}
+                        <div class="fashion-item-card">
+                            <video width="100%" height="180" controls muted>
+                                <source src="{{ asset('storage/' . $bookmark->video->pathFile) }}" type="{{ $bookmark->video->mimeType }}">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="item-info-text">
+                                <h3>{{ Str::limit($bookmark->video->deskripsi, 20) ?? 'Video' }}</h3>
+                                <p>by {{ $bookmark->video->user->nama ?? 'Unknown User' }}</p>
+                            </div>
+                            {{-- Arahkan ke halaman detail video jika ada, jika tidak, cukup tampilkan di sini --}}
+                            {{-- <a href="#" class="view-detail-button">View Detail</a> --}}
+                        </div>
+                    @endif
+                @endforeach
             </div>
         @endif
     </div>

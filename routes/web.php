@@ -47,10 +47,11 @@ Route::middleware('auth:stylist')->group(function () {
 });
 
 Route::middleware('auth:')->group(function () {
+     Route::get('/set-preference/result', [SetPreferenceController::class, 'showResult'])->name('set_preference.result');
     Route::get('/set-preference/{step?}', [SetPreferenceController::class, 'index'])->name('set_preference.index');
     Route::post('/set-preference/save/{step}', [SetPreferenceController::class, 'saveStep'])->name('set_preference.save_step');
     Route::get('/quiz/countdown', [SetPreferenceController::class, 'showCountdown'])->name('set_preference.countdown');
-    Route::get('/set-preference/result', [SetPreferenceController::class, 'showResult'])->name('set_preference.result');
+    // Route::get('/set-preference/result', [SetPreferenceController::class, 'showResult'])->name('set_preference.result'); ini harus diatas /set-preference{step}, soalnya laravel gabisa baca
     Route::post('/set-preference/complete', [SetPreferenceController::class, 'complete'])->name('set_preference.complete');
 });
 

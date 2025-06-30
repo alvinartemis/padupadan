@@ -34,7 +34,8 @@
         .lookbook-grid {
             /* PERBAIKAN DI SINI UNTUK JUMLAH KOLOM */
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 3 atau 4 kolom. minmax 250px */
+            grid-template-columns: repeat(4, 1fr);
+            /* 3 atau 4 kolom. minmax 250px */
             /* Jika ingin 3 kolom pasti, gunakan: grid-template-columns: repeat(3, 1fr); */
             /* Jika ingin 4 kolom pasti, gunakan: grid-template-columns: repeat(4, 1fr); */
             gap: 20px;
@@ -67,7 +68,8 @@
             left: 0;
             width: 100%;
             height: 3px;
-            background-color: #f4bc43; /* Yellow color, adjust to pink if desired */
+            background-color: #f4bc43;
+            /* Yellow color, adjust to pink if desired */
         }
 
         .outfit-card::before {
@@ -80,13 +82,15 @@
 
         .outfit-card img {
             width: 100%;
-            height: 280px; /* Tinggi gambar */
+            height: 280px;
+            /* Tinggi gambar */
             object-fit: contain;
             display: block;
             padding: 10px;
             box-sizing: border-box;
             /* Debugging: */
-            /* border: 1px solid red !important; */ /* Uncomment this to see if img element is rendered */
+            /* border: 1px solid red !important; */
+            /* Uncomment this to see if img element is rendered */
         }
 
         .outfit-card .outfit-info {
@@ -135,13 +139,16 @@
                 grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
                 gap: 15px;
             }
+
             .outfit-card img {
                 height: 180px;
             }
+
             .create-button-fixed {
                 right: 20px;
                 bottom: 20px;
             }
+
             .create-button {
                 padding: 10px 20px;
                 font-size: 0.9em;
@@ -152,9 +159,11 @@
             .lookbook-grid {
                 grid-template-columns: 1fr;
             }
+
             .outfit-card img {
                 height: 150px;
             }
+
             .create-button-fixed {
                 right: 15px;
                 bottom: 15px;
@@ -169,23 +178,20 @@
 
         <div class="lookbook-grid">
             @forelse($lookbooks as $lookbook)
-            <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" class="outfit-card">
-
-                {{-- Debugging: Inspect this path in browser's developer tools --}}
-                {{-- <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}" style="border: 1px solid blue;"> --}}
-                @if($lookbook->imgLookbook)
-                    <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}">
-                @else
-                    <img src="https://via.placeholder.com/300x280?text=No+Image" alt="No Image Available">
-                @endif
-                <div class="outfit-info">
-                    <div class="designer-name">{{ $lookbook->nama }}</div>
-                </div>
-            </div>
+                <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" class="outfit-card">
+                    @if ($lookbook->imgLookbook)
+                        <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}">
+                    @else
+                        <img src="https://via.placeholder.com/300x280?text=No+Image" alt="No Image Available">
+                    @endif
+                    <div class="outfit-info">
+                        <div class="designer-name">{{ $lookbook->nama }}</div>
+                    </div>
+                </a>
             @empty
                 <p>Belum ada lookbook yang Anda buat. Silakan buat satu!</p>
             @endforelse
-        </div>
+        </div> <!-- ✅ Di sini baru tutup .lookbook-grid -->
     </div>
 
     <div class="create-button-fixed">

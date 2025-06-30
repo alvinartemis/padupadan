@@ -119,6 +119,7 @@ Route::middleware(['auth:stylist'])->group(function () {
     Route::get('/stylist/lookbook', [LookbookController::class, 'index'])->name('lookbook.index');
     Route::get('/stylist/lookbook/create', [LookbookController::class, 'create'])->name('lookbook.create');
     Route::post('/stylist/lookbook', [LookbookController::class, 'store'])->name('lookbook.store');
+    Route::get('/stylist/lookbook/{lookbook}', [LookbookController::class, 'showStylistLookbook'])->name('stylist.lookbook.show');
 });
 
 
@@ -129,6 +130,6 @@ Route::get('/lookbook/tags/suggestions', [LookbookController::class, 'getTagSugg
 
 Route::middleware('auth')->group(function () {
     Route::post('/bookmark/lookbook/{lookbook}', [BookmarkController::class, 'toggleLookbookBookmark'])->name('bookmark.lookbook.toggle');
-    Route::post('/bookmark/video/{video}', [BookmarkController::class, 'toggleVideoBookmark'])->name('bookmark.video.toggle'); // <-- TAMBAHKAN INI
+    Route::post('/bookmark/video/{video}', [BookmarkController::class, 'toggleVideoBookmark'])->name('bookmark.video.toggle');
     Route::get('/settings/bookmark', [BookmarkController::class, 'bookmark'])->name('bookmark');
 });

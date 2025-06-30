@@ -4,7 +4,6 @@
 
 @section('content')
     <style>
-        /* CSS Khusus untuk Halaman Lookbook Stylist */
         .content-block {
             background-color: #fff;
             padding: 20px;
@@ -32,12 +31,8 @@
         }
 
         .lookbook-grid {
-            /* PERBAIKAN DI SINI UNTUK JUMLAH KOLOM */
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            /* 3 atau 4 kolom. minmax 250px */
-            /* Jika ingin 3 kolom pasti, gunakan: grid-template-columns: repeat(3, 1fr); */
-            /* Jika ingin 4 kolom pasti, gunakan: grid-template-columns: repeat(4, 1fr); */
             gap: 20px;
             padding-top: 10px;
             padding-bottom: 20px;
@@ -60,7 +55,6 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
         }
 
-        /* Pink border lines */
         .outfit-card::before,
         .outfit-card::after {
             content: '';
@@ -69,7 +63,6 @@
             width: 100%;
             height: 3px;
             background-color: #f4bc43;
-            /* Yellow color, adjust to pink if desired */
         }
 
         .outfit-card::before {
@@ -83,14 +76,10 @@
         .outfit-card img {
             width: 100%;
             height: 280px;
-            /* Tinggi gambar */
             object-fit: contain;
             display: block;
             padding: 10px;
             box-sizing: border-box;
-            /* Debugging: */
-            /* border: 1px solid red !important; */
-            /* Uncomment this to see if img element is rendered */
         }
 
         .outfit-card .outfit-info {
@@ -105,7 +94,6 @@
             font-size: 1em;
         }
 
-        /* Floating Create Button */
         .create-button-fixed {
             position: fixed;
             right: 40px;
@@ -133,14 +121,13 @@
             transform: translateY(-2px);
         }
 
-        /* Style for empty lookbook message */
         .empty-lookbook-message {
             text-align: center;
             font-style: italic;
             color: #666;
-            margin-top: 50px; /* Adjust as needed */
-            width: 100%; /* Ensure it takes full width to center */
-            grid-column: 1 / -1; /* Make it span all columns in the grid */
+            margin-top: 50px;
+            width: 100%;
+            grid-column: 1 / -1;
         }
 
         /* Responsive adjustments */
@@ -188,7 +175,7 @@
 
         <div class="lookbook-grid">
             @forelse($lookbooks as $lookbook)
-                <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" class="outfit-card">
+                <a href="{{ route('stylist.lookbook.show', $lookbook->idLookbook) }}" class="outfit-card">
                     @if ($lookbook->imgLookbook)
                         <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}">
                     @else
@@ -199,17 +186,16 @@
                     </div>
                 </a>
             @empty
-                {{-- Menggunakan div dengan kelas baru untuk styling --}}
                 <div class="empty-lookbook-message">
                     You haven't created any lookbooks yet. Go ahead and create one!
                 </div>
             @endforelse
-        </div> <!-- ✅ Di sini baru tutup .lookbook-grid -->
+        </div>
     </div>
 
     <div class="create-button-fixed">
         <a href="{{ route('lookbook.create') }}" class="create-button">
-            create
+            +
         </a>
     </div>
 @endsection

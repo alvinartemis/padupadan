@@ -102,8 +102,8 @@ class LookbookController extends Controller
         $isBookmarked = false;
         if (Auth::check()) {
             $isBookmarked = Auth::user()->wishlistItems()
-                                ->where('wishlistitem.idLookbook', $lookbook->idLookbook)
-                                ->exists();
+    ->where('lookbook.idLookbook', $lookbook->idLookbook)
+    ->exists();
         }
         $lookbook->load('stylist');
         return view('lookbook.detaillookbook', compact('lookbook', 'isBookmarked'));

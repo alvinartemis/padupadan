@@ -169,7 +169,8 @@
 
         <div class="lookbook-grid">
             @forelse($lookbooks as $lookbook)
-            <div class="outfit-card">
+            <a href="{{ route('lookbook.show', $lookbook->idLookbook) }}" class="outfit-card">
+
                 {{-- Debugging: Inspect this path in browser's developer tools --}}
                 {{-- <img src="{{ asset('storage/' . $lookbook->imgLookbook) }}" alt="{{ $lookbook->nama }}" style="border: 1px solid blue;"> --}}
                 @if($lookbook->imgLookbook)

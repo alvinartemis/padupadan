@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>The Moment of Truth!</title>
@@ -63,6 +64,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="circle left"></div>
     <div class="circle right"></div>
@@ -76,6 +78,8 @@
         <h1 id="countdown-phase-2" style="display: none;">Time to reveal your fashion identity</h1>
         <h1 id="countdown-number" style="display: none;"></h1>
     </div>
+    <span id="result-url" data-url="{{ route('set_preference.result') }}"></span>
+
 
     <script>
         const countdownPhase1Element = document.getElementById('countdown-text');
@@ -101,10 +105,13 @@
                 setTimeout(updateCountdown, 1000);
             } else {
                 setTimeout(() => {
-                    window.location.href = "{{ route('set_preference.result') }}";
+                    const resultUrl = document.getElementById('result-url').dataset.url;
+                    window.location.href = resultUrl;
                 }, 1000);
             }
+
         };
     </script>
 </body>
+
 </html>
